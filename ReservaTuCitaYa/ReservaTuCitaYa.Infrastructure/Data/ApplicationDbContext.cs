@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
+using ReservaTuCitaYa.Domain.Entities;
 using ReservaTuCitaYa.Infrastructure.Identity;
 using System;
 using System.Collections.Generic;
@@ -16,10 +17,14 @@ namespace ReservaTuCitaYa.Infrastructure.Data
         {
         }
 
+        public DbSet<TipoOrganizacion> TiposOrganizacion => Set<TipoOrganizacion>();
+        public DbSet<Organizacion> Organizaciones => Set<Organizacion>();
+        public DbSet<Sede> Sedes => Set<Sede>();
+
         protected override void OnModelCreating(ModelBuilder builder)
         {
             base.OnModelCreating(builder);
-            // Aquí después irán las configuraciones de entidades (Configurations/)
+            builder.ApplyConfigurationsFromAssembly(typeof(ApplicationDbContext).Assembly);
         }
     }
 }
