@@ -11,5 +11,7 @@ namespace ReservaTuCitaYa.Domain.Entities
         public string? Telefono { get; set; }
         public string? Correo { get; set; }
         public string? Referencia { get; set; }
+
+        public ICollection<ServicioSede> ServiciosSede { get; set; } = new List<ServicioSede>();
     }
 }
