@@ -1,33 +1,36 @@
-﻿using Microsoft.AspNetCore.Identity;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.Extensions.Logging;
+using ReservaTuCitaYa.Infrastructure.Identity;
 
 namespace ReservaTuCitaYa.Infrastructure.Data.Seed
 {
     public static class IdentitySeeder
     {
-        private static readonly string[] Roles =
-       {
-            "Superadministrador",
-            "Administrador",
-            "Recepcionista",
-            "Profesional",
-            "Cliente"
-        };
-
-        public static async Task SeedRolesAsync(RoleManager<IdentityRole> roleManager)
+        public static async Task SeedRolesAsync(
+            RoleManager<IdentityRole> roleManager,
+            ILogger logger)
         {
-            foreach (var rol in Roles)
+            foreach (var rol in RoleNames.Todos)
             {
-                if (!await roleManager.RoleExistsAsync(rol))
+                if (await roleManager.RoleExistsAsync(rol))
                 {
-                    await roleManager.CreateAsync(new IdentityRole(rol));
+                    continue;
                 }
+
+                var resultado = await roleManager.CreateAsync(new IdentityRole(rol));
+
+                if (!resultado.Succeeded)
+                {
+                    var errores = string.Join(
+                        "; ",
+                        resultado.Errors.Select(error => $"{error.Code}: {error.Description}"));
+
+                    throw new InvalidOperationException(
+                        $"No se pudo crear el rol '{rol}'. {errores}");
+                }
+
+                logger.LogInformation("Rol {Rol} creado correctamente.", rol);
             }
         }
     }
 }
-
