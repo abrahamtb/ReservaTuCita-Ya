@@ -21,7 +21,6 @@
   <ItemGroup>
     <Folder Include="Areas\" />
     <Folder Include="Extensions\" />
-    <Folder Include="ViewModels\" />
   </ItemGroup>
 
 </Project>
