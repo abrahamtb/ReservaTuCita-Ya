@@ -5,7 +5,6 @@ using ReservaTuCitaYa.Infrastructure.Data;
 using ReservaTuCitaYa.Infrastructure.Data.Seed;
 using ReservaTuCitaYa.Infrastructure.Identity;
 
-
 var builder = WebApplication.CreateBuilder(args);
 
 // DbContext
@@ -70,11 +69,20 @@ app.MapControllerRoute(
 
 using (var scope = app.Services.CreateScope())
 {
+    var dbContext = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
     var roleManager = scope.ServiceProvider.GetRequiredService<RoleManager<IdentityRole>>();
     var userManager = scope.ServiceProvider.GetRequiredService<UserManager<ApplicationUser>>();
+    var logger = scope.ServiceProvider
+        .GetRequiredService<ILoggerFactory>()
+        .CreateLogger("DatabaseInitialization");
 
-    await IdentitySeeder.SeedRolesAsync(roleManager);
-    await SeedSuperAdmin.SeedSuperAdminAsync(userManager, roleManager);
+    await dbContext.Database.MigrateAsync();
+    await IdentitySeeder.SeedRolesAsync(roleManager, logger);
+    await SeedSuperAdmin.SeedSuperAdminAsync(
+        userManager,
+        roleManager,
+        builder.Configuration,
+        logger);
 }
 
 app.Run();

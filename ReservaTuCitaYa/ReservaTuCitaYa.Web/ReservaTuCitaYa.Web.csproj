@@ -4,6 +4,7 @@
     <TargetFramework>net8.0</TargetFramework>
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
+    <UserSecretsId>ReservaTuCitaYa-Web-77e4d31b-51e1-469e-8c5b-6ad61b1fb832</UserSecretsId>
   </PropertyGroup>
 
   <ItemGroup>
