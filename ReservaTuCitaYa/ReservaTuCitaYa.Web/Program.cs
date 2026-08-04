@@ -1,10 +1,13 @@
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using ReservaTuCitaYa.Application.Abstractions.Persistence;
+using ReservaTuCitaYa.Application.Interfaces;
+using ReservaTuCitaYa.Application.Services;
 using ReservaTuCitaYa.Infrastructure.Data;
 using ReservaTuCitaYa.Infrastructure.Data.Seed;
 using ReservaTuCitaYa.Infrastructure.Identity;
-
+using ReservaTuCitaYa.Infrastructure.Repositories;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -47,6 +50,10 @@ builder.Services.ConfigureApplicationCookie(options =>
 });
 
 builder.Services.AddControllersWithViews();
+builder.Services.AddScoped<IOrganizacionRepository, OrganizacionRepository>();
+builder.Services.AddScoped<ISedeRepository, SedeRepository>();
+builder.Services.AddScoped<IOrganizacionService, OrganizacionService>();
+builder.Services.AddScoped<ISedeService, SedeService>();
 
 var app = builder.Build();
 
@@ -70,11 +77,20 @@ app.MapControllerRoute(
 
 using (var scope = app.Services.CreateScope())
 {
+    var dbContext = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
     var roleManager = scope.ServiceProvider.GetRequiredService<RoleManager<IdentityRole>>();
     var userManager = scope.ServiceProvider.GetRequiredService<UserManager<ApplicationUser>>();
+    var logger = scope.ServiceProvider
+        .GetRequiredService<ILoggerFactory>()
+        .CreateLogger("DatabaseInitialization");
 
-    await IdentitySeeder.SeedRolesAsync(roleManager);
-    await SeedSuperAdmin.SeedSuperAdminAsync(userManager, roleManager);
+    await dbContext.Database.MigrateAsync();
+    await IdentitySeeder.SeedRolesAsync(roleManager, logger);
+    await SeedSuperAdmin.SeedSuperAdminAsync(
+        userManager,
+        roleManager,
+        builder.Configuration,
+        logger);
 }
 
 app.Run();
