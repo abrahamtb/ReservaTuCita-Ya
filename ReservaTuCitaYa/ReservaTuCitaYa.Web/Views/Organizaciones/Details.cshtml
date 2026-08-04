@@ -11,6 +11,8 @@
     <div class="d-flex gap-2">
         <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-primary">Editar</a>
         <a asp-controller="Sedes" asp-action="Index" asp-route-organizacionId="@Model.Id" class="btn btn-outline-primary">Administrar sedes (@Model.CantidadSedesActivas)</a>
+        <a asp-controller="CategoriasServicio" asp-action="Index" asp-route-organizacionId="@Model.Id" class="btn btn-outline-primary">Categorías</a>
+        <a asp-controller="Servicios" asp-action="Index" asp-route-organizacionId="@Model.Id" class="btn btn-outline-primary">Servicios</a>
     </div>
 </div>
 
