@@ -13,7 +13,7 @@ namespace ReservaTuCitaYa.IntegrationTests;
 public sealed class CrudOrganizacionesSedesSqlServerTests : IAsyncLifetime
 {
     private const string CadenaConexion =
-        "Server=(localdb)\\MSSQLLocalDB;Database=ReservaTuCitaYa_RG016_Pruebas;Trusted_Connection=True;Encrypt=False;TrustServerCertificate=True;";
+        "Server=.\\SQLEXPRESS;Database=ReservaTuCitaYa_RG016_Pruebas;Trusted_Connection=True;Encrypt=False;TrustServerCertificate=True;";
 
     private readonly DbContextOptions<ApplicationDbContext> _opciones =
         new DbContextOptionsBuilder<ApplicationDbContext>()

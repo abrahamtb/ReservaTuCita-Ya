@@ -52,8 +52,12 @@ builder.Services.ConfigureApplicationCookie(options =>
 builder.Services.AddControllersWithViews();
 builder.Services.AddScoped<IOrganizacionRepository, OrganizacionRepository>();
 builder.Services.AddScoped<ISedeRepository, SedeRepository>();
+builder.Services.AddScoped<ICategoriaServicioRepository, CategoriaServicioRepository>();
+builder.Services.AddScoped<IServicioRepository, ServicioRepository>();
 builder.Services.AddScoped<IOrganizacionService, OrganizacionService>();
 builder.Services.AddScoped<ISedeService, SedeService>();
+builder.Services.AddScoped<ICategoriaServicioService, CategoriaServicioService>();
+builder.Services.AddScoped<IServicioService, ServicioService>();
 
 var app = builder.Build();
 

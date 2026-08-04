@@ -1,0 +1,5 @@
+@model ReservaTuCitaYa.Web.ViewModels.Servicios.ServicioFormularioViewModel
+@{ ViewData["Title"] = "Nuevo servicio"; }
+<h1>Nuevo servicio</h1>
+<form asp-action="Create" method="post" class="card card-body"><partial name="_Formulario" model="Model" /><div class="mt-4 d-flex gap-2"><button class="btn btn-primary" type="submit">Guardar</button><a asp-action="Index" asp-route-organizacionId="@Model.OrganizacionId" class="btn btn-outline-secondary">Cancelar</a></div></form>
+@section Scripts { <partial name="_ValidationScriptsPartial" /><partial name="_FormularioScripts" /> }
