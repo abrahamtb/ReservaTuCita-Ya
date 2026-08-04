@@ -1,0 +1,19 @@
+@model ReservaTuCitaYa.Application.DTOs.Sedes.SedeDetalleDto
+@{ ViewData["Title"] = "Detalle de sede"; }
+
+<div class="d-flex justify-content-between align-items-start mb-3">
+    <div><h1>@Model.Nombre</h1><p class="text-muted">@Model.Organizacion</p><span class="badge @(Model.EstaActivo ? "bg-success" : "bg-secondary")">@(Model.EstaActivo ? "Activa" : "Inactiva")</span></div>
+    <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-primary">Editar</a>
+</div>
+<div class="card mb-3"><div class="card-body"><dl class="row mb-0">
+    <dt class="col-sm-3">Dirección</dt><dd class="col-sm-9">@Model.Direccion</dd>
+    <dt class="col-sm-3">Teléfono</dt><dd class="col-sm-9">@(Model.Telefono ?? "—")</dd>
+    <dt class="col-sm-3">Correo</dt><dd class="col-sm-9">@(Model.Correo ?? "—")</dd>
+    <dt class="col-sm-3">Referencia</dt><dd class="col-sm-9">@(Model.Referencia ?? "—")</dd>
+    <dt class="col-sm-3">Creada</dt><dd class="col-sm-9">@Model.FechaCreacion.ToString("dd/MM/yyyy HH:mm")</dd>
+</dl></div></div>
+<div class="d-flex gap-2 flex-wrap">
+    <form asp-action="CambiarEstado" asp-route-id="@Model.Id" method="post" onsubmit="return confirm('¿Confirma el cambio de estado?');"><button type="submit" class="btn btn-outline-warning">@(Model.EstaActivo ? "Desactivar" : "Activar")</button></form>
+    <form asp-action="Eliminar" asp-route-id="@Model.Id" method="post" onsubmit="return confirm('¿Eliminar esta sede? Esta acción la ocultará del sistema.');"><button type="submit" class="btn btn-outline-danger">Eliminar</button></form>
+    <a asp-action="Index" asp-route-organizacionId="@Model.OrganizacionId" class="btn btn-link">Volver</a>
+</div>

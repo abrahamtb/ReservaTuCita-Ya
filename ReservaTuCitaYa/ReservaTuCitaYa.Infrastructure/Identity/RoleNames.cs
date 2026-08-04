@@ -7,6 +7,7 @@ namespace ReservaTuCitaYa.Infrastructure.Identity
         public const string Recepcionista = "Recepcionista";
         public const string Profesional = "Profesional";
         public const string Cliente = "Cliente";
+        public const string Administracion = Superadministrador + "," + Administrador;
 
         public static IReadOnlyCollection<string> Todos { get; } =
         [

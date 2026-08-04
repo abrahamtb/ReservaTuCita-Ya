@@ -1,9 +1,13 @@
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using ReservaTuCitaYa.Application.Abstractions.Persistence;
+using ReservaTuCitaYa.Application.Interfaces;
+using ReservaTuCitaYa.Application.Services;
 using ReservaTuCitaYa.Infrastructure.Data;
 using ReservaTuCitaYa.Infrastructure.Data.Seed;
 using ReservaTuCitaYa.Infrastructure.Identity;
+using ReservaTuCitaYa.Infrastructure.Repositories;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -46,6 +50,10 @@ builder.Services.ConfigureApplicationCookie(options =>
 });
 
 builder.Services.AddControllersWithViews();
+builder.Services.AddScoped<IOrganizacionRepository, OrganizacionRepository>();
+builder.Services.AddScoped<ISedeRepository, SedeRepository>();
+builder.Services.AddScoped<IOrganizacionService, OrganizacionService>();
+builder.Services.AddScoped<ISedeService, SedeService>();
 
 var app = builder.Build();
 
