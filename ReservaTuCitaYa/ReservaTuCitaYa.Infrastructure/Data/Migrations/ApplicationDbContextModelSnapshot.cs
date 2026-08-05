@@ -155,6 +155,100 @@ namespace ReservaTuCitaYa.Infrastructure.Data.Migrations
                     b.ToTable("AspNetUserTokens", (string)null);
                 });
 
+            modelBuilder.Entity("ReservaTuCitaYa.Domain.Entities.BloqueoProfesional", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid?>("CreadoPorUsuarioId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<bool>("EstaActivo")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("EstaEliminado")
+                        .HasColumnType("bit");
+
+                    b.Property<DateTime>("FechaCreacion")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime>("FechaHoraFin")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime>("FechaHoraInicio")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime?>("FechaModificacion")
+                        .HasColumnType("datetime2");
+
+                    b.Property<Guid?>("ModificadoPorUsuarioId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("Motivo")
+                        .IsRequired()
+                        .HasMaxLength(500)
+                        .HasColumnType("nvarchar(500)");
+
+                    b.Property<Guid>("ProfesionalId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<int>("TipoBloqueo")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("BloqueosProfesionales", (string)null);
+                });
+
+            modelBuilder.Entity("ReservaTuCitaYa.Domain.Entities.BloqueoRecurso", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid?>("CreadoPorUsuarioId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<bool>("EstaActivo")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("EstaEliminado")
+                        .HasColumnType("bit");
+
+                    b.Property<DateTime>("FechaCreacion")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime>("FechaHoraFin")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime>("FechaHoraInicio")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime?>("FechaModificacion")
+                        .HasColumnType("datetime2");
+
+                    b.Property<Guid?>("ModificadoPorUsuarioId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("Motivo")
+                        .IsRequired()
+                        .HasMaxLength(500)
+                        .HasColumnType("nvarchar(500)");
+
+                    b.Property<Guid>("RecursoId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<int>("TipoBloqueo")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("RecursoId");
+
+                    b.ToTable("BloqueosRecursos", (string)null);
+                });
+
             modelBuilder.Entity("ReservaTuCitaYa.Domain.Entities.CategoriaServicio", b =>
                 {
                     b.Property<Guid>("Id")
@@ -200,6 +294,144 @@ namespace ReservaTuCitaYa.Infrastructure.Data.Migrations
                         .HasFilter("[EstaActivo] = 1 AND [EstaEliminado] = 0");
 
                     b.ToTable("CategoriasServicio", (string)null);
+                });
+
+            modelBuilder.Entity("ReservaTuCitaYa.Domain.Entities.HorarioProfesional", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid?>("CreadoPorUsuarioId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<int>("DiaSemana")
+                        .HasColumnType("int");
+
+                    b.Property<bool>("EstaActivo")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("EstaEliminado")
+                        .HasColumnType("bit");
+
+                    b.Property<DateTime>("FechaCreacion")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateOnly?>("FechaFinVigencia")
+                        .HasColumnType("date");
+
+                    b.Property<DateOnly>("FechaInicioVigencia")
+                        .HasColumnType("date");
+
+                    b.Property<DateTime?>("FechaModificacion")
+                        .HasColumnType("datetime2");
+
+                    b.Property<TimeOnly>("HoraFin")
+                        .HasColumnType("time");
+
+                    b.Property<TimeOnly>("HoraInicio")
+                        .HasColumnType("time");
+
+                    b.Property<Guid?>("ModificadoPorUsuarioId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("ProfesionalId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("SedeId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("SedeId");
+
+                    b.ToTable("HorariosProfesionales", (string)null);
+                });
+
+            modelBuilder.Entity("ReservaTuCitaYa.Domain.Entities.HorarioRecurso", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid?>("CreadoPorUsuarioId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<int>("DiaSemana")
+                        .HasColumnType("int");
+
+                    b.Property<bool>("EstaActivo")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("EstaEliminado")
+                        .HasColumnType("bit");
+
+                    b.Property<DateTime>("FechaCreacion")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime?>("FechaModificacion")
+                        .HasColumnType("datetime2");
+
+                    b.Property<TimeOnly>("HoraFin")
+                        .HasColumnType("time");
+
+                    b.Property<TimeOnly>("HoraInicio")
+                        .HasColumnType("time");
+
+                    b.Property<Guid?>("ModificadoPorUsuarioId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("RecursoId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("RecursoId");
+
+                    b.ToTable("HorarioRecurso");
+                });
+
+            modelBuilder.Entity("ReservaTuCitaYa.Domain.Entities.HorarioSede", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid?>("CreadoPorUsuarioId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<int>("DiaSemana")
+                        .HasColumnType("int");
+
+                    b.Property<bool>("EstaActivo")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("EstaEliminado")
+                        .HasColumnType("bit");
+
+                    b.Property<DateTime>("FechaCreacion")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime?>("FechaModificacion")
+                        .HasColumnType("datetime2");
+
+                    b.Property<TimeOnly>("HoraFin")
+                        .HasColumnType("time");
+
+                    b.Property<TimeOnly>("HoraInicio")
+                        .HasColumnType("time");
+
+                    b.Property<Guid?>("ModificadoPorUsuarioId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("SedeId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("SedeId");
+
+                    b.ToTable("HorariosSede", (string)null);
                 });
 
             modelBuilder.Entity("ReservaTuCitaYa.Domain.Entities.Organizacion", b =>
@@ -267,6 +499,64 @@ namespace ReservaTuCitaYa.Infrastructure.Data.Migrations
                     b.HasIndex("TipoOrganizacionId");
 
                     b.ToTable("Organizaciones", (string)null);
+                });
+
+            modelBuilder.Entity("ReservaTuCitaYa.Domain.Entities.Recurso", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<int>("Capacidad")
+                        .HasColumnType("int");
+
+                    b.Property<Guid?>("CreadoPorUsuarioId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("Descripcion")
+                        .HasMaxLength(500)
+                        .HasColumnType("nvarchar(500)");
+
+                    b.Property<bool>("EstaActivo")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("EstaEliminado")
+                        .HasColumnType("bit");
+
+                    b.Property<int>("EstadoRecurso")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("FechaCreacion")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime?>("FechaModificacion")
+                        .HasColumnType("datetime2");
+
+                    b.Property<Guid?>("ModificadoPorUsuarioId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("Nombre")
+                        .IsRequired()
+                        .HasMaxLength(150)
+                        .HasColumnType("nvarchar(150)");
+
+                    b.Property<Guid>("OrganizacionId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("SedeId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("UbicacionInterna")
+                        .HasMaxLength(200)
+                        .HasColumnType("nvarchar(200)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("OrganizacionId");
+
+                    b.HasIndex("SedeId");
+
+                    b.ToTable("Recursos", (string)null);
                 });
 
             modelBuilder.Entity("ReservaTuCitaYa.Domain.Entities.Sede", b =>
@@ -664,6 +954,17 @@ namespace ReservaTuCitaYa.Infrastructure.Data.Migrations
                         .IsRequired();
                 });
 
+            modelBuilder.Entity("ReservaTuCitaYa.Domain.Entities.BloqueoRecurso", b =>
+                {
+                    b.HasOne("ReservaTuCitaYa.Domain.Entities.Recurso", "Recurso")
+                        .WithMany()
+                        .HasForeignKey("RecursoId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("Recurso");
+                });
+
             modelBuilder.Entity("ReservaTuCitaYa.Domain.Entities.CategoriaServicio", b =>
                 {
                     b.HasOne("ReservaTuCitaYa.Domain.Entities.Organizacion", "Organizacion")
@@ -675,6 +976,39 @@ namespace ReservaTuCitaYa.Infrastructure.Data.Migrations
                     b.Navigation("Organizacion");
                 });
 
+            modelBuilder.Entity("ReservaTuCitaYa.Domain.Entities.HorarioProfesional", b =>
+                {
+                    b.HasOne("ReservaTuCitaYa.Domain.Entities.Sede", "Sede")
+                        .WithMany()
+                        .HasForeignKey("SedeId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("Sede");
+                });
+
+            modelBuilder.Entity("ReservaTuCitaYa.Domain.Entities.HorarioRecurso", b =>
+                {
+                    b.HasOne("ReservaTuCitaYa.Domain.Entities.Recurso", "Recurso")
+                        .WithMany()
+                        .HasForeignKey("RecursoId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Recurso");
+                });
+
+            modelBuilder.Entity("ReservaTuCitaYa.Domain.Entities.HorarioSede", b =>
+                {
+                    b.HasOne("ReservaTuCitaYa.Domain.Entities.Sede", "Sede")
+                        .WithMany()
+                        .HasForeignKey("SedeId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("Sede");
+                });
+
             modelBuilder.Entity("ReservaTuCitaYa.Domain.Entities.Organizacion", b =>
                 {
                     b.HasOne("ReservaTuCitaYa.Domain.Entities.TipoOrganizacion", "TipoOrganizacion")
@@ -684,6 +1018,25 @@ namespace ReservaTuCitaYa.Infrastructure.Data.Migrations
                         .IsRequired();
 
                     b.Navigation("TipoOrganizacion");
+                });
+
+            modelBuilder.Entity("ReservaTuCitaYa.Domain.Entities.Recurso", b =>
+                {
+                    b.HasOne("ReservaTuCitaYa.Domain.Entities.Organizacion", "Organizacion")
+                        .WithMany()
+                        .HasForeignKey("OrganizacionId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("ReservaTuCitaYa.Domain.Entities.Sede", "Sede")
+                        .WithMany()
+                        .HasForeignKey("SedeId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("Organizacion");
+
+                    b.Navigation("Sede");
                 });
 
             modelBuilder.Entity("ReservaTuCitaYa.Domain.Entities.Sede", b =>
