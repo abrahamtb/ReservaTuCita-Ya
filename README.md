@@ -1,80 +1,171 @@
-# ReservaTuCita Ya
+# Reserva tu Cita Ya
 
-Plataforma multisectorial de reservas, atención y gestión de servicios desarrollada con ASP.NET Core MVC, Identity, Entity Framework Core y SQL Server.
+Plataforma académica de reservas con backend ASP.NET Core 8, frontend React/TypeScript, Entity Framework Core 8, SQL Server Express y ASP.NET Core Identity.
 
-## Requisitos previos
+## Arquitectura
+
+```text
+React + TypeScript (Vite)
+        │ HTTPS/JSON
+        ▼
+ASP.NET Core Web API
+        │
+        ├── Application (servicios y contratos)
+        ├── Infrastructure (EF Core, Identity y repositorios)
+        └── Domain (entidades y enumeraciones)
+                │
+                ▼
+          SQL Server Express
+```
+
+La presentación MVC/Razor fue retirada. `ReservaTuCitaYa.Api` es el único host del backend y React nunca se conecta directamente a SQL Server.
+
+## Requisitos
 
 - .NET SDK 8.
-- Visual Studio 2022 con desarrollo web de ASP.NET.
-- SQL Server Express, SQL Server Developer o LocalDB.
-- Herramientas de Entity Framework Core (`dotnet-ef`) 8.
+- Node.js 20 o posterior y npm.
+- Visual Studio 2022 con desarrollo web ASP.NET.
+- SQL Server Express.
+- Certificado HTTPS de desarrollo confiable: `dotnet dev-certs https --trust`.
+- Herramienta `dotnet-ef` 8.
 
-## Configuración local segura
+## Configurar User Secrets
 
-El proyecto Web carga la conexión y las credenciales iniciales mediante User Secrets. No agregues contraseñas a `appsettings.json` ni crees un archivo `secrets.json` dentro del repositorio.
-
-Desde la carpeta `ReservaTuCitaYa/ReservaTuCitaYa.Web`, configura una de estas conexiones.
-
-SQL Server Express:
+La API mantiene el `UserSecretsId` utilizado durante el desarrollo anterior, por lo que los secretos locales existentes siguen funcionando. Desde `ReservaTuCitaYa/ReservaTuCitaYa.Api`:
 
 ```powershell
 dotnet user-secrets set "ConnectionStrings:DefaultConnection" "Server=.\SQLEXPRESS;Database=ReservaTuCitaYaDb;Trusted_Connection=True;Encrypt=False;TrustServerCertificate=True;MultipleActiveResultSets=True"
-```
-
-LocalDB:
-
-```powershell
-dotnet user-secrets set "ConnectionStrings:DefaultConnection" "Server=(localdb)\MSSQLLocalDB;Database=ReservaTuCitaYaDb;Trusted_Connection=True;MultipleActiveResultSets=True"
-```
-
-Configura las credenciales iniciales con valores propios:
-
-```powershell
 dotnet user-secrets set "SeedAdmin:Email" "tu-correo-administrativo"
 dotnet user-secrets set "SeedAdmin:Password" "tu-contraseña-segura"
 dotnet user-secrets set "SeedAdmin:Nombres" "Tus nombres"
 dotnet user-secrets set "SeedAdmin:Apellidos" "Tus apellidos"
 ```
 
-## Migraciones y base de datos
+No agregues conexiones, contraseñas o secretos al frontend ni a `appsettings.json`.
 
-Desde la carpeta que contiene la solución:
+## Ejecutar el backend
 
-```powershell
-dotnet tool restore
-dotnet tool run dotnet-ef migrations add InitialCreate --project ReservaTuCitaYa.Infrastructure --startup-project ReservaTuCitaYa.Web --context ApplicationDbContext --output-dir Data/Migrations
-dotnet tool run dotnet-ef database update --project ReservaTuCitaYa.Infrastructure --startup-project ReservaTuCitaYa.Web --context ApplicationDbContext
-```
-
-En la Consola del Administrador de paquetes de Visual Studio, los comandos equivalentes son:
-
-```powershell
-Add-Migration InitialCreate -Project ReservaTuCitaYa.Infrastructure -StartupProject ReservaTuCitaYa.Web -Context ApplicationDbContext -OutputDir Data/Migrations
-Update-Database -Project ReservaTuCitaYa.Infrastructure -StartupProject ReservaTuCitaYa.Web -Context ApplicationDbContext
-```
-
-La aplicación también aplica migraciones pendientes durante el inicio antes de crear los datos de Identity.
-
-## Ejecución
+Desde `ReservaTuCitaYa` (la carpeta que contiene la solución):
 
 ```powershell
 dotnet restore
 dotnet build
-dotnet test
-dotnet run --project ReservaTuCitaYa.Web
+dotnet run --project ReservaTuCitaYa.Api --launch-profile https
 ```
 
-Durante el primer inicio se crean, de forma idempotente, los roles `Superadministrador`, `Administrador`, `Recepcionista`, `Profesional` y `Cliente`, además del superadministrador configurado en User Secrets.
+- API HTTPS: `https://localhost:7264`.
+- Swagger: `https://localhost:7264/swagger`.
+- API HTTP auxiliar: `http://localhost:5264`.
 
-## Comprobación en SQL Server
+La API aplica las migraciones existentes y ejecuta los seeders idempotentes de roles y superadministrador al iniciar.
 
-En SQL Server Management Studio, conéctate a tu instancia y comprueba:
+## Ejecutar React
 
-- La base `ReservaTuCitaYaDb`.
-- Las tablas de Identity con prefijo `AspNet`.
-- Las tablas de negocio.
-- La tabla `__EFMigrationsHistory`.
-- Los cinco registros de `AspNetRoles`.
-- El superadministrador y su relación con el rol en `AspNetUserRoles`.
+Desde `frontend/reserva-tu-cita-ya-web`:
 
-No consultes ni compartas `PasswordHash`, tokens o valores almacenados en User Secrets.
+```powershell
+Copy-Item .env.example .env
+npm install
+npm run dev
+```
+
+El frontend abre en `http://localhost:5173` y obtiene la API mediante:
+
+```text
+VITE_API_URL=https://localhost:7264
+```
+
+`.env`, `node_modules` y `dist` están ignorados por Git. Si Vite utiliza otro puerto, actualiza `Frontend:Url` en la configuración de API y reinicia ambos hosts; el origen debe coincidir exactamente.
+
+## Sesión, CORS y antiforgery
+
+- Identity conserva autenticación mediante cookie `HttpOnly` y `Secure`; React nunca lee ni guarda la cookie.
+- Todas las solicitudes usan `credentials: "include"`.
+- La política CORS `ReactFrontend` permite únicamente el origen de `Frontend:Url`, junto con credenciales.
+- Antes de un POST, PUT, PATCH o DELETE, el cliente solicita `GET /api/antiforgery/token` y envía el token en `X-XSRF-TOKEN`.
+- Después del login se solicita un token nuevo porque cambió la identidad asociada a la sesión.
+- 401 y 403 se devuelven como ProblemDetails JSON, sin redirecciones HTML.
+
+Para probar escrituras desde Swagger:
+
+1. Ejecuta `GET /api/antiforgery/token`.
+2. Copia `requestToken`.
+3. Ejecuta `POST /api/auth/login` agregando `X-XSRF-TOKEN` con ese valor.
+4. Vuelve a solicitar un token después del login.
+5. Usa el token renovado en cada operación mutable. El navegador conserva la cookie de sesión.
+
+## Endpoints principales
+
+```text
+GET  /api/antiforgery/token
+POST /api/auth/login
+POST /api/auth/logout
+GET  /api/auth/me
+
+GET|POST       /api/organizaciones
+GET|PUT|DELETE /api/organizaciones/{id}
+PATCH          /api/organizaciones/{id}/estado
+GET            /api/organizaciones/tipos
+
+GET|POST       /api/organizaciones/{organizacionId}/sedes
+GET|PUT|DELETE /api/sedes/{id}
+PATCH          /api/sedes/{id}/estado
+
+GET|POST       /api/organizaciones/{organizacionId}/categorias
+GET|PUT|DELETE /api/categorias/{id}
+PATCH          /api/categorias/{id}/estado
+
+GET|POST       /api/organizaciones/{organizacionId}/servicios
+GET|PUT|DELETE /api/servicios/{id}
+PATCH          /api/servicios/{id}/estado
+```
+
+Swagger documenta también los endpoints auxiliares para opciones de categorías y sedes.
+
+## Migraciones existentes
+
+Esta separación no crea migraciones ni cambia entidades/configuraciones EF. Para aplicar únicamente las migraciones existentes:
+
+```powershell
+dotnet tool restore
+dotnet tool run dotnet-ef database update --project ReservaTuCitaYa.Infrastructure --startup-project ReservaTuCitaYa.Api --context ApplicationDbContext
+```
+
+No ejecutes `migrations add` para esta tarea.
+
+### Riesgo preexistente de RG-014
+
+El `develop` recibido incorporó entidades de recursos/horarios y actualizó el snapshot, pero no incluyó una migración que cree esas tablas. También existen advertencias de EF sobre relaciones requeridas con filtros globales y falta una configuración explícita de `HorarioRecurso`. Esta tarea no lo corrige porque su alcance prohíbe modificar el modelo o las migraciones. Debe resolverse en una rama de persistencia separada antes de usar RG-014 en producción.
+
+## Validación
+
+Desde la carpeta de la solución:
+
+```powershell
+dotnet build --no-restore
+dotnet test ReservaTuCitaYa.UnitTests --no-build
+dotnet test ReservaTuCitaYa.IntegrationTests --no-build
+```
+
+Desde el frontend:
+
+```powershell
+npm run lint
+npm run build
+```
+
+Las pruebas API utilizan `WebApplicationFactory` y una base SQL Server Express aislada y desechable. No usan EF InMemory.
+
+## Solución de problemas
+
+- **CORS:** confirma que Vite use exactamente el mismo esquema, host y puerto configurados en `Frontend:Url`.
+- **Cookie no enviada:** usa `localhost` en ambos proyectos, confía el certificado HTTPS y no mezcles `localhost` con `127.0.0.1`.
+- **400 antiforgery:** recarga la página o vuelve a solicitar el token; después del login siempre se renueva.
+- **401:** inicia sesión nuevamente; la sesión pudo vencer o el usuario pudo desactivarse.
+- **403:** el usuario necesita temporalmente el rol `Administrador` o `Superadministrador`.
+- **SQL Server:** comprueba que la instancia `SQLEXPRESS` esté iniciada y que User Secrets contenga `DefaultConnection`.
+
+## Trabajo posterior
+
+- RG-018 debe comenzar solo después de aprobar esta separación y resolver el riesgo de persistencia de RG-014.
+- RG-030 deberá reemplazar la autorización temporal por políticas, contexto de organización, permisos detallados y menús definitivos.

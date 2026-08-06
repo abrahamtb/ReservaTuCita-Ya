@@ -1,4 +1,5 @@
 using ReservaTuCitaYa.Application.Common;
+using ReservaTuCitaYa.Application.DTOs.Common;
 using ReservaTuCitaYa.Application.DTOs.Organizaciones;
 
 namespace ReservaTuCitaYa.Application.Interfaces
@@ -6,6 +7,10 @@ namespace ReservaTuCitaYa.Application.Interfaces
     public interface IOrganizacionService
     {
         Task<IReadOnlyList<OrganizacionListaDto>> ListarAsync(
+            OrganizacionFiltroDto filtro,
+            CancellationToken cancellationToken = default);
+
+        Task<PaginaResultado<OrganizacionListaDto>> ListarPaginadoAsync(
             OrganizacionFiltroDto filtro,
             CancellationToken cancellationToken = default);
 

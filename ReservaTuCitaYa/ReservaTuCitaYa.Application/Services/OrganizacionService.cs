@@ -2,6 +2,7 @@ using System.Net.Mail;
 using ReservaTuCitaYa.Application.Abstractions.Persistence;
 using ReservaTuCitaYa.Application.Common;
 using ReservaTuCitaYa.Application.DTOs.Organizaciones;
+using ReservaTuCitaYa.Application.DTOs.Common;
 using ReservaTuCitaYa.Application.Interfaces;
 using ReservaTuCitaYa.Domain.Entities;
 
@@ -20,6 +21,11 @@ namespace ReservaTuCitaYa.Application.Services
             OrganizacionFiltroDto filtro,
             CancellationToken cancellationToken = default) =>
             _repository.ListarAsync(filtro, cancellationToken);
+
+        public Task<PaginaResultado<OrganizacionListaDto>> ListarPaginadoAsync(
+            OrganizacionFiltroDto filtro,
+            CancellationToken cancellationToken = default) =>
+            _repository.ListarPaginadoAsync(filtro, cancellationToken);
 
         public async Task<ResultadoOperacion<OrganizacionDetalleDto>> ObtenerPorIdAsync(
             Guid id,
