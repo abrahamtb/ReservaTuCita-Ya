@@ -31,6 +31,12 @@ public class BloqueoRecursoConfiguration : IEntityTypeConfiguration<BloqueoRecur
             .HasForeignKey(x => x.RecursoId)
             .OnDelete(DeleteBehavior.Restrict);
 
+        builder.HasQueryFilter(x =>
+            !x.EstaEliminado &&
+            !x.Recurso.EstaEliminado &&
+            !x.Recurso.Organizacion.EstaEliminado &&
+            !x.Recurso.Sede.EstaEliminado);
+
 
         // Cuando exista Profesional dentro de BloqueoProfesional
         // la relación sería:

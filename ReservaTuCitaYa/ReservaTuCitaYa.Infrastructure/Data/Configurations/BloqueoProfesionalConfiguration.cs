@@ -30,6 +30,7 @@ public class BloqueoProfesionalConfiguration
         builder.Property(x => x.FechaHoraFin)
             .IsRequired();
 
+        builder.HasQueryFilter(x => !x.EstaEliminado);
 
 
         // Cuando exista la entidad Profesional:
