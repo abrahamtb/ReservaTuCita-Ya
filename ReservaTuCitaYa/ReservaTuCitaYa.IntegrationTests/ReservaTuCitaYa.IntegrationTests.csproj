@@ -20,7 +20,6 @@
   <ItemGroup>
     <ProjectReference Include="..\ReservaTuCitaYa.Infrastructure\ReservaTuCitaYa.Infrastructure.csproj" />
     <ProjectReference Include="..\ReservaTuCitaYa.Api\ReservaTuCitaYa.Api.csproj" />
-    <ProjectReference Include="..\ReservaTuCitaYa.Web\ReservaTuCitaYa.Web.csproj" />
   </ItemGroup>
 
   <ItemGroup>

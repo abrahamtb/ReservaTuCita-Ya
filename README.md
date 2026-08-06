@@ -2,7 +2,7 @@
 
 Plataforma académica de reservas con backend ASP.NET Core 8, frontend React/TypeScript, Entity Framework Core 8, SQL Server Express y ASP.NET Core Identity.
 
-## Arquitectura temporal
+## Arquitectura
 
 ```text
 React + TypeScript (Vite)
@@ -18,7 +18,7 @@ ASP.NET Core Web API
           SQL Server Express
 ```
 
-`ReservaTuCitaYa.Web` y sus vistas Razor se conservan temporalmente para comparación y reversión. React nunca se conecta directamente a SQL Server.
+La presentación MVC/Razor fue retirada. `ReservaTuCitaYa.Api` es el único host del backend y React nunca se conecta directamente a SQL Server.
 
 ## Requisitos
 
@@ -31,7 +31,7 @@ ASP.NET Core Web API
 
 ## Configurar User Secrets
 
-Web y API comparten intencionalmente el mismo `UserSecretsId`, por lo que se configuran una sola vez. Desde `ReservaTuCitaYa/ReservaTuCitaYa.Api`:
+La API mantiene el `UserSecretsId` utilizado durante el desarrollo anterior, por lo que los secretos locales existentes siguen funcionando. Desde `ReservaTuCitaYa/ReservaTuCitaYa.Api`:
 
 ```powershell
 dotnet user-secrets set "ConnectionStrings:DefaultConnection" "Server=.\SQLEXPRESS;Database=ReservaTuCitaYaDb;Trusted_Connection=True;Encrypt=False;TrustServerCertificate=True;MultipleActiveResultSets=True"
