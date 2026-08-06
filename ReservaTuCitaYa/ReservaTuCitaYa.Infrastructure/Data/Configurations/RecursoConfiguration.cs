@@ -39,5 +39,10 @@ public class RecursoConfiguration
             .WithMany()
             .HasForeignKey(x => x.SedeId)
             .OnDelete(DeleteBehavior.Restrict);
+
+        builder.HasQueryFilter(x =>
+            !x.EstaEliminado &&
+            !x.Organizacion.EstaEliminado &&
+            !x.Sede.EstaEliminado);
     }
 }

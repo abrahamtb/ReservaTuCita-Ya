@@ -34,7 +34,10 @@ public class HorarioProfesionalConfiguration
             .HasForeignKey(x => x.SedeId)
             .OnDelete(DeleteBehavior.Restrict);
 
-       // Cuando exista Profesional:
+        builder.HasQueryFilter(x =>
+            !x.EstaEliminado && !x.Sede.EstaEliminado);
+
+        // Cuando exista Profesional:
         //
         // builder.HasOne(x => x.Profesional)
         //     .WithMany(x => x.Horarios)

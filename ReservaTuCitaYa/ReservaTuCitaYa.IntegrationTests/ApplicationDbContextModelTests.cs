@@ -15,7 +15,13 @@ namespace ReservaTuCitaYa.IntegrationTests
             typeof(Sede),
             typeof(CategoriaServicio),
             typeof(Servicio),
-            typeof(ServicioSede)
+            typeof(ServicioSede),
+            typeof(Recurso),
+            typeof(HorarioRecurso),
+            typeof(HorarioSede),
+            typeof(HorarioProfesional),
+            typeof(BloqueoRecurso),
+            typeof(BloqueoProfesional)
         };
 
         [Fact]
@@ -31,6 +37,24 @@ namespace ReservaTuCitaYa.IntegrationTests
                 Assert.NotNull(entidad.GetTableName());
                 Assert.NotNull(entidad.GetQueryFilter());
             }
+        }
+
+        [Theory]
+        [InlineData(typeof(Recurso), "Recursos")]
+        [InlineData(typeof(HorarioRecurso), "HorariosRecursos")]
+        [InlineData(typeof(HorarioSede), "HorariosSede")]
+        [InlineData(typeof(HorarioProfesional), "HorariosProfesionales")]
+        [InlineData(typeof(BloqueoRecurso), "BloqueosRecursos")]
+        [InlineData(typeof(BloqueoProfesional), "BloqueosProfesionales")]
+        public void EntidadesRg014_TienenNombreDeTablaExplicito(
+            Type tipoEntidad,
+            string tablaEsperada)
+        {
+            using var context = CrearContexto();
+
+            Assert.Equal(
+                tablaEsperada,
+                context.Model.FindEntityType(tipoEntidad)!.GetTableName());
         }
 
         [Fact]
