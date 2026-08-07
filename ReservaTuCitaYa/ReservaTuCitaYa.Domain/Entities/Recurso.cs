@@ -21,7 +21,5 @@ namespace ReservaTuCitaYa.Domain.Entities
         // Relaciones
         public Organizacion Organizacion { get; set; } = null!;
         public Sede Sede { get; set; } = null!;
-
-        public ICollection<HorarioRecurso> Horarios { get; set; } = new List<HorarioRecurso>();
     }
 }

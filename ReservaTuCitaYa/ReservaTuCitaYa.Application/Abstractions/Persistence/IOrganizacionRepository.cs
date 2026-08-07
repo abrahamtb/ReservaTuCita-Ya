@@ -1,3 +1,4 @@
+using ReservaTuCitaYa.Application.DTOs.Common;
 using ReservaTuCitaYa.Application.DTOs.Organizaciones;
 using ReservaTuCitaYa.Domain.Entities;
 
@@ -8,6 +9,20 @@ namespace ReservaTuCitaYa.Application.Abstractions.Persistence
         Task<IReadOnlyList<OrganizacionListaDto>> ListarAsync(
             OrganizacionFiltroDto filtro,
             CancellationToken cancellationToken = default);
+
+        async Task<PaginaResultado<OrganizacionListaDto>> ListarPaginadoAsync(
+            OrganizacionFiltroDto filtro,
+            CancellationToken cancellationToken = default)
+        {
+            var pagina = Math.Max(1, filtro.Pagina);
+            var tamano = Math.Clamp(filtro.TamanoPagina, 1, 50);
+            var todos = await ListarAsync(filtro, cancellationToken);
+            return new PaginaResultado<OrganizacionListaDto>(
+                todos.Skip((pagina - 1) * tamano).Take(tamano).ToArray(),
+                pagina,
+                tamano,
+                todos.Count);
+        }
 
         Task<OrganizacionDetalleDto?> ObtenerDetalleAsync(
             Guid id,

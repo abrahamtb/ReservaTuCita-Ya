@@ -201,7 +201,7 @@ namespace ReservaTuCitaYa.Infrastructure.Data.Migrations
                     b.ToTable("BloqueosProfesionales", (string)null);
                 });
 
-            modelBuilder.Entity("ReservaTuCitaYa.Domain.Entities.BloqueoRecursos", b =>
+            modelBuilder.Entity("ReservaTuCitaYa.Domain.Entities.BloqueoRecurso", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -345,12 +345,7 @@ namespace ReservaTuCitaYa.Infrastructure.Data.Migrations
 
                     b.HasIndex("SedeId");
 
-                    b.HasIndex("ProfesionalId", "SedeId", "DiaSemana");
-
-                    b.ToTable("HorariosProfesionales", null, t =>
-                        {
-                            t.HasCheckConstraint("CK_HorariosProfesionales_HoraInicio_HoraFin", "[HoraInicio] < [HoraFin]");
-                        });
+                    b.ToTable("HorariosProfesionales", (string)null);
                 });
 
             modelBuilder.Entity("ReservaTuCitaYa.Domain.Entities.HorarioRecurso", b =>
@@ -393,12 +388,7 @@ namespace ReservaTuCitaYa.Infrastructure.Data.Migrations
 
                     b.HasIndex("RecursoId");
 
-                    b.HasIndex("RecursoId", "DiaSemana", "HoraInicio", "HoraFin");
-
-                    b.ToTable("HorariosRecurso", null, t =>
-                        {
-                            t.HasCheckConstraint("CK_HorariosRecurso_HoraInicio_HoraFin", "[HoraInicio] < [HoraFin]");
-                        });
+                    b.ToTable("HorariosRecursos", (string)null);
                 });
 
             modelBuilder.Entity("ReservaTuCitaYa.Domain.Entities.HorarioSede", b =>
@@ -964,7 +954,7 @@ namespace ReservaTuCitaYa.Infrastructure.Data.Migrations
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("ReservaTuCitaYa.Domain.Entities.BloqueoRecursos", b =>
+            modelBuilder.Entity("ReservaTuCitaYa.Domain.Entities.BloqueoRecurso", b =>
                 {
                     b.HasOne("ReservaTuCitaYa.Domain.Entities.Recurso", "Recurso")
                         .WithMany()
@@ -1000,7 +990,7 @@ namespace ReservaTuCitaYa.Infrastructure.Data.Migrations
             modelBuilder.Entity("ReservaTuCitaYa.Domain.Entities.HorarioRecurso", b =>
                 {
                     b.HasOne("ReservaTuCitaYa.Domain.Entities.Recurso", "Recurso")
-                        .WithMany("Horarios")
+                        .WithMany()
                         .HasForeignKey("RecursoId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
@@ -1110,11 +1100,6 @@ namespace ReservaTuCitaYa.Infrastructure.Data.Migrations
                     b.Navigation("Sedes");
 
                     b.Navigation("Servicios");
-                });
-
-            modelBuilder.Entity("ReservaTuCitaYa.Domain.Entities.Recurso", b =>
-                {
-                    b.Navigation("Horarios");
                 });
 
             modelBuilder.Entity("ReservaTuCitaYa.Domain.Entities.Sede", b =>

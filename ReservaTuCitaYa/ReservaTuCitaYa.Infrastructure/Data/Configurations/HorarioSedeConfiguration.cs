@@ -22,9 +22,12 @@ public class HorarioSedeConfiguration
         builder.Property(x => x.HoraFin)
             .IsRequired();
 
-       builder.HasOne(x => x.Sede)
+        builder.HasOne(x => x.Sede)
             .WithMany()
             .HasForeignKey(x => x.SedeId)
             .OnDelete(DeleteBehavior.Restrict);
+
+        builder.HasQueryFilter(x =>
+            !x.EstaEliminado && !x.Sede.EstaEliminado);
     }
 }
