@@ -4,9 +4,9 @@ using ReservaTuCitaYa.Domain.Entities;
 
 namespace ReservaTuCitaYa.Infrastructure.Data.Configurations;
 
-public class BloqueoRecursoConfiguration : IEntityTypeConfiguration<BloqueoRecurso>
+public class BloqueoRecursoConfiguration : IEntityTypeConfiguration<BloqueoRecursos>
 {
-    public void Configure(EntityTypeBuilder<BloqueoRecurso> builder)
+    public void Configure(EntityTypeBuilder<BloqueoRecursos> builder)
     {
         builder.ToTable("BloqueosRecursos");
 

@@ -481,7 +481,7 @@ namespace ReservaTuCitaYa.Infrastructure.Data.Migrations
                 name: "ServiciosSede");
 
             migrationBuilder.DropTable(
-                name: "AspNetRoles");
+                name: "AspNetRoles"); 
 
             migrationBuilder.DropTable(
                 name: "AspNetUsers");

@@ -18,6 +18,5 @@ public class HorarioRecurso : BaseEntity
 
     public TimeOnly HoraFin { get; set; }
 
-
     public Recurso Recurso { get; set; } = null!;
 }
