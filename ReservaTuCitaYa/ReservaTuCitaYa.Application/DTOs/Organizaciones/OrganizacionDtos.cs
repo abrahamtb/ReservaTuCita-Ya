@@ -4,7 +4,9 @@ namespace ReservaTuCitaYa.Application.DTOs.Organizaciones
 {
     public sealed record OrganizacionFiltroDto(
         string? Busqueda = null,
-        EstadoFiltro Estado = EstadoFiltro.Todos);
+        EstadoFiltro Estado = EstadoFiltro.Todos,
+        int Pagina = 1,
+        int TamanoPagina = 10);
 
     public sealed record TipoOrganizacionOpcionDto(Guid Id, string Nombre);
 

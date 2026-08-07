@@ -9,12 +9,8 @@ public class HorarioProfesionalConfiguration
 {
     public void Configure(EntityTypeBuilder<HorarioProfesional> builder)
     {
-        builder.ToTable("HorariosProfesionales", tabla =>
-        {
-            tabla.HasCheckConstraint(
-                "CK_HorariosProfesionales_HoraInicio_HoraFin",
-                "[HoraInicio] < [HoraFin]");
-        });
+        builder.ToTable("HorariosProfesionales");
+
 
         builder.HasKey(x => x.Id);
 
@@ -33,23 +29,19 @@ public class HorarioProfesionalConfiguration
         builder.Property(x => x.FechaFinVigencia)
             .IsRequired(false);
 
-        builder.HasIndex(x => x.SedeId);
-
-        // Índice preparado para cuando exista la entidad Profesional.
-        // Actualmente ProfesionalId es solo un campo de referencia,
-        // no existe relación FK porque la entidad Profesional aún no está creada.
-        builder.HasIndex(x => new
-        {
-            x.ProfesionalId,
-            x.SedeId,
-            x.DiaSemana
-        });
-
         builder.HasOne(x => x.Sede)
             .WithMany()
             .HasForeignKey(x => x.SedeId)
             .OnDelete(DeleteBehavior.Restrict);
 
-        builder.HasQueryFilter(x => !x.EstaEliminado);
+        builder.HasQueryFilter(x =>
+            !x.EstaEliminado && !x.Sede.EstaEliminado);
+
+        // Cuando exista Profesional:
+        //
+        // builder.HasOne(x => x.Profesional)
+        //     .WithMany(x => x.Horarios)
+        //     .HasForeignKey(x => x.ProfesionalId)
+        //     .OnDelete(DeleteBehavior.Restrict);
     }
 }

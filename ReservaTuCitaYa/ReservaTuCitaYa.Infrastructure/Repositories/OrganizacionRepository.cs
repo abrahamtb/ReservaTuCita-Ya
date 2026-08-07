@@ -22,6 +22,27 @@ namespace ReservaTuCitaYa.Infrastructure.Repositories
             OrganizacionFiltroDto filtro,
             CancellationToken cancellationToken = default)
         {
+            return await CrearConsulta(filtro).ToListAsync(cancellationToken);
+        }
+
+        public async Task<PaginaResultado<OrganizacionListaDto>> ListarPaginadoAsync(
+            OrganizacionFiltroDto filtro,
+            CancellationToken cancellationToken = default)
+        {
+            var pagina = Math.Max(1, filtro.Pagina);
+            var tamano = Math.Clamp(filtro.TamanoPagina, 1, 50);
+            var consulta = CrearConsulta(filtro);
+            var total = await consulta.CountAsync(cancellationToken);
+            var elementos = await consulta
+                .Skip((pagina - 1) * tamano)
+                .Take(tamano)
+                .ToListAsync(cancellationToken);
+
+            return new PaginaResultado<OrganizacionListaDto>(elementos, pagina, tamano, total);
+        }
+
+        private IQueryable<OrganizacionListaDto> CrearConsulta(OrganizacionFiltroDto filtro)
+        {
             var consulta = _context.Organizaciones.AsNoTracking();
 
             if (!string.IsNullOrWhiteSpace(filtro.Busqueda))
@@ -40,7 +61,7 @@ namespace ReservaTuCitaYa.Infrastructure.Repositories
                 _ => consulta
             };
 
-            return await consulta
+            return consulta
                 .OrderBy(organizacion => organizacion.NombreComercial)
                 .Select(organizacion => new OrganizacionListaDto(
                     organizacion.Id,
@@ -50,8 +71,7 @@ namespace ReservaTuCitaYa.Infrastructure.Repositories
                     organizacion.TipoOrganizacion.Nombre,
                     organizacion.Telefono,
                     organizacion.Correo,
-                    organizacion.EstaActivo))
-                .ToListAsync(cancellationToken);
+                    organizacion.EstaActivo));
         }
 
         public Task<OrganizacionDetalleDto?> ObtenerDetalleAsync(

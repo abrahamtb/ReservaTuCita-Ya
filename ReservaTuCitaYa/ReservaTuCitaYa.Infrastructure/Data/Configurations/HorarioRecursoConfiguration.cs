@@ -1,47 +1,36 @@
-﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using ReservaTuCitaYa.Domain.Entities;
 
-namespace ReservaTuCitaYa.Infrastructure.Data.Configurations
+namespace ReservaTuCitaYa.Infrastructure.Data.Configurations;
+
+public sealed class HorarioRecursoConfiguration
+    : IEntityTypeConfiguration<HorarioRecurso>
 {
-    public class HorarioRecursoConfiguration : IEntityTypeConfiguration<HorarioRecurso>
+    public void Configure(EntityTypeBuilder<HorarioRecurso> builder)
     {
-        public void Configure(EntityTypeBuilder<HorarioRecurso> builder)
-        {
-            builder.ToTable("HorariosRecurso", tabla =>
-            {
-                tabla.HasCheckConstraint(
-                    "CK_HorariosRecurso_HoraInicio_HoraFin",
-                    "[HoraInicio] < [HoraFin]");
-            });
+        builder.ToTable("HorariosRecursos");
 
-            builder.HasKey(horario => horario.Id);
+        builder.HasKey(x => x.Id);
 
-            builder.Property(horario => horario.DiaSemana)
-                .IsRequired();
+        builder.Property(x => x.DiaSemana)
+            .IsRequired();
 
-            builder.Property(horario => horario.HoraInicio)
-                .IsRequired();
+        builder.Property(x => x.HoraInicio)
+            .IsRequired();
 
-            builder.Property(horario => horario.HoraFin)
-                .IsRequired();
+        builder.Property(x => x.HoraFin)
+            .IsRequired();
 
-            builder.HasIndex(horario => horario.RecursoId);
+        builder.HasOne(x => x.Recurso)
+            .WithMany()
+            .HasForeignKey(x => x.RecursoId)
+            .OnDelete(DeleteBehavior.Restrict);
 
-            builder.HasIndex(horario => new
-            {
-                horario.RecursoId,
-                horario.DiaSemana,
-                horario.HoraInicio,
-                horario.HoraFin
-            });
-
-            builder.HasOne(horario => horario.Recurso)
-                .WithMany(recurso => recurso.Horarios)
-                .HasForeignKey(horario => horario.RecursoId)
-                .OnDelete(DeleteBehavior.Restrict);
-
-            builder.HasQueryFilter(horario => !horario.EstaEliminado);
-        }
+        builder.HasQueryFilter(x =>
+            !x.EstaEliminado &&
+            !x.Recurso.EstaEliminado &&
+            !x.Recurso.Organizacion.EstaEliminado &&
+            !x.Recurso.Sede.EstaEliminado);
     }
 }
