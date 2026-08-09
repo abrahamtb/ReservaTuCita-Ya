@@ -22,6 +22,7 @@ public static class DependencyInjection
         services.AddScoped<ICategoriaServicioService, CategoriaServicioService>();
         services.AddScoped<IServicioService, ServicioService>();
         services.AddScoped<IClienteService, ClienteService>();
+        services.AddScoped<IEmpleadoService, EmpleadoService>();
 
         return services;
     }
@@ -42,6 +43,7 @@ public static class DependencyInjection
         services.AddScoped<ICategoriaServicioRepository, CategoriaServicioRepository>();
         services.AddScoped<IServicioRepository, ServicioRepository>();
         services.AddScoped<IClienteRepository, ClienteRepository>();
+        services.AddScoped<IEmpleadoRepository, EmpleadoRepository>();
 
         return services;
     }

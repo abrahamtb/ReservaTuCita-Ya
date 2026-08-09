@@ -30,6 +30,9 @@ namespace ReservaTuCitaYa.Infrastructure.Data
         public DbSet<HorarioSede> HorarioSede => Set<HorarioSede>();
         public DbSet<Recurso> Recurso => Set<Recurso>();
         public DbSet<Cliente> Clientes => Set<Cliente>();
+        public DbSet<Empleado> Empleados => Set<Empleado>();
+        public DbSet<EmpleadoSede> EmpleadosSede => Set<EmpleadoSede>();
+        public DbSet<ProfesionalServicio> ProfesionalesServicio => Set<ProfesionalServicio>();
 
         protected override void OnModelCreating(ModelBuilder builder)
         {

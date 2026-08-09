@@ -26,5 +26,7 @@ namespace ReservaTuCitaYa.Domain.Entities
         public int TiempoPosteriorMinutos { get; set; }
 
         public ICollection<ServicioSede> ServiciosSede { get; set; } = new List<ServicioSede>();
+        public ICollection<ProfesionalServicio> ProfesionalesServicio { get; set; } =
+            new List<ProfesionalServicio>();
     }
 }

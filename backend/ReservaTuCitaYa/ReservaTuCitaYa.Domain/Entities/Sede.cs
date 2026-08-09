@@ -13,5 +13,6 @@ namespace ReservaTuCitaYa.Domain.Entities
         public string? Referencia { get; set; }
 
         public ICollection<ServicioSede> ServiciosSede { get; set; } = new List<ServicioSede>();
+        public ICollection<EmpleadoSede> EmpleadosSede { get; set; } = new List<EmpleadoSede>();
     }
 }
