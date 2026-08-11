@@ -13,6 +13,7 @@ namespace ReservaTuCitaYa.Infrastructure.Data.Configurations
     {
         public void Configure(EntityTypeBuilder<Permission> builder)
         {
+            builder.ToTable("Permissions");
             builder.HasIndex(p => p.Codigo).IsUnique();
             builder.Property(p => p.Codigo).HasMaxLength(100).IsRequired();
             builder.Property(p => p.Nombre).HasMaxLength(150).IsRequired();

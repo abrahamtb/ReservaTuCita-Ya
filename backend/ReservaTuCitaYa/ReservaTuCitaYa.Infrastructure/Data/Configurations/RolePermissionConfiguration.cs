@@ -13,6 +13,7 @@ namespace ReservaTuCitaYa.Infrastructure.Data.Configurations
     {
         public void Configure(EntityTypeBuilder<RolePermission> builder)
         {
+            builder.ToTable("RolePermissions");
             builder.HasKey(rp => new { rp.RoleId, rp.PermissionId });
 
             builder.HasOne(rp => rp.Permission)

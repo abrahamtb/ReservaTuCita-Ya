@@ -705,6 +705,52 @@ namespace ReservaTuCitaYa.Infrastructure.Data.Migrations
                     b.ToTable("Organizaciones", (string)null);
                 });
 
+            modelBuilder.Entity("ReservaTuCitaYa.Domain.Entities.Permission", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("Codigo")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<Guid?>("CreadoPorUsuarioId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("Descripcion")
+                        .HasMaxLength(300)
+                        .HasColumnType("nvarchar(300)");
+
+                    b.Property<bool>("EstaActivo")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("EstaEliminado")
+                        .HasColumnType("bit");
+
+                    b.Property<DateTime>("FechaCreacion")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime?>("FechaModificacion")
+                        .HasColumnType("datetime2");
+
+                    b.Property<Guid?>("ModificadoPorUsuarioId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("Nombre")
+                        .IsRequired()
+                        .HasMaxLength(150)
+                        .HasColumnType("nvarchar(150)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("Codigo")
+                        .IsUnique();
+
+                    b.ToTable("Permissions", (string)null);
+                });
+
             modelBuilder.Entity("ReservaTuCitaYa.Domain.Entities.ProfesionalServicio", b =>
                 {
                     b.Property<Guid>("Id")
@@ -815,7 +861,7 @@ namespace ReservaTuCitaYa.Infrastructure.Data.Migrations
 
                     b.HasIndex("PermissionId");
 
-                    b.ToTable("RolePermissions");
+                    b.ToTable("RolePermissions", (string)null);
                 });
 
             modelBuilder.Entity("ReservaTuCitaYa.Domain.Entities.Sede", b =>
