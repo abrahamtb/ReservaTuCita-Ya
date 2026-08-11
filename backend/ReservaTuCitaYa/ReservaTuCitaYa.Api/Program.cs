@@ -1,11 +1,13 @@
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.OpenApi.Models;
 using System.Text.Json.Serialization;
 using ReservaTuCitaYa.Api.Middleware;
 using ReservaTuCitaYa.Infrastructure;
 using ReservaTuCitaYa.Infrastructure.Identity;
+using ReservaTuCitaYa.Infrastructure.Security;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -91,7 +93,33 @@ builder.Services.AddSwaggerGen(options =>
         Name = "ReservaTuCitaYa.Auth",
         Description = "Cookie segura creada por POST /api/auth/login. Para escrituras solicita antes /api/antiforgery/token."
     });
+    options.AddSecurityDefinition("XsrfToken", new OpenApiSecurityScheme
+    {
+        Type = SecuritySchemeType.ApiKey,
+        In = ParameterLocation.Header,
+        Name = "X-XSRF-TOKEN",
+        Description = "Token antiforgery obtenido de GET /api/antiforgery/token. Requerido en POST/PUT/PATCH/DELETE."
+    });
+
+    options.AddSecurityRequirement(new OpenApiSecurityRequirement
+    {
+        {
+            new OpenApiSecurityScheme
+            {
+                Reference = new OpenApiReference
+                {
+                    Type = ReferenceType.SecurityScheme,
+                    Id = "XsrfToken"
+                }
+            },
+            Array.Empty<string>()
+        }
+    });
 });
+
+builder.Services.AddAuthorization();
+builder.Services.AddSingleton<IAuthorizationPolicyProvider, PermissionPolicyProvider>();
+builder.Services.AddScoped<IAuthorizationHandler, PermissionAuthorizationHandler>();
 
 var app = builder.Build();
 
