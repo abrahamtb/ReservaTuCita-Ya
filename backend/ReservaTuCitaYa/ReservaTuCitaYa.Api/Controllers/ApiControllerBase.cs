@@ -7,7 +7,9 @@ public abstract class ApiControllerBase : ControllerBase
 {
     protected ObjectResult OperationProblem(
         string? detail,
-        TipoErrorOperacion errorType)
+        TipoErrorOperacion errorType,
+        string? type = null,
+        string? titleOverride = null)
     {
         var (status, title) = errorType switch
         {
@@ -19,8 +21,9 @@ public abstract class ApiControllerBase : ControllerBase
         };
 
         return Problem(
+            type: type,
             statusCode: status,
-            title: title,
+            title: titleOverride ?? title,
             detail: detail ?? "La operación no pudo completarse.");
     }
 }

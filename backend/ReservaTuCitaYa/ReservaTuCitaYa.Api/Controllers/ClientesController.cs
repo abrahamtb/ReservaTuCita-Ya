@@ -1,0 +1,121 @@
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
+using ReservaTuCitaYa.Api.Contracts.Clientes;
+using ReservaTuCitaYa.Application.Common;
+using ReservaTuCitaYa.Application.DTOs.Clientes;
+using ReservaTuCitaYa.Application.DTOs.Common;
+using ReservaTuCitaYa.Application.Interfaces;
+using ReservaTuCitaYa.Domain.Enums;
+using ReservaTuCitaYa.Infrastructure.Identity;
+
+namespace ReservaTuCitaYa.Api.Controllers;
+
+[ApiController]
+[Authorize(Roles = RoleNames.Administracion)]
+public sealed class ClientesController(IClienteService service) : ApiControllerBase
+{
+    [HttpGet("api/organizaciones/{organizacionId:guid}/clientes")]
+    public async Task<ActionResult<PaginaResultado<ClienteListaDto>>> Listar(
+        Guid organizacionId,
+        [FromQuery] string? busqueda,
+        [FromQuery] TipoDocumento? tipoDocumento,
+        [FromQuery] EstadoFiltro estado = EstadoFiltro.Todos,
+        [FromQuery] int pagina = 1,
+        [FromQuery] int tamanoPagina = 10,
+        CancellationToken cancellationToken = default)
+    {
+        var result = await service.ListarAsync(new ClienteFiltroDto(
+            organizacionId, busqueda, tipoDocumento, estado, pagina, tamanoPagina),
+            cancellationToken);
+        return result.EsExitoso && result.Valor is not null
+            ? Ok(result.Valor)
+            : ClienteProblem(result.Error, result.TipoError);
+    }
+
+    [HttpGet("api/clientes/{id:guid}")]
+    public async Task<ActionResult<ClienteDetalleDto>> Obtener(
+        Guid id,
+        CancellationToken cancellationToken)
+    {
+        var result = await service.ObtenerPorIdAsync(id, cancellationToken);
+        return result.EsExitoso && result.Valor is not null
+            ? Ok(result.Valor)
+            : ClienteProblem(result.Error, result.TipoError);
+    }
+
+    [HttpPost("api/organizaciones/{organizacionId:guid}/clientes")]
+    public async Task<ActionResult<ClienteDetalleDto>> Crear(
+        Guid organizacionId,
+        CrearClienteRequest request,
+        CancellationToken cancellationToken)
+    {
+        var result = await service.CrearAsync(new CrearClienteSolicitud
+        {
+            OrganizacionId = organizacionId,
+            TipoDocumento = request.TipoDocumento,
+            NumeroDocumento = request.NumeroDocumento,
+            Nombres = request.Nombres,
+            Apellidos = request.Apellidos,
+            Correo = request.Correo,
+            Telefono = request.Telefono,
+            Direccion = request.Direccion,
+            FechaNacimiento = request.FechaNacimiento,
+            Observaciones = request.Observaciones
+        }, cancellationToken);
+        if (!result.EsExitoso)
+            return ClienteProblem(result.Error, result.TipoError);
+
+        var detail = await service.ObtenerPorIdAsync(result.Valor, cancellationToken);
+        return CreatedAtAction(nameof(Obtener), new { id = result.Valor }, detail.Valor);
+    }
+
+    [HttpPut("api/clientes/{id:guid}")]
+    public async Task<IActionResult> Actualizar(
+        Guid id,
+        ActualizarClienteRequest request,
+        CancellationToken cancellationToken)
+    {
+        var result = await service.ActualizarAsync(new ActualizarClienteSolicitud
+        {
+            Id = id,
+            TipoDocumento = request.TipoDocumento,
+            NumeroDocumento = request.NumeroDocumento,
+            Nombres = request.Nombres,
+            Apellidos = request.Apellidos,
+            Correo = request.Correo,
+            Telefono = request.Telefono,
+            Direccion = request.Direccion,
+            FechaNacimiento = request.FechaNacimiento,
+            Observaciones = request.Observaciones
+        }, cancellationToken);
+        return result.EsExitoso
+            ? NoContent()
+            : ClienteProblem(result.Error, result.TipoError);
+    }
+
+    [HttpPatch("api/clientes/{id:guid}/estado")]
+    public async Task<IActionResult> CambiarEstado(
+        Guid id,
+        CambiarEstadoClienteRequest request,
+        CancellationToken cancellationToken)
+    {
+        var result = await service.CambiarEstadoAsync(id, request.EstaActivo, cancellationToken);
+        return result.EsExitoso
+            ? NoContent()
+            : ClienteProblem(result.Error, result.TipoError);
+    }
+
+    [HttpDelete("api/clientes/{id:guid}")]
+    public async Task<IActionResult> Eliminar(Guid id, CancellationToken cancellationToken)
+    {
+        var result = await service.EliminarAsync(id, cancellationToken);
+        return result.EsExitoso
+            ? NoContent()
+            : ClienteProblem(result.Error, result.TipoError);
+    }
+
+    private ObjectResult ClienteProblem(string? detail, TipoErrorOperacion errorType) =>
+        errorType == TipoErrorOperacion.Conflicto
+            ? OperationProblem(detail, errorType, "client-document-duplicate", "Cliente duplicado")
+            : OperationProblem(detail, errorType);
+}

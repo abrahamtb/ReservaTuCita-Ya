@@ -24,6 +24,8 @@ public static class DependencyInjection
         services.AddScoped<ISedeService, SedeService>();
         services.AddScoped<ICategoriaServicioService, CategoriaServicioService>();
         services.AddScoped<IServicioService, ServicioService>();
+        services.AddScoped<IClienteService, ClienteService>();
+        services.AddScoped<IEmpleadoService, EmpleadoService>();
 
         return services;
     }
@@ -43,6 +45,8 @@ public static class DependencyInjection
         services.AddScoped<ISedeRepository, SedeRepository>();
         services.AddScoped<ICategoriaServicioRepository, CategoriaServicioRepository>();
         services.AddScoped<IServicioRepository, ServicioRepository>();
+        services.AddScoped<IClienteRepository, ClienteRepository>();
+        services.AddScoped<IEmpleadoRepository, EmpleadoRepository>();
 
         services.AddHttpContextAccessor();
         services.AddScoped<ICurrentUser, CurrentUser>();

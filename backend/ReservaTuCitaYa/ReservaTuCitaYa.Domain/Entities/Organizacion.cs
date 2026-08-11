@@ -17,5 +17,7 @@ namespace ReservaTuCitaYa.Domain.Entities
         public ICollection<Sede> Sedes { get; set; } = new List<Sede>();
         public ICollection<CategoriaServicio> CategoriasServicio { get; set; } = new List<CategoriaServicio>();
         public ICollection<Servicio> Servicios { get; set; } = new List<Servicio>();
+        public ICollection<Cliente> Clientes { get; set; } = new List<Cliente>();
+        public ICollection<Empleado> Empleados { get; set; } = new List<Empleado>();
     }
 }
