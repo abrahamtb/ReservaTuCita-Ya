@@ -33,7 +33,11 @@ namespace ReservaTuCitaYa.Infrastructure.Data
         public DbSet<Empleado> Empleados => Set<Empleado>();
         public DbSet<EmpleadoSede> EmpleadosSede => Set<EmpleadoSede>();
         public DbSet<ProfesionalServicio> ProfesionalesServicio => Set<ProfesionalServicio>();
-
+        public DbSet<Permission> Permissions => Set<Permission>();
+        public DbSet<RolePermission> RolePermissions => Set<RolePermission>();
+        public DbSet<UsuarioOrganizacion> UsuariosOrganizaciones => Set<UsuarioOrganizacion>();
+        public DbSet<UsuarioEmpleado> UsuariosEmpleados => Set<UsuarioEmpleado>();
+        public DbSet<UsuarioCliente> UsuariosClientes => Set<UsuarioCliente>();
         protected override void OnModelCreating(ModelBuilder builder)
         {
             base.OnModelCreating(builder);

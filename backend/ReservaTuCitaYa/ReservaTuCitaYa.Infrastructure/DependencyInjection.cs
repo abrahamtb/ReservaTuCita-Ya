@@ -1,8 +1,10 @@
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
+using ReservaTuCitaYa.Application.Abstractions;
 using ReservaTuCitaYa.Application.Abstractions.Persistence;
 using ReservaTuCitaYa.Application.Interfaces;
 using ReservaTuCitaYa.Application.Services;
@@ -10,6 +12,7 @@ using ReservaTuCitaYa.Infrastructure.Data;
 using ReservaTuCitaYa.Infrastructure.Data.Seed;
 using ReservaTuCitaYa.Infrastructure.Identity;
 using ReservaTuCitaYa.Infrastructure.Repositories;
+using ReservaTuCitaYa.Infrastructure.Security;
 
 namespace ReservaTuCitaYa.Infrastructure;
 
@@ -45,6 +48,11 @@ public static class DependencyInjection
         services.AddScoped<IClienteRepository, ClienteRepository>();
         services.AddScoped<IEmpleadoRepository, EmpleadoRepository>();
 
+        services.AddHttpContextAccessor();
+        services.AddScoped<ICurrentUser, CurrentUser>();
+
+        services.AddSingleton<IAuthorizationPolicyProvider, PermissionPolicyProvider>();
+        services.AddScoped<IAuthorizationHandler, PermissionAuthorizationHandler>();
         return services;
     }
 
@@ -81,6 +89,8 @@ public static class DependencyInjection
 
         await dbContext.Database.MigrateAsync(cancellationToken);
         await IdentitySeeder.SeedRolesAsync(roleManager, logger);
+        await PermissionSeeder.SeedPermissionsAsync(dbContext, logger);
+        await RolePermissionSeeder.SeedRolePermissionsAsync(dbContext, roleManager, logger);
         await SeedSuperAdmin.SeedSuperAdminAsync(
             userManager,
             roleManager,

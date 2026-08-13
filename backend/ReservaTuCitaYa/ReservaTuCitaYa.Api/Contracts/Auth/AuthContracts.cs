@@ -15,9 +15,15 @@ public sealed class LoginRequest
 }
 
 public sealed record AuthUserResponse(
-    string Id,
-    string Email,
-    IReadOnlyList<string> Roles);
+       Guid Id,
+       string Email,
+       string[] Roles,
+       string[] Permisos,
+       OrganizacionResumenDto? Organizacion,
+       Guid? ClienteId,
+       Guid? EmpleadoId);
+
+public sealed record OrganizacionResumenDto(Guid Id, string Nombre);
 
 public sealed record AntiforgeryTokenResponse(
     string RequestToken,

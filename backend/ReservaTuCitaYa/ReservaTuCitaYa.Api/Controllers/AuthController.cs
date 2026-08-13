@@ -1,7 +1,10 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using ReservaTuCitaYa.Api.Contracts.Auth;
+using ReservaTuCitaYa.Application.Abstractions;
+using ReservaTuCitaYa.Infrastructure.Data;
 using ReservaTuCitaYa.Infrastructure.Identity;
 
 namespace ReservaTuCitaYa.Api.Controllers;
@@ -12,13 +15,19 @@ public sealed class AuthController : ControllerBase
 {
     private readonly SignInManager<ApplicationUser> _signInManager;
     private readonly UserManager<ApplicationUser> _userManager;
+    private readonly ICurrentUser _currentUser;
+    private readonly ApplicationDbContext _db;
 
     public AuthController(
         SignInManager<ApplicationUser> signInManager,
-        UserManager<ApplicationUser> userManager)
+        UserManager<ApplicationUser> userManager,
+        ICurrentUser currentUser,
+        ApplicationDbContext db)
     {
         _signInManager = signInManager;
         _userManager = userManager;
+        _currentUser = currentUser;
+        _db = db;
     }
 
     [AllowAnonymous]
@@ -30,7 +39,6 @@ public sealed class AuthController : ControllerBase
         CancellationToken cancellationToken)
     {
         var user = await _userManager.FindByEmailAsync(request.Email.Trim());
-
         if (user is null || !user.EstaActivo)
         {
             return UnauthorizedProblem();
@@ -49,6 +57,7 @@ public sealed class AuthController : ControllerBase
 
         user.FechaUltimoAcceso = DateTime.UtcNow;
         var updateResult = await _userManager.UpdateAsync(user);
+
         if (!updateResult.Succeeded)
         {
             await _signInManager.SignOutAsync();
@@ -58,7 +67,7 @@ public sealed class AuthController : ControllerBase
                 detail: "La sesión no pudo completarse. Inténtalo nuevamente.");
         }
 
-        return Ok(await BuildResponseAsync(user));
+        return Ok(await BuildResponseAsync(user, cancellationToken));
     }
 
     [Authorize]
@@ -74,7 +83,7 @@ public sealed class AuthController : ControllerBase
             return UnauthorizedProblem();
         }
 
-        return Ok(await BuildResponseAsync(user));
+        return Ok(await BuildResponseAsync(user, cancellationToken));
     }
 
     [Authorize]
@@ -86,10 +95,33 @@ public sealed class AuthController : ControllerBase
         return NoContent();
     }
 
-    private async Task<AuthUserResponse> BuildResponseAsync(ApplicationUser user)
+    private async Task<AuthUserResponse> BuildResponseAsync(
+        ApplicationUser user,
+        CancellationToken cancellationToken)
     {
-        var roles = await _userManager.GetRolesAsync(user);
-        return new AuthUserResponse(user.Id, user.Email ?? string.Empty, roles.ToArray());
+        OrganizacionResumenDto? organizacion = null;
+
+        if (_currentUser.OrganizacionId is Guid organizacionId)
+        {
+            var org = await _db.Organizaciones
+                .Where(o => o.Id == organizacionId)
+                .Select(o => new { o.Id, o.NombreComercial })
+                .FirstOrDefaultAsync(cancellationToken);
+
+            if (org is not null)
+            {
+                organizacion = new OrganizacionResumenDto(org.Id, org.NombreComercial);
+            }
+        }
+
+        return new AuthUserResponse(
+            Guid.Parse(user.Id),
+            user.Email ?? string.Empty,
+            _currentUser.Roles.ToArray(),
+            _currentUser.Permissions.ToArray(),
+            organizacion,
+            _currentUser.ClienteId,
+            _currentUser.EmpleadoId);
     }
 
     private ObjectResult UnauthorizedProblem() => Problem(

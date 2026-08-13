@@ -4,6 +4,7 @@ using ReservaTuCitaYa.Application.DTOs.Common;
 using ReservaTuCitaYa.Application.DTOs.Organizaciones;
 using ReservaTuCitaYa.Application.Interfaces;
 using ReservaTuCitaYa.Infrastructure.Identity;
+using ReservaTuCitaYa.Domain.Common;
 
 namespace ReservaTuCitaYa.Api.Controllers;
 
@@ -13,6 +14,7 @@ namespace ReservaTuCitaYa.Api.Controllers;
 public sealed class OrganizacionesController(IOrganizacionService service) : ApiControllerBase
 {
     [HttpGet]
+    [Authorize(Policy = Permissions.Organizaciones.Ver)]
     public async Task<ActionResult<PaginaResultado<OrganizacionListaDto>>> Listar(
         [FromQuery] string? busqueda,
         [FromQuery] EstadoFiltro estado = EstadoFiltro.Todos,
@@ -24,11 +26,13 @@ public sealed class OrganizacionesController(IOrganizacionService service) : Api
             cancellationToken));
 
     [HttpGet("tipos")]
+    [Authorize(Policy = Permissions.Organizaciones.Ver)]
     public async Task<ActionResult<IReadOnlyList<TipoOrganizacionOpcionDto>>> ListarTipos(
         CancellationToken cancellationToken) =>
         Ok(await service.ListarTiposActivosAsync(cancellationToken));
 
     [HttpGet("{id:guid}")]
+    [Authorize(Policy = Permissions.Organizaciones.Ver)]
     public async Task<ActionResult<OrganizacionDetalleDto>> Obtener(
         Guid id,
         CancellationToken cancellationToken)
@@ -40,6 +44,7 @@ public sealed class OrganizacionesController(IOrganizacionService service) : Api
     }
 
     [HttpPost]
+    [Authorize(Policy = Permissions.Organizaciones.Gestionar)]
     public async Task<ActionResult<OrganizacionDetalleDto>> Crear(
         CrearOrganizacionSolicitud request,
         CancellationToken cancellationToken)
@@ -53,6 +58,7 @@ public sealed class OrganizacionesController(IOrganizacionService service) : Api
     }
 
     [HttpPut("{id:guid}")]
+    [Authorize(Policy = Permissions.Organizaciones.Gestionar)]
     public async Task<IActionResult> Actualizar(
         Guid id,
         ActualizarOrganizacionSolicitud request,
@@ -65,6 +71,7 @@ public sealed class OrganizacionesController(IOrganizacionService service) : Api
     }
 
     [HttpPatch("{id:guid}/estado")]
+    [Authorize(Policy = Permissions.Organizaciones.Gestionar)]
     public async Task<IActionResult> CambiarEstado(Guid id, CancellationToken cancellationToken)
     {
         var result = await service.CambiarEstadoAsync(id, cancellationToken);
@@ -74,6 +81,7 @@ public sealed class OrganizacionesController(IOrganizacionService service) : Api
     }
 
     [HttpDelete("{id:guid}")]
+    [Authorize(Policy = Permissions.Organizaciones.Gestionar)]
     public async Task<IActionResult> Eliminar(Guid id, CancellationToken cancellationToken)
     {
         var result = await service.EliminarAsync(id, cancellationToken);
