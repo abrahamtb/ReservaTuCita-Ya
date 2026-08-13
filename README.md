@@ -2,6 +2,25 @@
 
 Plataforma académica de reservas con backend ASP.NET Core 8, frontend React/TypeScript, Entity Framework Core 8, SQL Server Express y ASP.NET Core Identity.
 
+## Estructura del repositorio
+
+```text
+backend/
+└── ReservaTuCitaYa/
+    ├── ReservaTuCitaYa.sln
+    ├── ReservaTuCitaYa.Api/
+    ├── ReservaTuCitaYa.Application/
+    ├── ReservaTuCitaYa.Domain/
+    ├── ReservaTuCitaYa.Infrastructure/
+    ├── ReservaTuCitaYa.UnitTests/
+    └── ReservaTuCitaYa.IntegrationTests/
+
+frontend/
+└── ReservaTuCitaYa/
+    ├── package.json
+    └── src/
+```
+
 ## Arquitectura
 
 ```text
@@ -31,7 +50,7 @@ La presentación MVC/Razor fue retirada. `ReservaTuCitaYa.Api` es el único host
 
 ## Configurar User Secrets
 
-La API mantiene el `UserSecretsId` utilizado durante el desarrollo anterior, por lo que los secretos locales existentes siguen funcionando. Desde `ReservaTuCitaYa/ReservaTuCitaYa.Api`:
+La API mantiene el `UserSecretsId` utilizado durante el desarrollo anterior, por lo que los secretos locales existentes siguen funcionando. Desde `backend/ReservaTuCitaYa/ReservaTuCitaYa.Api`:
 
 ```powershell
 dotnet user-secrets set "ConnectionStrings:DefaultConnection" "Server=.\SQLEXPRESS;Database=ReservaTuCitaYaDb;Trusted_Connection=True;Encrypt=False;TrustServerCertificate=True;MultipleActiveResultSets=True"
@@ -45,7 +64,7 @@ No agregues conexiones, contraseñas o secretos al frontend ni a `appsettings.js
 
 ## Ejecutar el backend
 
-Desde `ReservaTuCitaYa` (la carpeta que contiene la solución):
+Desde `backend/ReservaTuCitaYa` (la carpeta que contiene la solución):
 
 ```powershell
 dotnet restore
@@ -61,7 +80,7 @@ La API aplica las migraciones existentes y ejecuta los seeders idempotentes de r
 
 ## Ejecutar React
 
-Desde `frontend/reserva-tu-cita-ya-web`:
+Desde `frontend/ReservaTuCitaYa`:
 
 ```powershell
 Copy-Item .env.example .env
@@ -124,22 +143,22 @@ Swagger documenta también los endpoints auxiliares para opciones de categorías
 
 ## Migraciones existentes
 
-Esta separación no crea migraciones ni cambia entidades/configuraciones EF. Para aplicar únicamente las migraciones existentes:
+Para aplicar las migraciones existentes, ejecuta desde `backend/ReservaTuCitaYa`:
 
 ```powershell
 dotnet tool restore
 dotnet tool run dotnet-ef database update --project ReservaTuCitaYa.Infrastructure --startup-project ReservaTuCitaYa.Api --context ApplicationDbContext
 ```
 
-No ejecutes `migrations add` para esta tarea.
+No ejecutes `migrations add` si no realizaste cambios nuevos en el modelo.
 
-### Riesgo preexistente de RG-014
+### Estado de RG-014
 
-El `develop` recibido incorporó entidades de recursos/horarios y actualizó el snapshot, pero no incluyó una migración que cree esas tablas. También existen advertencias de EF sobre relaciones requeridas con filtros globales y falta una configuración explícita de `HorarioRecurso`. Esta tarea no lo corrige porque su alcance prohíbe modificar el modelo o las migraciones. Debe resolverse en una rama de persistencia separada antes de usar RG-014 en producción.
+RG-014 utiliza una sola migración incremental: `20260806231410_AddRecursosHorariosDisponibilidad`. La configuración explícita de `HorarioRecurso`, los filtros globales relacionados y el snapshot de EF Core están sincronizados. La migración duplicada `20260807022144_AgregarHorariosYRecursos` no forma parte de la versión consolidada.
 
 ## Validación
 
-Desde la carpeta de la solución:
+Desde `backend/ReservaTuCitaYa`:
 
 ```powershell
 dotnet build --no-restore
