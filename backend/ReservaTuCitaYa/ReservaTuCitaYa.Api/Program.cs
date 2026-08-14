@@ -1,13 +1,24 @@
+using System.Text.Json.Serialization;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.OpenApi.Models;
-using System.Text.Json.Serialization;
 using ReservaTuCitaYa.Api.Middleware;
+using ReservaTuCitaYa.Application.Common.Disponibilidad;
+using ReservaTuCitaYa.Application.Interfaces;
 using ReservaTuCitaYa.Infrastructure;
 using ReservaTuCitaYa.Infrastructure.Identity;
 
 var builder = WebApplication.CreateBuilder(args);
+
+var disponibilidadConfig = builder.Configuration
+    .GetSection(DisponibilidadOptions.Seccion)
+    .Get<DisponibilidadOptions>() ?? new DisponibilidadOptions();
+
+builder.Services.AddSingleton(disponibilidadConfig);
+
+builder.Services.AddScoped<IDisponibilidadService,
+    ReservaTuCitaYa.Application.Services.DisponibilidadService>();
 
 builder.Services
     .AddApplicationServices()

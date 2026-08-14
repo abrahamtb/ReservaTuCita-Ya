@@ -11,7 +11,6 @@ public class HorarioProfesionalConfiguration
     {
         builder.ToTable("HorariosProfesionales");
 
-
         builder.HasKey(x => x.Id);
 
         builder.Property(x => x.DiaSemana)
@@ -23,11 +22,10 @@ public class HorarioProfesionalConfiguration
         builder.Property(x => x.HoraFin)
             .IsRequired();
 
-        builder.Property(x => x.FechaInicioVigencia)
-            .IsRequired();
-
-        builder.Property(x => x.FechaFinVigencia)
-            .IsRequired(false);
+        builder.HasOne(x => x.Empleado)
+            .WithMany()
+            .HasForeignKey(x => x.EmpleadoId)
+            .OnDelete(DeleteBehavior.Restrict);
 
         builder.HasOne(x => x.Sede)
             .WithMany()
@@ -36,12 +34,5 @@ public class HorarioProfesionalConfiguration
 
         builder.HasQueryFilter(x =>
             !x.EstaEliminado && !x.Sede.EstaEliminado);
-
-        // Cuando exista Profesional:
-        //
-        // builder.HasOne(x => x.Profesional)
-        //     .WithMany(x => x.Horarios)
-        //     .HasForeignKey(x => x.ProfesionalId)
-        //     .OnDelete(DeleteBehavior.Restrict);
     }
 }

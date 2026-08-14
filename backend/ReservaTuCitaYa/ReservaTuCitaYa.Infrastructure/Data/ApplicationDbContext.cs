@@ -16,7 +16,6 @@ namespace ReservaTuCitaYa.Infrastructure.Data
             : base(options)
         {
         }
-
         public DbSet<TipoOrganizacion> TiposOrganizacion => Set<TipoOrganizacion>();
         public DbSet<Organizacion> Organizaciones => Set<Organizacion>();
         public DbSet<Sede> Sedes => Set<Sede>();
@@ -29,11 +28,19 @@ namespace ReservaTuCitaYa.Infrastructure.Data
         public DbSet<HorarioRecurso> HorarioRecurso => Set<HorarioRecurso>();
         public DbSet<HorarioSede> HorarioSede => Set<HorarioSede>();
         public DbSet<Recurso> Recurso => Set<Recurso>();
+        public DbSet<ServicioRecurso> ServiciosRecurso => Set<ServicioRecurso>();
         public DbSet<Cliente> Clientes => Set<Cliente>();
         public DbSet<Empleado> Empleados => Set<Empleado>();
-        public DbSet<EmpleadoSede> EmpleadosSede => Set<EmpleadoSede>();
         public DbSet<ProfesionalServicio> ProfesionalesServicio => Set<ProfesionalServicio>();
-
+        public DbSet<EmpleadoSede> EmpleadosSede => Set<EmpleadoSede>();
+        public DbSet<ExcepcionHorarioSede> ExcepcionHorarioSede => Set<ExcepcionHorarioSede>();
+        public DbSet<ExcepcionHorarioRecurso> ExcepcionesHorarioRecurso => Set<ExcepcionHorarioRecurso>();
+        public DbSet<ExcepcionHorarioProfesional> ExcepcionHorarioProfesional => Set<ExcepcionHorarioProfesional>();
+        public DbSet<ReprogramacionReserva> ReprogramacionesReserva => Set<ReprogramacionReserva>();
+        public DbSet<CancelacionReserva> CancelacionesReserva => Set<CancelacionReserva>();
+        public DbSet<Reserva> Reservas => Set<Reserva>();
+        public DbSet<ReservaParticipante> ReservaParticipantes => Set<ReservaParticipante>();
+        public DbSet<HistorialReserva> HistorialReservas => Set<HistorialReserva>();
         protected override void OnModelCreating(ModelBuilder builder)
         {
             base.OnModelCreating(builder);
