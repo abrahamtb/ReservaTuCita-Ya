@@ -2,6 +2,7 @@
 using ReservaTuCitaYa.Application.Abstractions.Persistence;
 using ReservaTuCitaYa.Application.Common;
 using ReservaTuCitaYa.Domain.Entities;
+using ReservaTuCitaYa.Domain.Enums;
 using ReservaTuCitaYa.Infrastructure.Data;
 namespace ReservaTuCitaYa.Infrastructure.Repositories;
 
@@ -84,14 +85,32 @@ public sealed class DisponibilidadRepository(ApplicationDbContext context) : IDi
             .ToListAsync(ct);
 
     public async Task<IReadOnlyList<Reserva>> ObtenerReservasActivasAsync(
-        Guid sedeId, DateOnly desde, DateOnly hasta, Guid? excluirReservaId = null,
-        CancellationToken ct = default)
+    Guid sedeId,
+    DateOnly desde,
+    DateOnly hasta,
+    Guid? excluirReservaId = null,
+    CancellationToken ct = default)
     {
-        var consulta = context.Reservas.AsNoTracking().Where(r =>
-            r.SedeId == sedeId && r.Fecha >= desde && r.Fecha <= hasta &&
-            EstadosReserva.OcupanHorario.Contains(r.EstadoReserva));
+        var consulta = context.Reservas
+            .AsNoTracking()
+            .Where(r =>
+                r.SedeId == sedeId &&
+                r.Fecha >= desde &&
+                r.Fecha <= hasta &&
+                (
+                    r.EstadoReserva == EstadoReserva.Pendiente ||
+                    r.EstadoReserva == EstadoReserva.Confirmada ||
+                    r.EstadoReserva == EstadoReserva.Presente ||
+                    r.EstadoReserva == EstadoReserva.EnAtencion ||
+                    r.EstadoReserva == EstadoReserva.Reprogramada
+                ));
+
         if (excluirReservaId.HasValue)
-            consulta = consulta.Where(r => r.Id != excluirReservaId.Value);
+        {
+            consulta = consulta.Where(
+                r => r.Id != excluirReservaId.Value);
+        }
+
         return await consulta.ToListAsync(ct);
     }
 }
