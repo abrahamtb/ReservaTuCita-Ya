@@ -40,4 +40,5 @@ public sealed class Reserva : BaseEntity
     public Recurso? Recurso { get; set; }
     public ICollection<ReservaParticipante> Participantes { get; set; } = new List<ReservaParticipante>();
     public ICollection<HistorialReserva> Historial { get; set; } = new List<HistorialReserva>();
+    public Atencion? Atencion { get; set; }
 }

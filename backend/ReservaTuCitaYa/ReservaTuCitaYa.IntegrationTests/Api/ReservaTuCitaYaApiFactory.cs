@@ -17,7 +17,7 @@ public sealed class ReservaTuCitaYaApiFactory : WebApplicationFactory<Program>, 
     public const string AdminPassword = "Admin1234";
     private readonly string _databaseName = $"ReservaTuCitaYa_Api_{Guid.NewGuid():N}";
     private string TestConnectionString =>
-        $"Server=.\\SQLEXPRESS;Database={_databaseName};Trusted_Connection=True;Encrypt=False;TrustServerCertificate=True;";
+    $"Server=(localdb)\\MSSQLLocalDB;Database={_databaseName};Trusted_Connection=True;TrustServerCertificate=True;";
 
     protected override void ConfigureWebHost(IWebHostBuilder builder)
     {
