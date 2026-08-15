@@ -1,311 +1,183 @@
-﻿using System;
 using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable
 
-namespace ReservaTuCitaYa.Infrastructure.Data.Migrations
+namespace ReservaTuCitaYa.Infrastructure.Data.Migrations;
+
+/// <inheritdoc />
+public partial class AgregarPermisosYRolePermissions : Migration
 {
     /// <inheritdoc />
-    public partial class AgregarPermisosYRolePermissions : Migration
+    protected override void Up(MigrationBuilder migrationBuilder)
     {
-        /// <inheritdoc />
-        protected override void Up(MigrationBuilder migrationBuilder)
-        {
-            migrationBuilder.CreateTable(
-                name: "Empleados",
-                columns: table => new
-                {
-                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    OrganizacionId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    TipoDocumento = table.Column<int>(type: "int", nullable: false),
-                    NumeroDocumento = table.Column<string>(type: "nvarchar(20)", maxLength: 20, nullable: false),
-                    Nombres = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
-                    Apellidos = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
-                    Correo = table.Column<string>(type: "nvarchar(150)", maxLength: 150, nullable: true),
-                    Telefono = table.Column<string>(type: "nvarchar(30)", maxLength: 30, nullable: true),
-                    Direccion = table.Column<string>(type: "nvarchar(250)", maxLength: 250, nullable: true),
-                    FechaNacimiento = table.Column<DateOnly>(type: "date", nullable: true),
-                    Cargo = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
-                    Especialidad = table.Column<string>(type: "nvarchar(150)", maxLength: 150, nullable: true),
-                    EsProfesional = table.Column<bool>(type: "bit", nullable: false),
-                    NumeroColegiatura = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: true),
-                    Observaciones = table.Column<string>(type: "nvarchar(500)", maxLength: 500, nullable: true),
-                    FechaCreacion = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    FechaModificacion = table.Column<DateTime>(type: "datetime2", nullable: true),
-                    CreadoPorUsuarioId = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
-                    ModificadoPorUsuarioId = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
-                    EstaActivo = table.Column<bool>(type: "bit", nullable: false),
-                    EstaEliminado = table.Column<bool>(type: "bit", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Empleados", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_Empleados_Organizaciones_OrganizacionId",
-                        column: x => x.OrganizacionId,
-                        principalTable: "Organizaciones",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
-                });
+        // Esta migración fue creada originalmente al renombrar la migración compartida
+        // AgregarEmpleadosProfesionales. Permissions, RolePermissions y los vínculos de
+        // usuario ya pertenecen a migraciones anteriores y no deben crearse nuevamente.
+        // Las comprobaciones permiten reconciliar bases que ya aplicaron el ID original.
+        migrationBuilder.Sql(
+            """
+            IF OBJECT_ID(N'[dbo].[Empleados]', N'U') IS NULL
+            BEGIN
+                CREATE TABLE [dbo].[Empleados]
+                (
+                    [Id] uniqueidentifier NOT NULL,
+                    [OrganizacionId] uniqueidentifier NOT NULL,
+                    [TipoDocumento] int NOT NULL,
+                    [NumeroDocumento] nvarchar(20) NOT NULL,
+                    [Nombres] nvarchar(100) NOT NULL,
+                    [Apellidos] nvarchar(100) NOT NULL,
+                    [Correo] nvarchar(150) NULL,
+                    [Telefono] nvarchar(30) NULL,
+                    [Direccion] nvarchar(250) NULL,
+                    [FechaNacimiento] date NULL,
+                    [Cargo] nvarchar(100) NOT NULL,
+                    [Especialidad] nvarchar(150) NULL,
+                    [EsProfesional] bit NOT NULL,
+                    [NumeroColegiatura] nvarchar(50) NULL,
+                    [Observaciones] nvarchar(500) NULL,
+                    [FechaCreacion] datetime2 NOT NULL,
+                    [FechaModificacion] datetime2 NULL,
+                    [CreadoPorUsuarioId] uniqueidentifier NULL,
+                    [ModificadoPorUsuarioId] uniqueidentifier NULL,
+                    [EstaActivo] bit NOT NULL,
+                    [EstaEliminado] bit NOT NULL,
+                    CONSTRAINT [PK_Empleados] PRIMARY KEY ([Id]),
+                    CONSTRAINT [FK_Empleados_Organizaciones_OrganizacionId]
+                        FOREIGN KEY ([OrganizacionId]) REFERENCES [dbo].[Organizaciones] ([Id])
+                        ON DELETE NO ACTION
+                );
 
-            migrationBuilder.CreateTable(
-                name: "Permissions",
-                columns: table => new
-                {
-                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    Codigo = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
-                    Nombre = table.Column<string>(type: "nvarchar(150)", maxLength: 150, nullable: false),
-                    Descripcion = table.Column<string>(type: "nvarchar(300)", maxLength: 300, nullable: true),
-                    FechaCreacion = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    FechaModificacion = table.Column<DateTime>(type: "datetime2", nullable: true),
-                    CreadoPorUsuarioId = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
-                    ModificadoPorUsuarioId = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
-                    EstaActivo = table.Column<bool>(type: "bit", nullable: false),
-                    EstaEliminado = table.Column<bool>(type: "bit", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Permissions", x => x.Id);
-                });
+                EXEC sys.sp_addextendedproperty
+                    @name = N'RG030_CreadaPor_20260811021227', @value = 1,
+                    @level0type = N'SCHEMA', @level0name = N'dbo',
+                    @level1type = N'TABLE', @level1name = N'Empleados';
+            END;
 
-            migrationBuilder.CreateTable(
-                name: "UsuariosClientes",
-                columns: table => new
-                {
-                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    UsuarioId = table.Column<string>(type: "nvarchar(450)", nullable: false),
-                    ClienteId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    FechaCreacion = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    FechaModificacion = table.Column<DateTime>(type: "datetime2", nullable: true),
-                    CreadoPorUsuarioId = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
-                    ModificadoPorUsuarioId = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
-                    EstaActivo = table.Column<bool>(type: "bit", nullable: false),
-                    EstaEliminado = table.Column<bool>(type: "bit", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_UsuariosClientes", x => x.Id);
-                });
+            IF NOT EXISTS (
+                SELECT 1 FROM sys.indexes
+                WHERE [name] = N'IX_Empleados_OrganizacionId'
+                  AND [object_id] = OBJECT_ID(N'[dbo].[Empleados]'))
+                CREATE INDEX [IX_Empleados_OrganizacionId]
+                    ON [dbo].[Empleados] ([OrganizacionId]);
 
-            migrationBuilder.CreateTable(
-                name: "UsuariosEmpleados",
-                columns: table => new
-                {
-                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    UsuarioId = table.Column<string>(type: "nvarchar(450)", nullable: false),
-                    EmpleadoId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    FechaCreacion = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    FechaModificacion = table.Column<DateTime>(type: "datetime2", nullable: true),
-                    CreadoPorUsuarioId = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
-                    ModificadoPorUsuarioId = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
-                    EstaActivo = table.Column<bool>(type: "bit", nullable: false),
-                    EstaEliminado = table.Column<bool>(type: "bit", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_UsuariosEmpleados", x => x.Id);
-                });
+            IF NOT EXISTS (
+                SELECT 1 FROM sys.indexes
+                WHERE [name] = N'IX_Empleados_OrganizacionId_TipoDocumento_NumeroDocumento'
+                  AND [object_id] = OBJECT_ID(N'[dbo].[Empleados]'))
+                CREATE UNIQUE INDEX [IX_Empleados_OrganizacionId_TipoDocumento_NumeroDocumento]
+                    ON [dbo].[Empleados] ([OrganizacionId], [TipoDocumento], [NumeroDocumento]);
 
-            migrationBuilder.CreateTable(
-                name: "UsuariosOrganizaciones",
-                columns: table => new
-                {
-                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    UsuarioId = table.Column<string>(type: "nvarchar(450)", nullable: false),
-                    OrganizacionId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    EsPrincipal = table.Column<bool>(type: "bit", nullable: false),
-                    FechaCreacion = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    FechaModificacion = table.Column<DateTime>(type: "datetime2", nullable: true),
-                    CreadoPorUsuarioId = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
-                    ModificadoPorUsuarioId = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
-                    EstaActivo = table.Column<bool>(type: "bit", nullable: false),
-                    EstaEliminado = table.Column<bool>(type: "bit", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_UsuariosOrganizaciones", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_UsuariosOrganizaciones_Organizaciones_OrganizacionId",
-                        column: x => x.OrganizacionId,
-                        principalTable: "Organizaciones",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
-                });
+            IF OBJECT_ID(N'[dbo].[EmpleadosSede]', N'U') IS NULL
+            BEGIN
+                CREATE TABLE [dbo].[EmpleadosSede]
+                (
+                    [Id] uniqueidentifier NOT NULL,
+                    [EmpleadoId] uniqueidentifier NOT NULL,
+                    [SedeId] uniqueidentifier NOT NULL,
+                    [FechaCreacion] datetime2 NOT NULL,
+                    [FechaModificacion] datetime2 NULL,
+                    [CreadoPorUsuarioId] uniqueidentifier NULL,
+                    [ModificadoPorUsuarioId] uniqueidentifier NULL,
+                    [EstaActivo] bit NOT NULL,
+                    [EstaEliminado] bit NOT NULL,
+                    CONSTRAINT [PK_EmpleadosSede] PRIMARY KEY ([Id]),
+                    CONSTRAINT [FK_EmpleadosSede_Empleados_EmpleadoId]
+                        FOREIGN KEY ([EmpleadoId]) REFERENCES [dbo].[Empleados] ([Id])
+                        ON DELETE NO ACTION,
+                    CONSTRAINT [FK_EmpleadosSede_Sedes_SedeId]
+                        FOREIGN KEY ([SedeId]) REFERENCES [dbo].[Sedes] ([Id])
+                        ON DELETE NO ACTION
+                );
 
-            migrationBuilder.CreateTable(
-                name: "EmpleadosSede",
-                columns: table => new
-                {
-                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    EmpleadoId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    SedeId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    FechaCreacion = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    FechaModificacion = table.Column<DateTime>(type: "datetime2", nullable: true),
-                    CreadoPorUsuarioId = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
-                    ModificadoPorUsuarioId = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
-                    EstaActivo = table.Column<bool>(type: "bit", nullable: false),
-                    EstaEliminado = table.Column<bool>(type: "bit", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_EmpleadosSede", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_EmpleadosSede_Empleados_EmpleadoId",
-                        column: x => x.EmpleadoId,
-                        principalTable: "Empleados",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
-                    table.ForeignKey(
-                        name: "FK_EmpleadosSede_Sedes_SedeId",
-                        column: x => x.SedeId,
-                        principalTable: "Sedes",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
-                });
+                EXEC sys.sp_addextendedproperty
+                    @name = N'RG030_CreadaPor_20260811021227', @value = 1,
+                    @level0type = N'SCHEMA', @level0name = N'dbo',
+                    @level1type = N'TABLE', @level1name = N'EmpleadosSede';
+            END;
 
-            migrationBuilder.CreateTable(
-                name: "ProfesionalesServicio",
-                columns: table => new
-                {
-                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    EmpleadoId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    ServicioId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    FechaCreacion = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    FechaModificacion = table.Column<DateTime>(type: "datetime2", nullable: true),
-                    CreadoPorUsuarioId = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
-                    ModificadoPorUsuarioId = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
-                    EstaActivo = table.Column<bool>(type: "bit", nullable: false),
-                    EstaEliminado = table.Column<bool>(type: "bit", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_ProfesionalesServicio", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_ProfesionalesServicio_Empleados_EmpleadoId",
-                        column: x => x.EmpleadoId,
-                        principalTable: "Empleados",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
-                    table.ForeignKey(
-                        name: "FK_ProfesionalesServicio_Servicios_ServicioId",
-                        column: x => x.ServicioId,
-                        principalTable: "Servicios",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
-                });
+            IF NOT EXISTS (
+                SELECT 1 FROM sys.indexes
+                WHERE [name] = N'IX_EmpleadosSede_EmpleadoId_SedeId'
+                  AND [object_id] = OBJECT_ID(N'[dbo].[EmpleadosSede]'))
+                CREATE UNIQUE INDEX [IX_EmpleadosSede_EmpleadoId_SedeId]
+                    ON [dbo].[EmpleadosSede] ([EmpleadoId], [SedeId]);
 
-            migrationBuilder.CreateTable(
-                name: "RolePermissions",
-                columns: table => new
-                {
-                    RoleId = table.Column<string>(type: "nvarchar(450)", nullable: false),
-                    PermissionId = table.Column<Guid>(type: "uniqueidentifier", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_RolePermissions", x => new { x.RoleId, x.PermissionId });
-                    table.ForeignKey(
-                        name: "FK_RolePermissions_Permissions_PermissionId",
-                        column: x => x.PermissionId,
-                        principalTable: "Permissions",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                });
+            IF NOT EXISTS (
+                SELECT 1 FROM sys.indexes
+                WHERE [name] = N'IX_EmpleadosSede_SedeId'
+                  AND [object_id] = OBJECT_ID(N'[dbo].[EmpleadosSede]'))
+                CREATE INDEX [IX_EmpleadosSede_SedeId]
+                    ON [dbo].[EmpleadosSede] ([SedeId]);
 
-            migrationBuilder.CreateIndex(
-                name: "IX_Empleados_OrganizacionId",
-                table: "Empleados",
-                column: "OrganizacionId");
+            IF OBJECT_ID(N'[dbo].[ProfesionalesServicio]', N'U') IS NULL
+            BEGIN
+                CREATE TABLE [dbo].[ProfesionalesServicio]
+                (
+                    [Id] uniqueidentifier NOT NULL,
+                    [EmpleadoId] uniqueidentifier NOT NULL,
+                    [ServicioId] uniqueidentifier NOT NULL,
+                    [FechaCreacion] datetime2 NOT NULL,
+                    [FechaModificacion] datetime2 NULL,
+                    [CreadoPorUsuarioId] uniqueidentifier NULL,
+                    [ModificadoPorUsuarioId] uniqueidentifier NULL,
+                    [EstaActivo] bit NOT NULL,
+                    [EstaEliminado] bit NOT NULL,
+                    CONSTRAINT [PK_ProfesionalesServicio] PRIMARY KEY ([Id]),
+                    CONSTRAINT [FK_ProfesionalesServicio_Empleados_EmpleadoId]
+                        FOREIGN KEY ([EmpleadoId]) REFERENCES [dbo].[Empleados] ([Id])
+                        ON DELETE NO ACTION,
+                    CONSTRAINT [FK_ProfesionalesServicio_Servicios_ServicioId]
+                        FOREIGN KEY ([ServicioId]) REFERENCES [dbo].[Servicios] ([Id])
+                        ON DELETE NO ACTION
+                );
 
-            migrationBuilder.CreateIndex(
-                name: "IX_Empleados_OrganizacionId_TipoDocumento_NumeroDocumento",
-                table: "Empleados",
-                columns: new[] { "OrganizacionId", "TipoDocumento", "NumeroDocumento" },
-                unique: true);
+                EXEC sys.sp_addextendedproperty
+                    @name = N'RG030_CreadaPor_20260811021227', @value = 1,
+                    @level0type = N'SCHEMA', @level0name = N'dbo',
+                    @level1type = N'TABLE', @level1name = N'ProfesionalesServicio';
+            END;
 
-            migrationBuilder.CreateIndex(
-                name: "IX_EmpleadosSede_EmpleadoId_SedeId",
-                table: "EmpleadosSede",
-                columns: new[] { "EmpleadoId", "SedeId" },
-                unique: true);
+            IF NOT EXISTS (
+                SELECT 1 FROM sys.indexes
+                WHERE [name] = N'IX_ProfesionalesServicio_EmpleadoId_ServicioId'
+                  AND [object_id] = OBJECT_ID(N'[dbo].[ProfesionalesServicio]'))
+                CREATE UNIQUE INDEX [IX_ProfesionalesServicio_EmpleadoId_ServicioId]
+                    ON [dbo].[ProfesionalesServicio] ([EmpleadoId], [ServicioId]);
 
-            migrationBuilder.CreateIndex(
-                name: "IX_EmpleadosSede_SedeId",
-                table: "EmpleadosSede",
-                column: "SedeId");
+            IF NOT EXISTS (
+                SELECT 1 FROM sys.indexes
+                WHERE [name] = N'IX_ProfesionalesServicio_ServicioId'
+                  AND [object_id] = OBJECT_ID(N'[dbo].[ProfesionalesServicio]'))
+                CREATE INDEX [IX_ProfesionalesServicio_ServicioId]
+                    ON [dbo].[ProfesionalesServicio] ([ServicioId]);
+            """);
+    }
 
-            migrationBuilder.CreateIndex(
-                name: "IX_Permissions_Codigo",
-                table: "Permissions",
-                column: "Codigo",
-                unique: true);
+    /// <inheritdoc />
+    protected override void Down(MigrationBuilder migrationBuilder)
+    {
+        migrationBuilder.Sql(
+            """
+            IF OBJECT_ID(N'[dbo].[EmpleadosSede]', N'U') IS NOT NULL
+               AND EXISTS (
+                   SELECT 1 FROM sys.extended_properties
+                   WHERE [major_id] = OBJECT_ID(N'[dbo].[EmpleadosSede]')
+                     AND [name] = N'RG030_CreadaPor_20260811021227')
+                DROP TABLE [dbo].[EmpleadosSede];
 
-            migrationBuilder.CreateIndex(
-                name: "IX_ProfesionalesServicio_EmpleadoId_ServicioId",
-                table: "ProfesionalesServicio",
-                columns: new[] { "EmpleadoId", "ServicioId" },
-                unique: true);
+            IF OBJECT_ID(N'[dbo].[ProfesionalesServicio]', N'U') IS NOT NULL
+               AND EXISTS (
+                   SELECT 1 FROM sys.extended_properties
+                   WHERE [major_id] = OBJECT_ID(N'[dbo].[ProfesionalesServicio]')
+                     AND [name] = N'RG030_CreadaPor_20260811021227')
+                DROP TABLE [dbo].[ProfesionalesServicio];
 
-            migrationBuilder.CreateIndex(
-                name: "IX_ProfesionalesServicio_ServicioId",
-                table: "ProfesionalesServicio",
-                column: "ServicioId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_RolePermissions_PermissionId",
-                table: "RolePermissions",
-                column: "PermissionId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_UsuariosClientes_UsuarioId_ClienteId",
-                table: "UsuariosClientes",
-                columns: new[] { "UsuarioId", "ClienteId" },
-                unique: true);
-
-            migrationBuilder.CreateIndex(
-                name: "IX_UsuariosEmpleados_UsuarioId_EmpleadoId",
-                table: "UsuariosEmpleados",
-                columns: new[] { "UsuarioId", "EmpleadoId" },
-                unique: true);
-
-            migrationBuilder.CreateIndex(
-                name: "IX_UsuariosOrganizaciones_OrganizacionId",
-                table: "UsuariosOrganizaciones",
-                column: "OrganizacionId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_UsuariosOrganizaciones_UsuarioId_OrganizacionId",
-                table: "UsuariosOrganizaciones",
-                columns: new[] { "UsuarioId", "OrganizacionId" },
-                unique: true);
-        }
-
-        /// <inheritdoc />
-        protected override void Down(MigrationBuilder migrationBuilder)
-        {
-            migrationBuilder.DropTable(
-                name: "EmpleadosSede");
-
-            migrationBuilder.DropTable(
-                name: "ProfesionalesServicio");
-
-            migrationBuilder.DropTable(
-                name: "RolePermissions");
-
-            migrationBuilder.DropTable(
-                name: "UsuariosClientes");
-
-            migrationBuilder.DropTable(
-                name: "UsuariosEmpleados");
-
-            migrationBuilder.DropTable(
-                name: "UsuariosOrganizaciones");
-
-            migrationBuilder.DropTable(
-                name: "Empleados");
-
-            migrationBuilder.DropTable(
-                name: "Permissions");
-        }
+            IF OBJECT_ID(N'[dbo].[Empleados]', N'U') IS NOT NULL
+               AND EXISTS (
+                   SELECT 1 FROM sys.extended_properties
+                   WHERE [major_id] = OBJECT_ID(N'[dbo].[Empleados]')
+                     AND [name] = N'RG030_CreadaPor_20260811021227')
+                DROP TABLE [dbo].[Empleados];
+            """);
     }
 }

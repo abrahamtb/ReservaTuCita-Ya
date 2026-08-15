@@ -169,6 +169,18 @@ public sealed class ServicioRepository(ApplicationDbContext context) : IServicio
             .Where(relacion => relacion.ServicioId == servicioId)
             .ToListAsync(cancellationToken);
 
+    public Task<ServicioSede?> ObtenerServicioSedeAsync(
+        Guid servicioId,
+        Guid sedeId,
+        CancellationToken cancellationToken = default) =>
+        context.ServiciosSede
+            .IgnoreQueryFilters()
+            .SingleOrDefaultAsync(
+                relacion =>
+                    relacion.ServicioId == servicioId &&
+                    relacion.SedeId == sedeId,
+                cancellationToken);
+
     public void Agregar(Servicio servicio) => context.Servicios.Add(servicio);
     public void AgregarRelacion(ServicioSede servicioSede) => context.ServiciosSede.Add(servicioSede);
 

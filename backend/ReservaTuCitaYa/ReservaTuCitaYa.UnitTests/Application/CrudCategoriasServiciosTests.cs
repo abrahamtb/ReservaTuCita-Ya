@@ -493,6 +493,10 @@ internal sealed class RepositorioServiciosFalso : IServicioRepository
     public Task<IReadOnlyList<SedeAsignacionDto>> ListarSedesParaAsignarAsync(Guid organizacionId, Guid? servicioId = null, CancellationToken cancellationToken = default) => Task.FromResult<IReadOnlyList<SedeAsignacionDto>>(Sedes.Where(s => s.OrganizacionId == organizacionId && s.EstaActivo && !s.EstaEliminado).Select(s => new SedeAsignacionDto(s.Id, s.Nombre, s.EstaActivo, Relaciones.Any(r => r.ServicioId == servicioId && r.SedeId == s.Id && r.EstaActivo && !r.EstaEliminado), Relaciones.FirstOrDefault(r => r.ServicioId == servicioId && r.SedeId == s.Id && r.EstaActivo && !r.EstaEliminado)?.PrecioEspecial)).ToArray());
     public Task<IReadOnlyList<Sede>> ObtenerSedesParaValidarAsync(IReadOnlyCollection<Guid> sedeIds, CancellationToken cancellationToken = default) => Task.FromResult<IReadOnlyList<Sede>>(Sedes.Where(s => sedeIds.Contains(s.Id)).ToArray());
     public Task<IReadOnlyList<ServicioSede>> ObtenerRelacionesSedeAsync(Guid servicioId, CancellationToken cancellationToken = default) => Task.FromResult<IReadOnlyList<ServicioSede>>(Relaciones.Where(r => r.ServicioId == servicioId).ToArray());
+    public Task<ServicioSede?> ObtenerServicioSedeAsync(Guid servicioId, Guid sedeId, CancellationToken cancellationToken = default)
+    {
+        return Task.FromResult(Relaciones.SingleOrDefault(r => r.ServicioId == servicioId && r.SedeId == sedeId));
+    }
     public void Agregar(Servicio servicio) => Servicios.Add(servicio);
     public void AgregarRelacion(ServicioSede servicioSede) => Relaciones.Add(servicioSede);
     public Task GuardarAsync(CancellationToken cancellationToken = default) => Task.CompletedTask;
