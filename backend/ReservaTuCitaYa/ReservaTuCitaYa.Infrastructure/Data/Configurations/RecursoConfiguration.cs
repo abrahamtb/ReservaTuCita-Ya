@@ -18,6 +18,10 @@ public class RecursoConfiguration
             .HasMaxLength(150)
             .IsRequired();
 
+        builder.Property(x => x.Codigo).HasMaxLength(50);
+        builder.Property(x => x.TipoRecurso).HasMaxLength(30).IsRequired();
+        builder.Property(x => x.Observaciones).HasMaxLength(500);
+
         builder.Property(x => x.Descripcion)
             .HasMaxLength(500);
 
@@ -39,6 +43,10 @@ public class RecursoConfiguration
             .WithMany()
             .HasForeignKey(x => x.SedeId)
             .OnDelete(DeleteBehavior.Restrict);
+
+        builder.HasIndex(x => new { x.SedeId, x.Codigo })
+            .IsUnique()
+            .HasFilter("[Codigo] IS NOT NULL AND [EstaEliminado] = 0");
 
         builder.HasQueryFilter(x =>
             !x.EstaEliminado &&

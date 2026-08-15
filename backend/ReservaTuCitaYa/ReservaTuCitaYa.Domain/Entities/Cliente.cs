@@ -10,6 +10,7 @@ public sealed class Cliente : BaseEntity
     public string NumeroDocumento { get; set; } = string.Empty;
     public string Nombres { get; set; } = string.Empty;
     public string Apellidos { get; set; } = string.Empty;
+    private static string ConstruirNombreCompleto(Cliente c) => $"{c.Nombres} {c.Apellidos}".Trim();
     public string? Correo { get; set; }
     public string? Telefono { get; set; }
     public string? Direccion { get; set; }

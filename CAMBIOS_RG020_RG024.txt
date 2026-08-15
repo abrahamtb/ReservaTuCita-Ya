@@ -1,0 +1,105 @@
+Estado local completo (git status --porcelain=v1 -uall)
+
+ M backend/ReservaTuCitaYa/ReservaTuCitaYa.Api/Program.cs
+ M backend/ReservaTuCitaYa/ReservaTuCitaYa.Api/appsettings.json
+ M backend/ReservaTuCitaYa/ReservaTuCitaYa.Application/Abstractions/Persistence/IServicioRepository.cs
+ M backend/ReservaTuCitaYa/ReservaTuCitaYa.Domain/Entities/BloqueoProfesional.cs
+ D backend/ReservaTuCitaYa/ReservaTuCitaYa.Domain/Entities/BloqueoRecursos.cs
+ M backend/ReservaTuCitaYa/ReservaTuCitaYa.Domain/Entities/Cliente.cs
+ M backend/ReservaTuCitaYa/ReservaTuCitaYa.Domain/Entities/HorarioProfesional.cs
+ M backend/ReservaTuCitaYa/ReservaTuCitaYa.Domain/Entities/HorarioRecurso.cs
+ M backend/ReservaTuCitaYa/ReservaTuCitaYa.Domain/Entities/HorarioSede.cs
+ M backend/ReservaTuCitaYa/ReservaTuCitaYa.Domain/Entities/Recurso.cs
+ M backend/ReservaTuCitaYa/ReservaTuCitaYa.Domain/Enums/EstadoReserva.cs
+ M backend/ReservaTuCitaYa/ReservaTuCitaYa.Infrastructure/Data/ApplicationDbContext.cs
+ M backend/ReservaTuCitaYa/ReservaTuCitaYa.Infrastructure/Data/Configurations/BloqueoRecursoConfiguration.cs
+ M backend/ReservaTuCitaYa/ReservaTuCitaYa.Infrastructure/Data/Configurations/HorarioProfesionalConfiguration.cs
+ M backend/ReservaTuCitaYa/ReservaTuCitaYa.Infrastructure/Data/Configurations/RecursoConfiguration.cs
+ M backend/ReservaTuCitaYa/ReservaTuCitaYa.Infrastructure/Data/Migrations/20260811021227_AgregarPermisosYRolePermissions.cs
+ M backend/ReservaTuCitaYa/ReservaTuCitaYa.Infrastructure/Data/Migrations/ApplicationDbContextModelSnapshot.cs
+ M backend/ReservaTuCitaYa/ReservaTuCitaYa.Infrastructure/DependencyInjection.cs
+ M backend/ReservaTuCitaYa/ReservaTuCitaYa.Infrastructure/Repositories/ServicioRepository.cs
+ M backend/ReservaTuCitaYa/ReservaTuCitaYa.UnitTests/Application/CrudCategoriasServiciosTests.cs
+?? AUDITORIA_RG020_RG024.md
+?? CAMBIOS_RG020_RG024.txt
+?? backend/ReservaTuCitaYa/ReservaTuCitaYa.Api/Contracts/Recursos/RecursosContract.cs
+?? backend/ReservaTuCitaYa/ReservaTuCitaYa.Api/Controllers/BloqueosRecursoController.cs
+?? backend/ReservaTuCitaYa/ReservaTuCitaYa.Api/Controllers/DisponibilidadController.cs
+?? backend/ReservaTuCitaYa/ReservaTuCitaYa.Api/Controllers/HorarioSedeController.cs
+?? backend/ReservaTuCitaYa/ReservaTuCitaYa.Api/Controllers/HorariosProfesionalController.cs
+?? backend/ReservaTuCitaYa/ReservaTuCitaYa.Api/Controllers/HorariosRecursoController.cs
+?? backend/ReservaTuCitaYa/ReservaTuCitaYa.Api/Controllers/RecursoController.cs
+?? backend/ReservaTuCitaYa/ReservaTuCitaYa.Api/Controllers/ReservaController.cs
+?? backend/ReservaTuCitaYa/ReservaTuCitaYa.Application/Abstractions/Persistence/IBloqueoRepository.cs
+?? backend/ReservaTuCitaYa/ReservaTuCitaYa.Application/Abstractions/Persistence/IDisponibilidadRepository.cs
+?? backend/ReservaTuCitaYa/ReservaTuCitaYa.Application/Abstractions/Persistence/IExcepcionHorarioProfesionalRepository.cs
+?? backend/ReservaTuCitaYa/ReservaTuCitaYa.Application/Abstractions/Persistence/IExcepcionHorarioRecursoRepository.cs
+?? backend/ReservaTuCitaYa/ReservaTuCitaYa.Application/Abstractions/Persistence/IExcepcionHorarioSedeRepository.cs
+?? backend/ReservaTuCitaYa/ReservaTuCitaYa.Application/Abstractions/Persistence/IHorarioProfesionalRepository.cs
+?? backend/ReservaTuCitaYa/ReservaTuCitaYa.Application/Abstractions/Persistence/IHorarioRecursoRepository.cs
+?? backend/ReservaTuCitaYa/ReservaTuCitaYa.Application/Abstractions/Persistence/IHorarioSedeRepository.cs
+?? backend/ReservaTuCitaYa/ReservaTuCitaYa.Application/Abstractions/Persistence/IRecursoRepository.cs
+?? backend/ReservaTuCitaYa/ReservaTuCitaYa.Application/Abstractions/Persistence/IReservaRepository.cs
+?? backend/ReservaTuCitaYa/ReservaTuCitaYa.Application/Common/CalculadorHorarioEfectivo.cs
+?? backend/ReservaTuCitaYa/ReservaTuCitaYa.Application/Common/CalculadorIntervalos.cs
+?? backend/ReservaTuCitaYa/ReservaTuCitaYa.Application/Common/Disponibilidad.cs
+?? backend/ReservaTuCitaYa/ReservaTuCitaYa.Application/Common/EstadosReserva.cs
+?? backend/ReservaTuCitaYa/ReservaTuCitaYa.Application/Common/GeneradorSlots.cs
+?? backend/ReservaTuCitaYa/ReservaTuCitaYa.Application/Common/Intervalo.cs
+?? backend/ReservaTuCitaYa/ReservaTuCitaYa.Application/Common/ValidadorIntervalos.cs
+?? backend/ReservaTuCitaYa/ReservaTuCitaYa.Application/DTOs/Disponibilidad/DisponibilidadDtos.cs
+?? backend/ReservaTuCitaYa/ReservaTuCitaYa.Application/DTOs/Horario/HorarioDto.cs
+?? backend/ReservaTuCitaYa/ReservaTuCitaYa.Application/DTOs/Recursos/BloqueoRecurso.cs
+?? backend/ReservaTuCitaYa/ReservaTuCitaYa.Application/DTOs/Recursos/RecursosDtos.cs
+?? backend/ReservaTuCitaYa/ReservaTuCitaYa.Application/DTOs/Reservas/CancelarSolicitud.cs
+?? backend/ReservaTuCitaYa/ReservaTuCitaYa.Application/DTOs/Reservas/ReprogramarReservaSolicitud.cs
+?? backend/ReservaTuCitaYa/ReservaTuCitaYa.Application/DTOs/Reservas/ReservaDtos.cs
+?? backend/ReservaTuCitaYa/ReservaTuCitaYa.Application/Interfaces/IBloqueoRecursoService.cs
+?? backend/ReservaTuCitaYa/ReservaTuCitaYa.Application/Interfaces/IDisponibilidadService.cs
+?? backend/ReservaTuCitaYa/ReservaTuCitaYa.Application/Interfaces/IHorarioProfesionalService.cs
+?? backend/ReservaTuCitaYa/ReservaTuCitaYa.Application/Interfaces/IHorarioRecursoService.cs
+?? backend/ReservaTuCitaYa/ReservaTuCitaYa.Application/Interfaces/IHorarioSedeService.cs
+?? backend/ReservaTuCitaYa/ReservaTuCitaYa.Application/Interfaces/IRecursoService.cs
+?? backend/ReservaTuCitaYa/ReservaTuCitaYa.Application/Interfaces/IReservaService.cs
+?? backend/ReservaTuCitaYa/ReservaTuCitaYa.Application/Services/BloqueoRecursoService.cs
+?? backend/ReservaTuCitaYa/ReservaTuCitaYa.Application/Services/DisponibilidadService.cs
+?? backend/ReservaTuCitaYa/ReservaTuCitaYa.Application/Services/HorarioProfesionalService.cs
+?? backend/ReservaTuCitaYa/ReservaTuCitaYa.Application/Services/HorarioRecursoService.cs
+?? backend/ReservaTuCitaYa/ReservaTuCitaYa.Application/Services/HorarioSedeService.cs
+?? backend/ReservaTuCitaYa/ReservaTuCitaYa.Application/Services/RecursoService.cs
+?? backend/ReservaTuCitaYa/ReservaTuCitaYa.Application/Services/ReservaService.cs
+?? backend/ReservaTuCitaYa/ReservaTuCitaYa.Domain/Entities/BloqueoRecurso.cs
+?? backend/ReservaTuCitaYa/ReservaTuCitaYa.Domain/Entities/CancelacionReserva.cs
+?? backend/ReservaTuCitaYa/ReservaTuCitaYa.Domain/Entities/HistorialReserva.cs
+?? backend/ReservaTuCitaYa/ReservaTuCitaYa.Domain/Entities/ReprogramacionReserva.cs
+?? backend/ReservaTuCitaYa/ReservaTuCitaYa.Domain/Entities/Reserva.cs
+?? backend/ReservaTuCitaYa/ReservaTuCitaYa.Domain/Entities/ReservaParticipante.cs
+?? backend/ReservaTuCitaYa/ReservaTuCitaYa.Domain/Entities/ServicioRecurso.cs
+?? backend/ReservaTuCitaYa/ReservaTuCitaYa.Domain/Enums/MotivoCancelacion.cs
+?? backend/ReservaTuCitaYa/ReservaTuCitaYa.Domain/Enums/MotivoProgramacion.cs
+?? backend/ReservaTuCitaYa/ReservaTuCitaYa.Domain/Enums/TipoAccionReserva.cs
+?? backend/ReservaTuCitaYa/ReservaTuCitaYa.Domain/Enums/TipoExceptionHorario.cs
+?? backend/ReservaTuCitaYa/ReservaTuCitaYa.Domain/Exception/ExcepcionHorarioProfesional.cs
+?? backend/ReservaTuCitaYa/ReservaTuCitaYa.Domain/Exception/ExcepcionHorarioRecurso.cs
+?? backend/ReservaTuCitaYa/ReservaTuCitaYa.Domain/Exception/ExcepcionHorarioSede.cs
+?? backend/ReservaTuCitaYa/ReservaTuCitaYa.Infrastructure/Data/ApplicationDbContextFactory.cs
+?? backend/ReservaTuCitaYa/ReservaTuCitaYa.Infrastructure/Data/Configurations/ExcepcionesHorarioConfiguration.cs
+?? backend/ReservaTuCitaYa/ReservaTuCitaYa.Infrastructure/Data/Configurations/ReservaConfiguration.cs
+?? backend/ReservaTuCitaYa/ReservaTuCitaYa.Infrastructure/Data/Configurations/ServicioRecursoConfiguration.cs
+?? backend/ReservaTuCitaYa/ReservaTuCitaYa.Infrastructure/Data/Migrations/20260813031037_RG020_RecursosYBloqueos.Designer.cs
+?? backend/ReservaTuCitaYa/ReservaTuCitaYa.Infrastructure/Data/Migrations/20260813031037_RG020_RecursosYBloqueos.cs
+?? backend/ReservaTuCitaYa/ReservaTuCitaYa.Infrastructure/Data/Migrations/20260813073412_AgregarHorariosYExcepciones.Designer.cs
+?? backend/ReservaTuCitaYa/ReservaTuCitaYa.Infrastructure/Data/Migrations/20260813073412_AgregarHorariosYExcepciones.cs
+?? backend/ReservaTuCitaYa/ReservaTuCitaYa.Infrastructure/Data/Migrations/20260815141612_CorregirRG020RG024Integracion.Designer.cs
+?? backend/ReservaTuCitaYa/ReservaTuCitaYa.Infrastructure/Data/Migrations/20260815141612_CorregirRG020RG024Integracion.cs
+?? backend/ReservaTuCitaYa/ReservaTuCitaYa.Infrastructure/Repositories/BloqueoRecursoRepository.cs
+?? backend/ReservaTuCitaYa/ReservaTuCitaYa.Infrastructure/Repositories/DisponibilidadRepository.cs
+?? backend/ReservaTuCitaYa/ReservaTuCitaYa.Infrastructure/Repositories/ExcepcionHorarioProfesionalRepository.cs
+?? backend/ReservaTuCitaYa/ReservaTuCitaYa.Infrastructure/Repositories/ExcepcionHorarioRecursoRepository.cs
+?? backend/ReservaTuCitaYa/ReservaTuCitaYa.Infrastructure/Repositories/ExcepcionHorarioSedeRepository.cs
+?? backend/ReservaTuCitaYa/ReservaTuCitaYa.Infrastructure/Repositories/HorarioProfesionalRepository.cs
+?? backend/ReservaTuCitaYa/ReservaTuCitaYa.Infrastructure/Repositories/HorarioRecursoRepository.cs
+?? backend/ReservaTuCitaYa/ReservaTuCitaYa.Infrastructure/Repositories/HorarioSedeRepository.cs
+?? backend/ReservaTuCitaYa/ReservaTuCitaYa.Infrastructure/Repositories/RecursoRepository.cs
+?? backend/ReservaTuCitaYa/ReservaTuCitaYa.Infrastructure/Repositories/ReservaRepository.cs
+?? backend/ReservaTuCitaYa/ReservaTuCitaYa.UnitTests/Application/Rg020Rg024BusinessRulesTests.cs

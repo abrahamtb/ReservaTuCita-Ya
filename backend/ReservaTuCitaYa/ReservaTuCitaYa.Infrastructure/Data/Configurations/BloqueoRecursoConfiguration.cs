@@ -27,9 +27,11 @@ public class BloqueoRecursoConfiguration : IEntityTypeConfiguration<BloqueoRecur
 
 
         builder.HasOne(x => x.Recurso)
-            .WithMany()
+            .WithMany(x => x.Bloqueos)
             .HasForeignKey(x => x.RecursoId)
             .OnDelete(DeleteBehavior.Restrict);
+
+        builder.HasIndex(x => new { x.RecursoId, x.FechaHoraInicio, x.FechaHoraFin });
 
         builder.HasQueryFilter(x =>
             !x.EstaEliminado &&
