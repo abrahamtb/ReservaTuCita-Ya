@@ -74,12 +74,13 @@ public static class DependencyInjection
     }
 
     public static async Task InitializeDatabaseAsync(
-        this IServiceProvider services,
-        IConfiguration configuration,
-        CancellationToken cancellationToken = default)
+    this IServiceProvider services,
+    IConfiguration configuration,
+    CancellationToken cancellationToken = default)
     {
         await using var scope = services.CreateAsyncScope();
         var serviceProvider = scope.ServiceProvider;
+
         var dbContext = serviceProvider.GetRequiredService<ApplicationDbContext>();
         var roleManager = serviceProvider.GetRequiredService<RoleManager<IdentityRole>>();
         var userManager = serviceProvider.GetRequiredService<UserManager<ApplicationUser>>();
@@ -87,7 +88,16 @@ public static class DependencyInjection
             .GetRequiredService<ILoggerFactory>()
             .CreateLogger("DatabaseInitialization");
 
-        await dbContext.Database.MigrateAsync(cancellationToken);
+        if (dbContext.Database.IsRelational())
+        {
+            await dbContext.Database.MigrateAsync(cancellationToken);
+        }
+        else
+        {
+            // Proveedor en memoria (pruebas de integración): no hay migraciones que aplicar
+            await dbContext.Database.EnsureCreatedAsync(cancellationToken);
+        }
+
         await IdentitySeeder.SeedRolesAsync(roleManager, logger);
         await PermissionSeeder.SeedPermissionsAsync(dbContext, logger);
         await RolePermissionSeeder.SeedRolePermissionsAsync(dbContext, roleManager, logger);
