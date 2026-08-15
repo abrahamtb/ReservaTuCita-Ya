@@ -6,6 +6,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using ReservaTuCitaYa.Domain.Enums;
 using ReservaTuCitaYa.Infrastructure.Data;
+using ReservaTuCitaYa.Infrastructure.Identity;
 using ReservaTuCitaYa.IntegrationTests.Api;
 using ReservaTuCitaYa.IntegrationTests.Infrastructure;
 using Xunit;
@@ -238,6 +239,43 @@ public sealed class AtencionesFlujoTests(
         Assert.Equal(
             HttpStatusCode.Conflict,
             response.StatusCode);
+    }
+
+    [Fact]
+    public async Task ProfesionalConPermiso_PuedeMarcarPresenteEnSuOrganizacion()
+    {
+        using var superAdminClient = CrearClienteHttp();
+
+        await ApiAuthenticationTests.LoginAsync(
+            superAdminClient,
+            ReservaTuCitaYaApiFactory.AdminEmail);
+
+        var orgId = await CrearOrganizacionAsync(superAdminClient);
+        var profesional =
+            await TestDataSeeder.CrearUsuarioDeOrganizacionAsync(
+                factory.Services,
+                orgId,
+                "PermisoAtencion",
+                RoleNames.Profesional);
+
+        var reserva =
+            await TestDataSeeder.CrearReservaParaAtencionAsync(
+                factory.Services,
+                orgId,
+                EstadoReserva.Confirmada,
+                "Profesional");
+
+        using var profesionalClient = CrearClienteHttp();
+
+        await ApiAuthenticationTests.LoginAsync(
+            profesionalClient,
+            profesional.Email!);
+
+        var response = await profesionalClient.PostAsync(
+            $"/api/organizaciones/{orgId}/reservas/{reserva.Id}/atencion/presencia",
+            null);
+
+        Assert.Equal(HttpStatusCode.OK, response.StatusCode);
     }
 
     private HttpClient CrearClienteHttp() =>

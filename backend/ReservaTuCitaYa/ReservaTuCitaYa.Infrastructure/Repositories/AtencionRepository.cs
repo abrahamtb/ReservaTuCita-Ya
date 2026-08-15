@@ -26,6 +26,18 @@ public sealed class AtencionRepository(
                 x => x.ReservaId == reservaId,
                 ct);
 
+    public Task<bool> ExisteServicioActivoEnOrganizacionAsync(
+        Guid servicioId,
+        Guid organizacionId,
+        CancellationToken ct = default) =>
+        db.Servicios
+            .AsNoTracking()
+            .AnyAsync(
+                x => x.Id == servicioId &&
+                     x.OrganizacionId == organizacionId &&
+                     x.EstaActivo,
+                ct);
+
     public void Agregar(Atencion atencion) =>
         db.Atenciones.Add(atencion);
 

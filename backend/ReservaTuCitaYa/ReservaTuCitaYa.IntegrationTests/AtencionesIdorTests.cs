@@ -2,7 +2,10 @@
 using System.Net.Http.Json;
 using System.Text.Json;
 using Microsoft.AspNetCore.Mvc.Testing;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.DependencyInjection;
 using ReservaTuCitaYa.Domain.Enums;
+using ReservaTuCitaYa.Infrastructure.Data;
 using ReservaTuCitaYa.IntegrationTests.Api;
 using ReservaTuCitaYa.IntegrationTests.Infrastructure;
 using Xunit;
@@ -259,5 +262,67 @@ public sealed class AtencionesIdorTests(
             response.StatusCode == HttpStatusCode.NotFound ||
             response.StatusCode == HttpStatusCode.Forbidden,
             $"Se esperaba 404 o 403, pero se obtuvo {response.StatusCode}");
+    }
+
+    [Fact]
+    public async Task Finalizar_NoAceptaProximoServicioDeOtraOrganizacion()
+    {
+        using var client = CrearClienteHttp();
+
+        await ApiAuthenticationTests.LoginAsync(
+            client,
+            ReservaTuCitaYaApiFactory.AdminEmail);
+
+        var orgAId = await CrearOrganizacionAsync(client, "SERV-A");
+        var orgBId = await CrearOrganizacionAsync(client, "SERV-B");
+
+        var reservaA =
+            await TestDataSeeder.CrearReservaParaAtencionAsync(
+                factory.Services,
+                orgAId,
+                EstadoReserva.Confirmada,
+                "ServicioOrgA");
+
+        var reservaB =
+            await TestDataSeeder.CrearReservaParaAtencionAsync(
+                factory.Services,
+                orgBId,
+                EstadoReserva.Confirmada,
+                "ServicioOrgB");
+
+        var presencia = await client.PostAsync(
+            $"/api/organizaciones/{orgAId}/reservas/{reservaA.Id}/atencion/presencia",
+            null);
+        Assert.Equal(HttpStatusCode.OK, presencia.StatusCode);
+
+        var iniciar = await client.PostAsync(
+            $"/api/organizaciones/{orgAId}/reservas/{reservaA.Id}/atencion/iniciar",
+            null);
+        Assert.Equal(HttpStatusCode.OK, iniciar.StatusCode);
+
+        var finalizar = await client.PostAsJsonAsync(
+            $"/api/organizaciones/{orgAId}/reservas/{reservaA.Id}/atencion/finalizar",
+            new
+            {
+                resultado = "Completada",
+                proximoServicioId = reservaB.ServicioId
+            });
+
+        Assert.Equal(HttpStatusCode.NotFound, finalizar.StatusCode);
+
+        using var scope = factory.Services.CreateScope();
+        var db = scope.ServiceProvider
+            .GetRequiredService<ApplicationDbContext>();
+
+        var reservaPersistida = await db.Reservas
+            .IgnoreQueryFilters()
+            .SingleAsync(x => x.Id == reservaA.Id);
+        var atencionPersistida = await db.Atenciones
+            .IgnoreQueryFilters()
+            .SingleAsync(x => x.ReservaId == reservaA.Id);
+
+        Assert.Equal(EstadoReserva.EnAtencion, reservaPersistida.EstadoReserva);
+        Assert.Null(atencionPersistida.FechaHoraFinReal);
+        Assert.Null(atencionPersistida.ProximoServicioId);
     }
 }

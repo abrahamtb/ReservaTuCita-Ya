@@ -12,6 +12,11 @@ public interface IAtencionRepository
         Guid reservaId,
         CancellationToken ct = default);
 
+    Task<bool> ExisteServicioActivoEnOrganizacionAsync(
+        Guid servicioId,
+        Guid organizacionId,
+        CancellationToken ct = default);
+
     void Agregar(Atencion atencion);
 
     void AgregarHistorial(HistorialReserva historial);

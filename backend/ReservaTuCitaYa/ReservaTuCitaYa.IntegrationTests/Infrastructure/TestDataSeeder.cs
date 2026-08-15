@@ -190,10 +190,21 @@ public static class TestDataSeeder
 
         return reserva;
     }
-    public static async Task<ApplicationUser> CrearAdminDeOrganizacionAsync(
-    IServiceProvider services,
-    Guid organizacionId,
-    string sufijo)
+    public static Task<ApplicationUser> CrearAdminDeOrganizacionAsync(
+        IServiceProvider services,
+        Guid organizacionId,
+        string sufijo) =>
+        CrearUsuarioDeOrganizacionAsync(
+            services,
+            organizacionId,
+            sufijo,
+            RoleNames.Administrador);
+
+    public static async Task<ApplicationUser> CrearUsuarioDeOrganizacionAsync(
+        IServiceProvider services,
+        Guid organizacionId,
+        string sufijo,
+        string rol)
     {
         using var scope = services.CreateScope();
 
@@ -204,13 +215,13 @@ public static class TestDataSeeder
             .GetRequiredService<UserManager<ApplicationUser>>();
 
         var email =
-            $"admin-{sufijo}-{Guid.NewGuid():N}@test.local";
+            $"{rol.ToLowerInvariant()}-{sufijo}-{Guid.NewGuid():N}@test.local";
 
         var usuario = new ApplicationUser
         {
             UserName = email,
             Email = email,
-            Nombres = "Administrador",
+            Nombres = rol,
             Apellidos = sufijo,
             NumeroDocumento =
                 Random.Shared.Next(10000000, 99999999).ToString(),
@@ -233,7 +244,7 @@ public static class TestDataSeeder
 
         await userManager.AddToRoleAsync(
             usuario,
-            RoleNames.Administrador);
+            rol);
 
         db.UsuariosOrganizaciones.Add(
             new UsuarioOrganizacion

@@ -40,6 +40,9 @@ public sealed class AtencionService(
     public const string ResultadoInvalido =
         "El resultado de atención no es válido.";
 
+    public const string ProximoServicioInvalido =
+        "El próximo servicio no existe o no pertenece a la organización.";
+
     public const string EstadoNoPermitidoNoAsistio =
     "El estado actual de la reserva no permite marcarla como no asistida.";
 
@@ -324,6 +327,19 @@ public sealed class AtencionService(
                         .Fallo(
                             "La atención ya fue finalizada.",
                             TipoErrorOperacion.Conflicto);
+                }
+
+                if (solicitud.ProximoServicioId.HasValue &&
+                    !await atencionRepository
+                        .ExisteServicioActivoEnOrganizacionAsync(
+                            solicitud.ProximoServicioId.Value,
+                            organizacionId,
+                            innerCt))
+                {
+                    return ResultadoOperacion<FinalizarAtencionRespuesta>
+                        .Fallo(
+                            ProximoServicioInvalido,
+                            TipoErrorOperacion.NoEncontrado);
                 }
 
                 var fechaHoraFin = DateTime.UtcNow;

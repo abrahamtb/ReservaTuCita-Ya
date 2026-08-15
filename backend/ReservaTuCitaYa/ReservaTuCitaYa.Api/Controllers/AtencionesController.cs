@@ -10,7 +10,7 @@ using System.Security.Claims;
 namespace ReservaTuCitaYa.Api.Controllers;
 
 [ApiController]
-[Authorize(Roles = RoleNames.Administracion)]
+[Authorize]
 public sealed class AtencionesController(
     IAtencionService service,
     ICurrentUser currentUser) : ApiControllerBase
