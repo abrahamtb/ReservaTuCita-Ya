@@ -7,6 +7,7 @@ using Microsoft.Extensions.Logging;
 using ReservaTuCitaYa.Application.Abstractions;
 using ReservaTuCitaYa.Application.Abstractions.Persistence;
 using ReservaTuCitaYa.Application.Interfaces;
+using ReservaTuCitaYa.Application.Interfaces.Repository;
 using ReservaTuCitaYa.Application.Services;
 using ReservaTuCitaYa.Infrastructure.Data;
 using ReservaTuCitaYa.Infrastructure.Data.Seed;
@@ -53,6 +54,10 @@ public static class DependencyInjection
 
         services.AddSingleton<IAuthorizationPolicyProvider, PermissionPolicyProvider>();
         services.AddScoped<IAuthorizationHandler, PermissionAuthorizationHandler>();
+        services.AddScoped<IPagoRepository, PagoRepository>();
+        services.AddScoped<IReembolsoRepository, ReembolsoRepository>();
+        services.AddScoped<IPagoService, PagoService>();
+
         return services;
     }
 
@@ -96,5 +101,6 @@ public static class DependencyInjection
             roleManager,
             configuration,
             logger);
+        await MetodoPagoSeeder.SeedAsync(dbContext);
     }
 }

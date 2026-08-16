@@ -38,6 +38,10 @@ namespace ReservaTuCitaYa.Infrastructure.Data
         public DbSet<UsuarioOrganizacion> UsuariosOrganizaciones => Set<UsuarioOrganizacion>();
         public DbSet<UsuarioEmpleado> UsuariosEmpleados => Set<UsuarioEmpleado>();
         public DbSet<UsuarioCliente> UsuariosClientes => Set<UsuarioCliente>();
+        public DbSet<MetodoPago> MetodosPago { get; set; }
+        public DbSet<Pago> Pagos { get; set; }
+        public DbSet<ReembolsoReserva> ReembolsosReserva { get; set; }
+
         protected override void OnModelCreating(ModelBuilder builder)
         {
             base.OnModelCreating(builder);
