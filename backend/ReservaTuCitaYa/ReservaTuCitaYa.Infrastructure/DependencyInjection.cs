@@ -36,6 +36,7 @@ public static class DependencyInjection
         services.AddScoped<IDisponibilidadService, DisponibilidadService>();
         services.AddScoped<IReservaService, ReservaService>();
         services.AddScoped<IAtencionService, AtencionService>();
+        services.AddScoped<IDashboardService, DashboardService>();
 
         return services;
     }
@@ -70,6 +71,7 @@ public static class DependencyInjection
         services.AddScoped<IDisponibilidadRepository, DisponibilidadRepository>();
         services.AddScoped<IReservaRepository, ReservaRepository>();
         services.AddScoped<IAtencionRepository, AtencionRepository>();
+        services.AddScoped<IDashboardRepository, DashboardRepository>();
 
         services.AddHttpContextAccessor();
         services.AddScoped<ICurrentUser, CurrentUser>();
