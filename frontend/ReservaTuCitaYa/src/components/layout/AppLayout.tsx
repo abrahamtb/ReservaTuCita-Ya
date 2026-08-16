@@ -1,6 +1,7 @@
 import { NavLink, Outlet } from 'react-router-dom'
 import { useAuth } from '../../auth/useAuth'
 
+
 export function AppLayout() {
   const { user, logout } = useAuth()
   return <div className="app-shell">

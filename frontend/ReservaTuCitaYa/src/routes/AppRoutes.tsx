@@ -9,6 +9,8 @@ import { AccessDeniedPage } from '../pages/AccessDeniedPage'
 import { DashboardPage } from '../pages/DashboardPage'
 import { LoginPage } from '../pages/LoginPage'
 import { NotFoundPage } from '../pages/NotFoundPage'
+import ClientesPage from '../features/clientes/pages/ClientesPage'
+import ClienteFormPage from '../features/clientes/pages/ClientesFormPage'
 
 export function AppRoutes() {
   return <Routes>
@@ -32,6 +34,8 @@ export function AppRoutes() {
       <Route path="organizaciones/:organizationId/servicios/nuevo" element={<ServiceFormPage />} />
       <Route path="servicios/:id" element={<ServiceDetailPage />} />
       <Route path="servicios/:id/editar" element={<ServiceFormPage />} />
+      <Route path="clientes" element={<ClientesPage />} />
+      <Route path="clientes/nuevo" element={<ClienteFormPage />} />
     </Route></Route>
     <Route path="*" element={<NotFoundPage />} />
   </Routes>

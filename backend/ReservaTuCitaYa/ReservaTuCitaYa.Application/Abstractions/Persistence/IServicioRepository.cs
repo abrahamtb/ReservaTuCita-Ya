@@ -37,6 +37,8 @@ public interface IServicioRepository
         Guid servicioId,
         CancellationToken cancellationToken = default);
 
+    Task<ServicioSede?> ObtenerServicioSedeAsync(Guid servicioId, Guid sedeId, CancellationToken cancellationToken = default);
+
     void Agregar(Servicio servicio);
     void AgregarRelacion(ServicioSede servicioSede);
     Task GuardarAsync(CancellationToken cancellationToken = default);

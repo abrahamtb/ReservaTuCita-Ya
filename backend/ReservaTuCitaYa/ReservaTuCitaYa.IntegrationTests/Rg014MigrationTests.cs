@@ -10,7 +10,7 @@ public sealed class Rg014MigrationTests
     {
         var databaseName = $"ReservaTuCitaYa_RG014_{Guid.NewGuid():N}";
         var connectionString =
-            $"Server=.\\SQLEXPRESS;Database={databaseName};Trusted_Connection=True;Encrypt=False;TrustServerCertificate=True;";
+            $"Server=(localdb)\\MSSQLLocalDB;Database={databaseName};Trusted_Connection=True;Encrypt=False;TrustServerCertificate=True;";
         var options = new DbContextOptionsBuilder<ApplicationDbContext>()
             .UseSqlServer(connectionString)
             .Options;
