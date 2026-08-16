@@ -14,6 +14,7 @@ public sealed class DashboardController(
     ICurrentUser currentUser) : ApiControllerBase
 {
     [HttpGet("api/dashboard")]
+    [HttpGet("api/dashboard/resumen")]
     public async Task<ActionResult<DashboardResumenDto>> Obtener(
         [FromQuery] DateOnly fechaDesde,
         [FromQuery] DateOnly fechaHasta,
@@ -45,8 +46,8 @@ public sealed class DashboardController(
                 return Forbid();
             }
 
-            // Un administrador normal SIEMPRE usa
-            // su organización del contexto autenticado.
+            // Un administrador normal siempre usa
+            // la organización de su contexto autenticado.
             organizacionAutorizada =
                 currentUser.OrganizacionId.Value;
         }
