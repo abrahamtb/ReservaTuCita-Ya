@@ -8,7 +8,7 @@ using ReservaTuCitaYa.Infrastructure.Identity;
 namespace ReservaTuCitaYa.Api.Controllers;
 
 [ApiController]
-[Authorize]
+[Authorize(Roles = RoleNames.Administracion)]
 public sealed class DashboardController(
     IDashboardService dashboardService,
     ICurrentUser currentUser) : ApiControllerBase
@@ -18,15 +18,41 @@ public sealed class DashboardController(
         [FromQuery] DateOnly fechaDesde,
         [FromQuery] DateOnly fechaHasta,
         [FromQuery] Guid? sedeId,
+        [FromQuery] Guid? organizacionId,
         CancellationToken ct)
     {
-        if (!currentUser.OrganizacionId.HasValue)
+        Guid organizacionAutorizada;
+
+        // Superadministrador no está ligado a una organización específica.
+        if (currentUser.IsInRole(RoleNames.Superadministrador))
         {
-            return Forbid();
+            if (!organizacionId.HasValue ||
+                organizacionId.Value == Guid.Empty)
+            {
+                return BadRequest(new
+                {
+                    detail =
+                        "El Superadministrador debe indicar una organización."
+                });
+            }
+
+            organizacionAutorizada = organizacionId.Value;
+        }
+        else
+        {
+            if (!currentUser.OrganizacionId.HasValue)
+            {
+                return Forbid();
+            }
+
+            // Un administrador normal SIEMPRE usa
+            // su organización del contexto autenticado.
+            organizacionAutorizada =
+                currentUser.OrganizacionId.Value;
         }
 
         var result = await dashboardService.ObtenerAsync(
-            currentUser.OrganizacionId.Value,
+            organizacionAutorizada,
             fechaDesde,
             fechaHasta,
             sedeId,

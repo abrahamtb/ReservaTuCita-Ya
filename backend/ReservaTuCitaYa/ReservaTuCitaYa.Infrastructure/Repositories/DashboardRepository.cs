@@ -348,7 +348,7 @@ public sealed class DashboardRepository(
         // GRÁFICO: RESERVAS POR ESTADO
         // ========================================
 
-        var reservasPorEstado =
+        var reservasPorEstadoDb =
             await ReservasBase(
                     filtro.OrganizacionId,
                     filtro.SedeId)
@@ -356,12 +356,21 @@ public sealed class DashboardRepository(
                     r.Fecha >= filtro.FechaDesde &&
                     r.Fecha <= filtro.FechaHasta)
                 .GroupBy(r => r.EstadoReserva)
-                .Select(g =>
-                    new ReservaPorEstadoDto(
-                        g.Key.ToString(),
-                        g.Count()))
-                .OrderBy(x => x.Estado)
+                .Select(g => new
+                {
+                    Estado = g.Key,
+                    Cantidad = g.Count()
+                })
                 .ToListAsync(ct);
+
+        var reservasPorEstado =
+            reservasPorEstadoDb
+                .Select(x =>
+                    new ReservaPorEstadoDto(
+                        x.Estado.ToString(),
+                        x.Cantidad))
+                .OrderBy(x => x.Estado)
+                .ToList();
 
         // ========================================
         // GRÁFICO: INGRESOS POR DÍA
