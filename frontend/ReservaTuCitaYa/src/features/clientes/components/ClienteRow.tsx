@@ -39,15 +39,6 @@ interface Props {
 export function ClienteRow({ cliente, onVerDetalle, onEditar, onEliminar, onCambiarEstado }: Props) {
   const [showMenu, setShowMenu] = useState(false);
 
-  const editarCliente = () => {
-    alert(`Editar cliente ${cliente.nombres}`);
-  };
-
-  const eliminarCliente = () => {
-    if (confirm(`¿Eliminar cliente ${cliente.nombres}?`)) {
-      alert("Cliente eliminado (simulado)");
-    }
-  };
 
   return (
     <tr className="cliente-row">

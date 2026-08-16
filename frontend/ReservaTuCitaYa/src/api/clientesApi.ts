@@ -9,6 +9,7 @@ import {
 } from '../features/clientes/types/Cliente';
 
 export async function listarClientes(filtros: ClienteFiltros): Promise<PaginaResultado<ClienteListado>> {
+  void filtros;
   return apiRequest('/clientes', { method: 'GET' });
 }
 

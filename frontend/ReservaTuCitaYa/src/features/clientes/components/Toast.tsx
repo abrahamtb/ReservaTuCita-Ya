@@ -9,7 +9,7 @@ interface Props {
 
 export function Toast({ mensaje, tipo = "info", onClose }: Props) {
   useEffect(() => {
-    const timer = setTimeout(onClose, 3000); // se cierra a los 3 s
+    const timer = setTimeout(onClose, 3000); // se cierra a los 3 s
     return () => clearTimeout(timer);
   }, [onClose]);
 

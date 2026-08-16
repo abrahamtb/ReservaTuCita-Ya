@@ -17,6 +17,7 @@ export function AppLayout() {
         <nav className="nav flex-column gap-1">
           <NavLink className="nav-link" to="/">Inicio</NavLink>
           <NavLink className="nav-link" to="/organizaciones">Organizaciones</NavLink>
+          <NavLink className="nav-link" to="/atenciones/agenda">Agenda de atención</NavLink>
         </nav>
         <p className="small text-secondary mt-4">Sedes, categorías y servicios se administran dentro de cada organización.</p>
       </aside>

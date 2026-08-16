@@ -10,6 +10,8 @@ import { DashboardPage } from '../pages/DashboardPage'
 import { LoginPage } from '../pages/LoginPage'
 import { NotFoundPage } from '../pages/NotFoundPage'
 import ClientesPage from '../features/clientes/pages/ClientesPage'
+import { AttentionDetailPage } from '../features/atenciones/AttentionDetailPage'
+import { ProfessionalAgendaPage } from '../features/atenciones/ProfessionalAgendaPage'
 import ClienteFormPage from '../features/clientes/pages/ClientesFormPage'
 
 export function AppRoutes() {
@@ -36,6 +38,8 @@ export function AppRoutes() {
       <Route path="servicios/:id/editar" element={<ServiceFormPage />} />
       <Route path="clientes" element={<ClientesPage />} />
       <Route path="clientes/nuevo" element={<ClienteFormPage />} />
+      <Route path="atenciones/agenda" element={<ProfessionalAgendaPage />} />
+      <Route path="organizaciones/:organizationId/reservas/:reservationId/atencion" element={<AttentionDetailPage />} />
     </Route></Route>
     <Route path="*" element={<NotFoundPage />} />
   </Routes>
