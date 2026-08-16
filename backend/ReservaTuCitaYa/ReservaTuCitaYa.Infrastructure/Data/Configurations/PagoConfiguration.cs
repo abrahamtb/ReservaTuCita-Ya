@@ -42,6 +42,10 @@ namespace ReservaTuCitaYa.Infrastructure.Data.Configurations
                 .WithMany(m => m.Pagos)
                 .HasForeignKey(p => p.MetodoPagoId)
                 .OnDelete(DeleteBehavior.Restrict);
+            builder.HasOne<Reserva>()
+                .WithMany()
+                .HasForeignKey(p => p.ReservaId)
+                .OnDelete(DeleteBehavior.Restrict);
         }
     }
 }
