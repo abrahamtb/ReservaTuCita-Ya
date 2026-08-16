@@ -1,8 +1,10 @@
-﻿using System.Net;
+﻿using Microsoft.AspNetCore.Mvc.Testing;
+using ReservaTuCitaYa.Domain.Enums;
+using ReservaTuCitaYa.IntegrationTests.Api;
+using ReservaTuCitaYa.IntegrationTests.Infrastructure;
+using System.Net;
 using System.Net.Http.Json;
 using System.Text.Json;
-using Microsoft.AspNetCore.Mvc.Testing;
-using ReservaTuCitaYa.IntegrationTests.Api;
 using Xunit;
 
 namespace ReservaTuCitaYa.IntegrationTests.Api
@@ -172,6 +174,108 @@ namespace ReservaTuCitaYa.IntegrationTests.Api
             Assert.Equal(
                 HttpStatusCode.BadRequest,
                 response.StatusCode);
+        }
+
+        [Fact]
+        public async Task Dashboard_RutaResumen_DevuelveOk()
+        {
+            using var client = CrearCliente();
+
+            await ApiAuthenticationTests.LoginAsync(
+                client,
+                ReservaTuCitaYaApiFactory.AdminEmail);
+
+            var organizacionId =
+                await CrearOrganizacionAsync(client);
+
+            var response = await client.GetAsync(
+                $"/api/dashboard/resumen" +
+                $"?fechaDesde=2026-08-01" +
+                $"&fechaHasta=2026-08-16" +
+                $"&organizacionId={organizacionId}");
+
+            Assert.Equal(
+                HttpStatusCode.OK,
+                response.StatusCode);
+
+            var json =
+                await response.Content
+                    .ReadFromJsonAsync<JsonElement>();
+
+            Assert.Equal(
+                "2026-08-01",
+                json.GetProperty("fechaDesde").GetString());
+
+            Assert.Equal(
+                "2026-08-16",
+                json.GetProperty("fechaHasta").GetString());
+
+            Assert.True(
+                json.TryGetProperty(
+                    "reservasPorEstado",
+                    out _));
+        }
+
+        [Fact]
+        public async Task Dashboard_ReservasPorEstado_IncluyePorcentaje()
+        {
+            using var client = CrearCliente();
+
+            await ApiAuthenticationTests.LoginAsync(
+                client,
+                ReservaTuCitaYaApiFactory.AdminEmail);
+
+            var organizacionId =
+                await CrearOrganizacionAsync(client);
+
+            await TestDataSeeder.CrearReservaParaAtencionAsync(
+                factory.Services,
+                organizacionId,
+                EstadoReserva.Confirmada,
+                "DashPorcentaje1");
+
+            await TestDataSeeder.CrearReservaParaAtencionAsync(
+                factory.Services,
+                organizacionId,
+                EstadoReserva.Atendida,
+                "DashPorcentaje2");
+
+            var hoy = DateOnly.FromDateTime(DateTime.Today);
+
+            var response = await client.GetAsync(
+                $"/api/dashboard/resumen" +
+                $"?fechaDesde={hoy:yyyy-MM-dd}" +
+                $"&fechaHasta={hoy:yyyy-MM-dd}" +
+                $"&organizacionId={organizacionId}");
+
+            Assert.Equal(
+                HttpStatusCode.OK,
+                response.StatusCode);
+
+            var json =
+                await response.Content
+                    .ReadFromJsonAsync<JsonElement>();
+
+            var estados =
+                json.GetProperty("reservasPorEstado");
+
+            Assert.Equal(2, estados.GetArrayLength());
+
+            var porcentajes = estados
+                .EnumerateArray()
+                .Select(x =>
+                    x.GetProperty("porcentaje")
+                        .GetDecimal())
+                .ToList();
+
+            Assert.All(
+                porcentajes,
+                porcentaje =>
+                    Assert.Equal(50m, porcentaje));
+
+            Assert.Equal(
+                100m,
+                porcentajes.Sum());
         }
 
         private HttpClient CrearCliente() =>

@@ -363,12 +363,21 @@ public sealed class DashboardRepository(
                 })
                 .ToListAsync(ct);
 
+        var totalReservasPorEstado =
+            reservasPorEstadoDb.Sum(x => x.Cantidad);
+
         var reservasPorEstado =
             reservasPorEstadoDb
                 .Select(x =>
                     new ReservaPorEstadoDto(
                         x.Estado.ToString(),
-                        x.Cantidad))
+                        x.Cantidad,
+                        totalReservasPorEstado == 0
+                            ? 0m
+                            : Math.Round(
+                                x.Cantidad * 100m /
+                                totalReservasPorEstado,
+                                2)))
                 .OrderBy(x => x.Estado)
                 .ToList();
 

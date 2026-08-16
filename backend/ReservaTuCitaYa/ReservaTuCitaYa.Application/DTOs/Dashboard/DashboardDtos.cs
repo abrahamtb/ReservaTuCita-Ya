@@ -30,7 +30,8 @@ public sealed record ReservaPorDiaDto(
 
 public sealed record ReservaPorEstadoDto(
     string Estado,
-    int Cantidad);
+    int Cantidad,
+    decimal Porcentaje);
 
 public sealed record IngresoPorDiaDto(
     DateOnly Fecha,
