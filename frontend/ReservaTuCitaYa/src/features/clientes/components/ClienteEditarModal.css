@@ -1,0 +1,19 @@
+.modal-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.4);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 9999;
+}
+
+.modal-card {
+  background: #fff;
+  border-radius: 0.75rem;
+  padding: 2rem;
+  width: 500px;
+  max-height: 90vh;
+  overflow-y: auto;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+}
