@@ -13,6 +13,8 @@ import ClientesPage from '../features/clientes/pages/ClientesPage'
 import ClienteFormPage from '../features/clientes/pages/ClientesFormPage'
 import EmpleadosPage from '../features/empleados/pages/EmpleadosPage'
 import EmpleadoFormPage from '../features/empleados/pages/EmpleadoFormPage'
+import { PagosReservaPage } from '../features/pagos/pages/PagosReservaPage'
+import { PagosGlobalPage } from '../features/pagos/pages/PagosGlobalPage'
 
 export function AppRoutes() {
   return <Routes>
@@ -39,7 +41,9 @@ export function AppRoutes() {
       <Route path="clientes" element={<ClientesPage />} />
       <Route path="clientes/nuevo" element={<ClienteFormPage />} />
       <Route path="empleados" element={<EmpleadosPage />} />
-      <Route path="/empleados/nuevo" element={<EmpleadoFormPage />} />
+      <Route path="empleados/nuevo" element={<EmpleadoFormPage />} />
+      <Route path="pagos" element={<PagosGlobalPage />} />
+      <Route path="pagos/:reservaId" element={<PagosReservaPage />} />
     </Route></Route>
     <Route path="*" element={<NotFoundPage />} />
   </Routes>
