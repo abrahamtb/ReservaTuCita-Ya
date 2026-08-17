@@ -220,3 +220,73 @@ export interface MarcarNoAsistioRespuesta {
   estado: EstadoReserva
   fechaHoraRegistro: string
 }
+
+
+export interface IndicadorComparativo {
+  valorActual: number
+  valorAnterior: number
+  variacionPorcentaje?: number | null
+  sinBaseComparacion: boolean
+}
+
+export interface DashboardIndicadores {
+  reservasHoy: IndicadorComparativo
+  porAtenderHoy: IndicadorComparativo
+  atencionesCompletadas: IndicadorComparativo
+  cancelaciones: IndicadorComparativo
+  clientesNuevos: IndicadorComparativo
+  ingresosNetos: IndicadorComparativo
+}
+
+export interface ReservaPorDia {
+  fecha: string
+  cantidad: number
+}
+
+export interface ReservasPorEstado {
+  estado: EstadoReserva
+  cantidad: number
+}
+
+export interface IngresoPorDia {
+  fecha: string
+  ingresosBrutos: number
+  reembolsos: number
+  ingresosNetos: number
+}
+
+export interface TopServicioDashboard {
+  servicioId: string
+  nombre: string
+  cantidadReservas: number
+  porcentajeSobreTotal: number
+}
+
+export interface ProximaReservaDashboard {
+  reservaId: string
+  codigo: string
+  horaInicio: string
+  cliente: string
+  servicio: string
+  profesional?: string | null
+  estado: EstadoReserva
+}
+
+export interface DashboardFiltros {
+  fechaDesde: string
+  fechaHasta: string
+  sedeId?: string
+  organizacionId?: string
+}
+
+export interface DashboardResumen extends DashboardIndicadores {
+  fechaDesde: string
+  fechaHasta: string
+  sedeId?: string | null
+  fechaHoraConsulta: string
+  reservasPorDia: ReservaPorDia[]
+  reservasPorEstado: ReservasPorEstado[]
+  ingresosPorDia: IngresoPorDia[]
+  topServicios: TopServicioDashboard[]
+  proximasReservas: ProximaReservaDashboard[]
+}
