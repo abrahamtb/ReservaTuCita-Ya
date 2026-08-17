@@ -21,4 +21,5 @@ public sealed class Atencion : BaseEntity
 
     public Reserva Reserva { get; set; } = null!;
     public Servicio? ProximoServicio { get; set; }
+    public Calificacion? Calificacion { get; set; }
 }
