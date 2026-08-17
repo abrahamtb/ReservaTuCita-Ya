@@ -11,6 +11,7 @@ import { LoginPage } from '../pages/LoginPage'
 import { NotFoundPage } from '../pages/NotFoundPage'
 import ClientesPage from '../features/clientes/pages/ClientesPage'
 import ClienteFormPage from '../features/clientes/pages/ClientesFormPage'
+import { ReportsPage } from '../features/reportes/ReportsPage'
 
 export function AppRoutes() {
   return <Routes>
@@ -36,6 +37,7 @@ export function AppRoutes() {
       <Route path="servicios/:id/editar" element={<ServiceFormPage />} />
       <Route path="clientes" element={<ClientesPage />} />
       <Route path="clientes/nuevo" element={<ClienteFormPage />} />
+      <Route path="reportes" element={<ReportsPage />} />
     </Route></Route>
     <Route path="*" element={<NotFoundPage />} />
   </Routes>
