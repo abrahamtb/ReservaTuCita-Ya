@@ -11,7 +11,15 @@ export interface PageResult<T> {
   tieneSiguiente: boolean
 }
 
-export interface AuthUser { id: string; email: string; roles: string[] }
+export interface AuthUser {
+  id: string
+  email: string
+  roles: string[]
+  permisos: string[]
+  organizacion?: Option | null
+  clienteId?: string | null
+  empleadoId?: string | null
+}
 export interface Option { id: string; nombre: string }
 
 export interface Organization {
@@ -62,4 +70,153 @@ export interface ServicioRequest {
 
 export interface ProblemDetails {
   title?: string; detail?: string; status?: number; errors?: Record<string, string[]>
+}
+
+
+export type EstadoReserva =
+  | 'NoDefinido' | 'Pendiente' | 'Confirmada' | 'Presente' | 'EnAtencion'
+  | 'Atendida' | 'Reprogramada' | 'Cancelada' | 'NoAsistio'
+
+export type ResultadoAtencion = 'Completada' | 'Parcial' | 'Interrumpida'
+
+export interface EmpleadoLista {
+  id: string
+  organizacionId: string
+  numeroDocumento: string
+  nombres: string
+  apellidos: string
+  nombreCompleto: string
+  correo?: string | null
+  telefono?: string | null
+  cargo: string
+  especialidad?: string | null
+  esProfesional: boolean
+  cantidadSedes: number
+  cantidadServicios: number
+  estaActivo: boolean
+}
+
+export interface AgendaReserva {
+  reservaId: string
+  codigoReserva: string
+  clienteId: string
+  clienteNombre: string
+  servicioId: string
+  servicioNombre: string
+  sedeId: string
+  sedeNombre: string
+  horaInicio: string
+  horaFin: string
+  estado: EstadoReserva
+  cantidadParticipantes: number
+  atencionId?: string | null
+  fechaHoraPresencia?: string | null
+  fechaHoraInicioReal?: string | null
+  fechaHoraFinReal?: string | null
+}
+
+export interface AgendaProfesional {
+  profesionalId: string
+  profesionalNombre: string
+  fecha: string
+  totalReservas: number
+  reservas: AgendaReserva[]
+}
+
+export interface EntidadResumen { id: string; nombre: string }
+
+export interface AtencionDetalle {
+  id: string
+  reservaId: string
+  organizacionId: string
+  codigoReserva: string
+  estadoReserva: EstadoReserva
+  cliente: EntidadResumen
+  servicio: EntidadResumen
+  sede: EntidadResumen
+  profesional?: EntidadResumen | null
+  fecha: string
+  horaInicioProgramada: string
+  horaFinProgramada: string
+  fechaHoraPresencia?: string | null
+  fechaHoraInicioReal?: string | null
+  fechaHoraFinReal?: string | null
+  minutosEspera?: number | null
+  duracionRealMinutos?: number | null
+  resultado?: ResultadoAtencion | null
+  observaciones?: string | null
+  recomendaciones?: string | null
+  proximoServicio?: EntidadResumen | null
+  proximaFechaSugerida?: string | null
+}
+
+export interface FinalizarAtencionRequest {
+  resultado: ResultadoAtencion
+  observaciones?: string | null
+  recomendaciones?: string | null
+  proximoServicioId?: string | null
+  proximaFechaSugerida?: string | null
+}
+
+export interface HistorialReserva {
+  id: string
+  estadoAnterior?: EstadoReserva | null
+  estadoNuevo: EstadoReserva
+  tipoAccion: string
+  motivo?: string | null
+  observacion?: string | null
+  fechaAccion: string
+}
+
+export interface ReservaDetalle {
+  id: string
+  organizacionId: string
+  codigo: string
+  estado: EstadoReserva
+  cliente: EntidadResumen
+  servicio: EntidadResumen
+  sede: EntidadResumen
+  profesional?: EntidadResumen | null
+  recurso?: EntidadResumen | null
+  fecha: string
+  horaInicio: string
+  horaFinServicio: string
+  duracionMinutos: number
+  cantidadParticipantes: number
+  observaciones?: string | null
+  historial: HistorialReserva[]
+}
+
+export interface MarcarPresenteRespuesta {
+  reservaId: string
+  atencionId: string
+  codigoReserva: string
+  estado: EstadoReserva
+  fechaHoraPresencia: string
+}
+
+export interface IniciarAtencionRespuesta {
+  reservaId: string
+  atencionId: string
+  codigoReserva: string
+  estado: EstadoReserva
+  fechaHoraInicioReal: string
+}
+
+export interface FinalizarAtencionRespuesta {
+  reservaId: string
+  atencionId: string
+  codigoReserva: string
+  estado: EstadoReserva
+  resultado: ResultadoAtencion
+  fechaHoraFinReal: string
+}
+
+export type MarcarNoAsistioRequest = Record<string, never>
+
+export interface MarcarNoAsistioRespuesta {
+  reservaId: string
+  codigoReserva: string
+  estado: EstadoReserva
+  fechaHoraRegistro: string
 }
