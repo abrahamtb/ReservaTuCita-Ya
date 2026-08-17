@@ -8,3 +8,4 @@ export function ProtectedRoute() {
   const authorized = user.roles.some(role => role === 'Administrador' || role === 'Superadministrador')
   return authorized ? <Outlet /> : <Navigate to="/acceso-denegado" replace />
 }
+
