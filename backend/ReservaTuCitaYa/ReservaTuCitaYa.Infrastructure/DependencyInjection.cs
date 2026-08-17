@@ -83,6 +83,8 @@ public static class DependencyInjection
         services.AddScoped<IPagoRepository, PagoRepository>();
         services.AddScoped<IReembolsoRepository, ReembolsoRepository>();
         services.AddScoped<IPagoService, PagoService>();
+        services.AddScoped<ICalificacionService, CalificacionService>();
+        services.AddScoped<ICalificacionRepository, CalificacionRepository>();
 
         return services;
     }

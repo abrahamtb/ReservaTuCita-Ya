@@ -54,6 +54,9 @@ namespace ReservaTuCitaYa.Infrastructure.Data
         public DbSet<HistorialReserva> HistorialReservas => Set<HistorialReserva>();
         public DbSet<Atencion> Atenciones => Set<Atencion>();
 
+        public DbSet<Calificacion> Calificaciones { get; set; }
+
+
         protected override void OnModelCreating(ModelBuilder builder)
         {
             base.OnModelCreating(builder);
