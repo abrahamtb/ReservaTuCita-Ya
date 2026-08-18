@@ -4,8 +4,7 @@ import { AppLayout } from '../components/layout/AppLayout'
 import { AttentionDetailPage } from '../features/atenciones/AttentionDetailPage'
 import { ProfessionalAgendaPage } from '../features/atenciones/ProfessionalAgendaPage'
 import { CategoriesPage, CategoryDetailPage, CategoryFormPage } from '../features/categorias/CategoryPages'
-import ClienteFormPage from '../features/clientes/pages/ClientesFormPage'
-import ClientesPage from '../features/clientes/pages/ClientesPage'
+import { ClienteActualDetailPage, ClienteActualFormPage, ClientesActualPage } from '../features/clientes/ClientePages'
 import { DisponibilidadPage } from '../features/disponibilidad/DisponibilidadPage'
 import { EmpleadoDetailPage, EmpleadoFormPage, EmpleadosPage } from '../features/empleados/EmpleadoPages'
 import { HorariosSedePage } from '../features/horarios/HorariosSedePage'
@@ -56,12 +55,14 @@ export function AppRoutes() {
       <Route path="organizaciones/:organizationId/servicios/nuevo" element={<ServiceFormPage />} />
       <Route path="servicios/:id" element={<ServiceDetailPage />} />
       <Route path="servicios/:id/editar" element={<ServiceFormPage />} />
+      <Route path="organizaciones/:organizationId/clientes" element={<ClientesActualPage />} />
+      <Route path="organizaciones/:organizationId/clientes/nuevo" element={<ClienteActualFormPage />} />
+      <Route path="organizaciones/:organizationId/clientes/:id" element={<ClienteActualDetailPage />} />
+      <Route path="organizaciones/:organizationId/clientes/:id/editar" element={<ClienteActualFormPage />} />
       <Route path="organizaciones/:organizationId/empleados" element={<EmpleadosPage />} />
       <Route path="organizaciones/:organizationId/empleados/nuevo" element={<EmpleadoFormPage />} />
       <Route path="organizaciones/:organizationId/empleados/:id" element={<EmpleadoDetailPage />} />
       <Route path="organizaciones/:organizationId/empleados/:id/editar" element={<EmpleadoFormPage />} />
-      <Route path="clientes" element={<ClientesPage />} />
-      <Route path="clientes/nuevo" element={<ClienteFormPage />} />
       <Route path="atenciones/agenda" element={<ProfessionalAgendaPage />} />
       <Route path="organizaciones/:organizationId/reservas/:reservationId/atencion" element={<AttentionDetailPage />} />
     </Route></Route>
