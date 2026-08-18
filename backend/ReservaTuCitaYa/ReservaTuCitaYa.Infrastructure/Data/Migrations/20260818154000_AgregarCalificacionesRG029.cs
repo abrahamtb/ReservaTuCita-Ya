@@ -1,9 +1,12 @@
+using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable
 
 namespace ReservaTuCitaYa.Infrastructure.Data.Migrations;
 
+[DbContext(typeof(ApplicationDbContext))]
+[Migration("20260818154000_AgregarCalificacionesRG029")]
 public partial class AgregarCalificacionesRG029 : Migration
 {
     protected override void Up(MigrationBuilder migrationBuilder)
