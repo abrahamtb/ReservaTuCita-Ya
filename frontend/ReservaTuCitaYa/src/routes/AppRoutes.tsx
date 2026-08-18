@@ -1,19 +1,20 @@
 import { Route, Routes } from 'react-router-dom'
 import { ProtectedRoute } from '../auth/ProtectedRoute'
 import { AppLayout } from '../components/layout/AppLayout'
+import { AttentionDetailPage } from '../features/atenciones/AttentionDetailPage'
+import { ProfessionalAgendaPage } from '../features/atenciones/ProfessionalAgendaPage'
 import { CategoriesPage, CategoryDetailPage, CategoryFormPage } from '../features/categorias/CategoryPages'
+import ClienteFormPage from '../features/clientes/pages/ClientesFormPage'
+import ClientesPage from '../features/clientes/pages/ClientesPage'
 import { EmpleadoDetailPage, EmpleadoFormPage, EmpleadosPage } from '../features/empleados/EmpleadoPages'
 import { OrganizationDetailPage, OrganizationFormPage, OrganizationsPage } from '../features/organizaciones/OrganizationPages'
+import { ReportsPage } from '../features/reportes/ReportsPage'
 import { SedeDetailPage, SedeFormPage, SedesPage } from '../features/sedes/SedePages'
 import { ServiceDetailPage, ServiceFormPage, ServicesPage } from '../features/servicios/ServicePages'
 import { AccessDeniedPage } from '../pages/AccessDeniedPage'
 import { DashboardPage } from '../pages/DashboardPage'
 import { LoginPage } from '../pages/LoginPage'
 import { NotFoundPage } from '../pages/NotFoundPage'
-import ClientesPage from '../features/clientes/pages/ClientesPage'
-import { AttentionDetailPage } from '../features/atenciones/AttentionDetailPage'
-import { ProfessionalAgendaPage } from '../features/atenciones/ProfessionalAgendaPage'
-import ClienteFormPage from '../features/clientes/pages/ClientesFormPage'
 
 export function AppRoutes() {
   return <Routes>
@@ -21,6 +22,7 @@ export function AppRoutes() {
     <Route path="/acceso-denegado" element={<AccessDeniedPage />} />
     <Route element={<ProtectedRoute />}><Route element={<AppLayout />}>
       <Route index element={<DashboardPage />} />
+      <Route path="reportes" element={<ReportsPage />} />
       <Route path="organizaciones" element={<OrganizationsPage />} />
       <Route path="organizaciones/nueva" element={<OrganizationFormPage />} />
       <Route path="organizaciones/:id" element={<OrganizationDetailPage />} />
