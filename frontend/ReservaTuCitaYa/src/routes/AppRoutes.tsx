@@ -6,9 +6,16 @@ import { ProfessionalAgendaPage } from '../features/atenciones/ProfessionalAgend
 import { CategoriesPage, CategoryDetailPage, CategoryFormPage } from '../features/categorias/CategoryPages'
 import ClienteFormPage from '../features/clientes/pages/ClientesFormPage'
 import ClientesPage from '../features/clientes/pages/ClientesPage'
+import { DisponibilidadPage } from '../features/disponibilidad/DisponibilidadPage'
 import { EmpleadoDetailPage, EmpleadoFormPage, EmpleadosPage } from '../features/empleados/EmpleadoPages'
+import { HorariosSedePage } from '../features/horarios/HorariosSedePage'
 import { OrganizationDetailPage, OrganizationFormPage, OrganizationsPage } from '../features/organizaciones/OrganizationPages'
+import { PagosReservaPage } from '../features/pagos/PagosReservaPage'
+import { RecursoDetailPage, RecursoFormPage, RecursosPage } from '../features/recursos/RecursoPages'
 import { ReportsPage } from '../features/reportes/ReportsPage'
+import { ReservaDetailPage } from '../features/reservas/ReservaDetailPage'
+import { ReservaFormPage } from '../features/reservas/ReservaFormPage'
+import { ReservasPage } from '../features/reservas/ReservasPage'
 import { SedeDetailPage, SedeFormPage, SedesPage } from '../features/sedes/SedePages'
 import { ServiceDetailPage, ServiceFormPage, ServicesPage } from '../features/servicios/ServicePages'
 import { AccessDeniedPage } from '../pages/AccessDeniedPage'
@@ -22,6 +29,11 @@ export function AppRoutes() {
     <Route path="/acceso-denegado" element={<AccessDeniedPage />} />
     <Route element={<ProtectedRoute />}><Route element={<AppLayout />}>
       <Route index element={<DashboardPage />} />
+      <Route path="reservas" element={<ReservasPage />} />
+      <Route path="reservas/:id" element={<ReservaDetailPage />} />
+      <Route path="organizaciones/:organizationId/reservas/nueva" element={<ReservaFormPage />} />
+      <Route path="pagos/:reservaId" element={<PagosReservaPage />} />
+      <Route path="disponibilidad" element={<DisponibilidadPage />} />
       <Route path="reportes" element={<ReportsPage />} />
       <Route path="organizaciones" element={<OrganizationsPage />} />
       <Route path="organizaciones/nueva" element={<OrganizationFormPage />} />
@@ -31,6 +43,11 @@ export function AppRoutes() {
       <Route path="organizaciones/:organizationId/sedes/nueva" element={<SedeFormPage />} />
       <Route path="sedes/:id" element={<SedeDetailPage />} />
       <Route path="sedes/:id/editar" element={<SedeFormPage />} />
+      <Route path="organizaciones/:organizationId/sedes/:sedeId/recursos" element={<RecursosPage />} />
+      <Route path="organizaciones/:organizationId/sedes/:sedeId/recursos/nuevo" element={<RecursoFormPage />} />
+      <Route path="organizaciones/:organizationId/sedes/:sedeId/recursos/:id" element={<RecursoDetailPage />} />
+      <Route path="organizaciones/:organizationId/sedes/:sedeId/recursos/:id/editar" element={<RecursoFormPage />} />
+      <Route path="organizaciones/:organizationId/sedes/:sedeId/horarios" element={<HorariosSedePage />} />
       <Route path="organizaciones/:organizationId/categorias" element={<CategoriesPage />} />
       <Route path="organizaciones/:organizationId/categorias/nueva" element={<CategoryFormPage />} />
       <Route path="categorias/:id" element={<CategoryDetailPage />} />
