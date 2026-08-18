@@ -2,6 +2,7 @@ import { Route, Routes } from 'react-router-dom'
 import { ProtectedRoute } from '../auth/ProtectedRoute'
 import { AppLayout } from '../components/layout/AppLayout'
 import { CategoriesPage, CategoryDetailPage, CategoryFormPage } from '../features/categorias/CategoryPages'
+import { EmpleadoDetailPage, EmpleadoFormPage, EmpleadosPage } from '../features/empleados/EmpleadoPages'
 import { OrganizationDetailPage, OrganizationFormPage, OrganizationsPage } from '../features/organizaciones/OrganizationPages'
 import { SedeDetailPage, SedeFormPage, SedesPage } from '../features/sedes/SedePages'
 import { ServiceDetailPage, ServiceFormPage, ServicesPage } from '../features/servicios/ServicePages'
@@ -36,6 +37,10 @@ export function AppRoutes() {
       <Route path="organizaciones/:organizationId/servicios/nuevo" element={<ServiceFormPage />} />
       <Route path="servicios/:id" element={<ServiceDetailPage />} />
       <Route path="servicios/:id/editar" element={<ServiceFormPage />} />
+      <Route path="organizaciones/:organizationId/empleados" element={<EmpleadosPage />} />
+      <Route path="organizaciones/:organizationId/empleados/nuevo" element={<EmpleadoFormPage />} />
+      <Route path="organizaciones/:organizationId/empleados/:id" element={<EmpleadoDetailPage />} />
+      <Route path="organizaciones/:organizationId/empleados/:id/editar" element={<EmpleadoFormPage />} />
       <Route path="clientes" element={<ClientesPage />} />
       <Route path="clientes/nuevo" element={<ClienteFormPage />} />
       <Route path="atenciones/agenda" element={<ProfessionalAgendaPage />} />
