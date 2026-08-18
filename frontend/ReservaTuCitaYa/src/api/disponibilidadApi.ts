@@ -1,6 +1,6 @@
 import { apiRequest, queryString } from './apiClient'
 
-export interface SlotDisponible {
+export interface HorarioDisponible {
   horaInicio: string
   horaFinServicio: string
   horaFinOcupacion: string
@@ -10,7 +10,7 @@ export interface SlotDisponible {
   recursoNombre?: string | null
   capacidadDisponible?: number | null
 }
-export interface DiaDisponible { fecha: string; estaDisponible: boolean; horarios: SlotDisponible[] }
+export interface DiaDisponible { fecha: string; estaDisponible: boolean; horarios: HorarioDisponible[] }
 export interface DisponibilidadRespuesta {
   sedeId: string
   servicioId: string
