@@ -429,9 +429,10 @@ public sealed class AtencionService(
                             TipoErrorOperacion.Conflicto);
                 }
 
-                var hoy = DateOnly.FromDateTime(DateTime.Now);
+                var ahora = DateTime.Now;
+                var fechaHoraProgramada = reserva.Fecha.ToDateTime(reserva.HoraInicio);
 
-                if (reserva.Fecha > hoy)
+                if (fechaHoraProgramada > ahora)
                 {
                     return ResultadoOperacion<MarcarNoAsistioRespuesta>
                         .Fallo(
