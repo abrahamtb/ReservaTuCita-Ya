@@ -37,6 +37,18 @@ namespace ReservaTuCitaYa.Infrastructure.Data.Configurations
                    .WithOne(a => a.Calificacion)
                    .HasForeignKey<Calificacion>(c => c.AtencionId)
                    .OnDelete(DeleteBehavior.Restrict);
+
+            // Atencion is required and has a global soft-delete filter.  The
+            // dependent must use the same visibility rule to avoid returning
+            // a Calificacion whose required principal was filtered out.
+            builder.HasQueryFilter(c =>
+                !c.EstaEliminado &&
+                !c.Reserva.EstaEliminado &&
+                !c.Reserva.Organizacion.EstaEliminado &&
+                !c.Reserva.Sede.EstaEliminado &&
+                !c.Reserva.Cliente.EstaEliminado &&
+                !c.Reserva.Servicio.EstaEliminado &&
+                !c.Atencion.EstaEliminado);
         }
     }
 }
