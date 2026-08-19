@@ -12,7 +12,7 @@ namespace ReservaTuCitaYa.Infrastructure.Data.Seed
         private static readonly Dictionary<string, string[]> MatrizPorRol = new()
         {
             [RoleNames.Superadministrador] = Permissions.Todos.ToArray(),
-            [RoleNames.Administrador] = Permissions.Todos.ToArray(), // todos los permisos de su organización
+            [RoleNames.Administrador] = Permissions.Todos.ToArray(),
             [RoleNames.Recepcionista] = new[]
             {
                 Permissions.Clientes.Ver, Permissions.Clientes.Crear, Permissions.Clientes.Editar,
@@ -36,7 +36,7 @@ namespace ReservaTuCitaYa.Infrastructure.Data.Seed
                 Permissions.Reservas.Ver, Permissions.Reservas.Crear,
                 Permissions.Reservas.Reprogramar, Permissions.Reservas.Cancelar,
                 Permissions.Pagos.Ver,
-                Permissions.Calificaciones.Crear,
+                Permissions.Calificaciones.Ver, Permissions.Calificaciones.Crear,
             },
         };
 
