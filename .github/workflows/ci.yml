@@ -59,5 +59,8 @@ jobs:
       - name: Build
         run: dotnet build ReservaTuCitaYa.sln --configuration Release --no-restore
 
-      - name: Test
-        run: dotnet test ReservaTuCitaYa.sln --configuration Release --no-build --verbosity normal
+      - name: Unit tests
+        run: dotnet test ReservaTuCitaYa.UnitTests/ReservaTuCitaYa.UnitTests.csproj --configuration Release --no-build --verbosity normal --logger "console;verbosity=detailed"
+
+      - name: Integration tests
+        run: dotnet test ReservaTuCitaYa.IntegrationTests/ReservaTuCitaYa.IntegrationTests.csproj --configuration Release --no-build --verbosity normal --logger "console;verbosity=detailed" -m:1
