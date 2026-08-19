@@ -1,5 +1,6 @@
 import { apiRequest, queryString } from './apiClient'
 import type { EmpleadoLista, EstadoFiltro, PageResult } from '../types'
+export type { EmpleadoLista } from '../types'
 
 export type TipoDocumentoEmpleado = 'NoDefinido' | 'DNI' | 'CarnetExtranjeria' | 'Pasaporte' | 'RUC'
 
