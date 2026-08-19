@@ -68,7 +68,16 @@ export const listarEmpleados = (
   filtros: EmpleadoFiltros = {},
   signal?: AbortSignal,
 ) => apiRequest<PageResult<EmpleadoLista>>(
-  `/api/organizaciones/${organizacionId}/empleados${queryString(filtros)}`,
+  `/api/organizaciones/${organizacionId}/empleados${queryString({
+    busqueda: filtros.busqueda,
+    tipoDocumento: filtros.tipoDocumento,
+    esProfesional: filtros.esProfesional,
+    estado: filtros.estado,
+    sedeId: filtros.sedeId,
+    servicioId: filtros.servicioId,
+    pagina: filtros.pagina,
+    tamanoPagina: filtros.tamanoPagina,
+  })}`,
   { signal },
 )
 
