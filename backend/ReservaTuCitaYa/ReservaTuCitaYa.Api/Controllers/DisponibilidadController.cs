@@ -4,24 +4,22 @@ using ReservaTuCitaYa.Application.Common;
 using ReservaTuCitaYa.Application.DTOs.Disponibilidad;
 using ReservaTuCitaYa.Application.Interfaces;
 using ReservaTuCitaYa.Application.Services;
-using ReservaTuCitaYa.Infrastructure.Identity;
+using ReservaTuCitaYa.Domain.Common;
 namespace ReservaTuCitaYa.Api.Controllers;
 
 [ApiController]
-[Authorize(Roles = RoleNames.Administracion)]
+[Authorize(Policy = Permissions.Reservas.Ver)]
 public sealed class DisponibilidadController(IDisponibilidadService service) : ApiControllerBase
 {
     [HttpGet("api/disponibilidad")]
     public async Task<ActionResult<DisponibilidadRespuestaDto>> Consultar(
         [FromQuery] Guid sedeId, [FromQuery] Guid servicioId,
         [FromQuery] DateOnly fechaDesde, [FromQuery] DateOnly fechaHasta,
-        [FromQuery] Guid? profesionalId, [FromQuery] Guid? recursoId,
-        CancellationToken ct)
+        [FromQuery] Guid? profesionalId, [FromQuery] Guid? recursoId, CancellationToken ct)
     {
         var result = await service.ConsultarAsync(
             new ConsultarDisponibilidadSolicitud(sedeId, servicioId, fechaDesde, fechaHasta, profesionalId, recursoId), ct);
-        return result.EsExitoso && result.Valor is not null
-            ? Ok(result.Valor) : DisponibilidadProblem(result.Error, result.TipoError);
+        return result.EsExitoso && result.Valor is not null ? Ok(result.Valor) : DisponibilidadProblem(result.Error, result.TipoError);
     }
 
     [HttpGet("api/disponibilidad/profesionales")]
@@ -29,8 +27,7 @@ public sealed class DisponibilidadController(IDisponibilidadService service) : A
         [FromQuery] Guid sedeId, [FromQuery] Guid servicioId, [FromQuery] DateOnly? fecha, CancellationToken ct)
     {
         var result = await service.ListarProfesionalesCompatiblesAsync(sedeId, servicioId, fecha, ct);
-        return result.EsExitoso && result.Valor is not null
-            ? Ok(result.Valor) : DisponibilidadProblem(result.Error, result.TipoError);
+        return result.EsExitoso && result.Valor is not null ? Ok(result.Valor) : DisponibilidadProblem(result.Error, result.TipoError);
     }
 
     [HttpGet("api/disponibilidad/recursos")]
@@ -38,8 +35,7 @@ public sealed class DisponibilidadController(IDisponibilidadService service) : A
         [FromQuery] Guid sedeId, [FromQuery] Guid servicioId, [FromQuery] DateOnly? fecha, CancellationToken ct)
     {
         var result = await service.ListarRecursosCompatiblesAsync(sedeId, servicioId, fecha, ct);
-        return result.EsExitoso && result.Valor is not null
-            ? Ok(result.Valor) : DisponibilidadProblem(result.Error, result.TipoError);
+        return result.EsExitoso && result.Valor is not null ? Ok(result.Valor) : DisponibilidadProblem(result.Error, result.TipoError);
     }
 
     private ObjectResult DisponibilidadProblem(string? detail, TipoErrorOperacion errorType)
