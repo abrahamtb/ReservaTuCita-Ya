@@ -1,37 +1,47 @@
-﻿using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using ReservaTuCitaYa.Application.DTOs.Pagos;
 using ReservaTuCitaYa.Application.Interfaces;
-using ReservaTuCitaYa.Domain.Common;
 
 namespace ReservaTuCitaYa.Api.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
-    [Authorize]
     public sealed class PagosController : ControllerBase
     {
         private readonly IPagoService _pagoService;
-        public PagosController(IPagoService pagoService) => _pagoService = pagoService;
+
+        public PagosController(IPagoService pagoService)
+        {
+            _pagoService = pagoService;
+        }
 
         [HttpGet("resumen/{reservaId}")]
-        [Authorize(Policy = Permissions.Pagos.Ver)]
         public async Task<ActionResult<ResumenPagoReservaDto>> ObtenerResumen(Guid reservaId)
-            => Ok(await _pagoService.ObtenerResumenAsync(reservaId));
+        {
+            var resumen = await _pagoService.ObtenerResumenAsync(reservaId);
+            return Ok(resumen);
+        }
 
         [HttpGet("{reservaId}")]
-        [Authorize(Policy = Permissions.Pagos.Ver)]
         public async Task<ActionResult<IEnumerable<PagoDto>>> ListarPagos(Guid reservaId)
-            => Ok(await _pagoService.ListarPagosAsync(reservaId));
+        {
+            var pagos = await _pagoService.ListarPagosAsync(reservaId);
+            return Ok(pagos);
+        }
 
         [HttpPost("{reservaId}")]
-        [Authorize(Policy = Permissions.Pagos.Registrar)]
         public async Task<ActionResult<PagoDto>> RegistrarPago(Guid reservaId, [FromBody] CrearPagoRequest request)
-            => Ok(await _pagoService.RegistrarPagoAsync(reservaId, request));
+        {
+            var pago = await _pagoService.RegistrarPagoAsync(reservaId, request);
+            return Ok(pago);
+        }
 
         [HttpPut("anular/{pagoId}")]
-        [Authorize(Policy = Permissions.Pagos.Anular)]
         public async Task<ActionResult<PagoDto>> AnularPago(Guid pagoId, [FromBody] AnularPagoRequest request)
-            => Ok(await _pagoService.AnularPagoAsync(pagoId, request));
+        {
+            var pago = await _pagoService.AnularPagoAsync(pagoId, request);
+            return Ok(pago);
+        }
     }
+
 }

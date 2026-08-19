@@ -12,10 +12,9 @@ namespace ReservaTuCitaYa.Infrastructure.Data.Seed
         private static readonly Dictionary<string, string[]> MatrizPorRol = new()
         {
             [RoleNames.Superadministrador] = Permissions.Todos.ToArray(),
-            [RoleNames.Administrador] = Permissions.Todos.ToArray(),
+            [RoleNames.Administrador] = Permissions.Todos.ToArray(), // todos los permisos de su organización
             [RoleNames.Recepcionista] = new[]
             {
-                Permissions.Sedes.Ver,
                 Permissions.Clientes.Ver, Permissions.Clientes.Crear, Permissions.Clientes.Editar,
                 Permissions.Servicios.Ver,
                 Permissions.Empleados.Ver,
@@ -28,18 +27,16 @@ namespace ReservaTuCitaYa.Infrastructure.Data.Seed
             },
             [RoleNames.Profesional] = new[]
             {
-                Permissions.Empleados.Ver,
                 Permissions.Reservas.Ver,
                 Permissions.Atenciones.Ver, Permissions.Atenciones.MarcarPresente,
                 Permissions.Atenciones.Iniciar, Permissions.Atenciones.Finalizar,
             },
             [RoleNames.Cliente] = new[]
             {
-                Permissions.Sedes.Ver, Permissions.Servicios.Ver,
                 Permissions.Reservas.Ver, Permissions.Reservas.Crear,
                 Permissions.Reservas.Reprogramar, Permissions.Reservas.Cancelar,
                 Permissions.Pagos.Ver,
-                Permissions.Calificaciones.Ver, Permissions.Calificaciones.Crear,
+                Permissions.Calificaciones.Crear,
             },
         };
 
@@ -48,7 +45,9 @@ namespace ReservaTuCitaYa.Infrastructure.Data.Seed
             RoleManager<IdentityRole> roleManager,
             ILogger logger)
         {
-            var permisosPorCodigo = await db.Permissions.ToDictionaryAsync(p => p.Codigo, p => p.Id);
+            var permisosPorCodigo = await db.Permissions
+                .ToDictionaryAsync(p => p.Codigo, p => p.Id);
+
             var totalNuevos = 0;
 
             foreach (var (nombreRol, codigosPermiso) in MatrizPorRol)
@@ -69,19 +68,31 @@ namespace ReservaTuCitaYa.Infrastructure.Data.Seed
                     .Where(codigo => permisosPorCodigo.ContainsKey(codigo))
                     .Select(codigo => permisosPorCodigo[codigo])
                     .Where(permissionId => !existentes.Contains(permissionId))
-                    .Select(permissionId => new RolePermission { RoleId = rol.Id, PermissionId = permissionId })
+                    .Select(permissionId => new RolePermission
+                    {
+                        RoleId = rol.Id,
+                        PermissionId = permissionId
+                    })
                     .ToList();
 
                 if (nuevos.Count > 0)
                 {
                     db.RolePermissions.AddRange(nuevos);
                     totalNuevos += nuevos.Count;
-                    logger.LogInformation("Se asignaron {Cantidad} permisos nuevos al rol {Rol}.", nuevos.Count, nombreRol);
+                    logger.LogInformation(
+                        "Se asignaron {Cantidad} permisos nuevos al rol {Rol}.",
+                        nuevos.Count, nombreRol);
                 }
             }
 
-            if (totalNuevos > 0) await db.SaveChangesAsync();
-            else logger.LogInformation("La matriz de permisos por rol ya estaba completa, no se agregó nada.");
+            if (totalNuevos > 0)
+            {
+                await db.SaveChangesAsync();
+            }
+            else
+            {
+                logger.LogInformation("La matriz de permisos por rol ya estaba completa, no se agregó nada.");
+            }
         }
     }
 }
