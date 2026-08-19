@@ -15,7 +15,7 @@ export function LoginPage() {
     catch (caught) { setError(caught) } finally { setBusy(false) }
   }
   return <main className="login-page"><form className="card shadow-sm login-card" onSubmit={submit}>
-    <div className="card-body p-4"><h1 className="h3 mb-1">Reserva tu Cita Ya</h1><p className="text-secondary mb-4">Acceso administrativo</p>
+    <div className="card-body p-4"><h1 className="h3 mb-1">Reserva tu Cita Ya</h1><p className="text-secondary mb-4">Acceso al sistema</p>
       {error ? <ErrorAlert error={error} /> : null}
       <label className="form-label">Correo</label><input className="form-control mb-3" type="email" required value={email} onChange={e => setEmail(e.target.value)} autoComplete="username" />
       <label className="form-label">Contraseña</label><input className="form-control mb-3" type="password" required value={password} onChange={e => setPassword(e.target.value)} autoComplete="current-password" />
