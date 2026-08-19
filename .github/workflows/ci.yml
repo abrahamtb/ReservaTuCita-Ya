@@ -64,6 +64,8 @@ jobs:
 
       - name: Integration tests
         run: dotnet test ReservaTuCitaYa.IntegrationTests/ReservaTuCitaYa.IntegrationTests.csproj --configuration Release --no-build --verbosity normal --logger "trx;LogFileName=integration.trx" -m:1
+        env:
+          ConnectionStrings__DefaultConnection: 'Server=(localdb)\MSSQLLocalDB;Database=ReservaTuCitaYa_CI_Bootstrap;Trusted_Connection=True;TrustServerCertificate=True;'
 
       - name: Upload integration test results
         if: always()
