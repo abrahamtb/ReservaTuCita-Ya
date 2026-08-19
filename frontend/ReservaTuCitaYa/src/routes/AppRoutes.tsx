@@ -23,7 +23,7 @@ import { UsuariosRolesPage } from '../features/seguridad/UsuariosRolesPage'
 import { SedeDetailPage, SedeFormPage, SedesPage } from '../features/sedes/SedePages'
 import { ServiceDetailPage, ServiceFormPage, ServicesPage } from '../features/servicios/ServicePages'
 import { AccessDeniedPage } from '../pages/AccessDeniedPage'
-import { DashboardPage } from '../pages/DashboardPage'
+import { HomePage } from '../pages/HomePage'
 import { LoginPage } from '../pages/LoginPage'
 import { NotFoundPage } from '../pages/NotFoundPage'
 
@@ -32,7 +32,7 @@ export function AppRoutes() {
     <Route path="/login" element={<LoginPage />} />
     <Route path="/acceso-denegado" element={<AccessDeniedPage />} />
     <Route element={<ProtectedRoute />}><Route element={<AppLayout />}>
-      <Route index element={<DashboardPage />} />
+      <Route index element={<HomePage />} />
       <Route path="reservas" element={<ReservasPage />} />
       <Route path="reservas/:id" element={<ReservaDetailPage />} />
       <Route path="organizaciones/:organizationId/reservas/nueva" element={<ReservaFormPage />} />
