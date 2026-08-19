@@ -9,6 +9,8 @@ export function AppLayout() {
   const has = (permission: string) => permisos.has(permission)
   const isClient = roles.includes('Cliente')
   const isProfessional = roles.includes('Profesional')
+  const isReception = roles.includes('Recepcionista')
+  const isAdmin = roles.includes('Administrador') || roles.includes('Superadministrador')
   const organizationPath = (suffix: string) => orgId ? `/organizaciones/${orgId}/${suffix}` : '/organizaciones'
   const primaryRole = roles[0] ?? 'Usuario'
 
@@ -24,21 +26,24 @@ export function AppLayout() {
       <aside className="app-sidebar">
         <div className="small fw-bold text-secondary text-uppercase px-3 mb-2">Gestión</div>
         <nav className="nav flex-column gap-1">
-          {has('dashboard.ver') && <NavLink className="nav-link" to="/">Dashboard</NavLink>}
-          {has('clientes.ver') && <NavLink className="nav-link" to={organizationPath('clientes')}>Clientes</NavLink>}
-          {has('empleados.ver') && <NavLink className="nav-link" to={organizationPath('empleados')}>Empleados y profesionales</NavLink>}
-          {has('servicios.ver') && <NavLink className="nav-link" to={organizationPath('servicios')}>Servicios</NavLink>}
-          {has('recursos.ver') && <NavLink className="nav-link" to={orgId ? `/organizaciones/${orgId}/sedes` : '/organizaciones'}>Recursos</NavLink>}
-          {has('horarios.ver') && <NavLink className="nav-link" to="/horarios">Horarios</NavLink>}
-          {has('reservas.ver') && <NavLink className="nav-link" to="/reservas">{isClient ? 'Mis reservas' : 'Reservas'}</NavLink>}
-          {has('reservas.crear') && isClient && orgId && <NavLink className="nav-link" to={`/organizaciones/${orgId}/reservas/nueva`}>Nueva reserva</NavLink>}
-          {has('atenciones.ver') && <NavLink className="nav-link" to="/atenciones/agenda">{isProfessional ? 'Mi agenda' : 'Atenciones'}</NavLink>}
-          {has('pagos.ver') && <NavLink className="nav-link" to="/pagos">{isClient ? 'Mis pagos' : 'Pagos'}</NavLink>}
-          {has('calificaciones.crear') && <NavLink className="nav-link" to="/calificaciones">Calificaciones</NavLink>}
-          {has('reportes.ver') && <NavLink className="nav-link" to="/reportes">Reportes</NavLink>}
+          {isAdmin && has('dashboard.ver') && <NavLink className="nav-link" to="/">Dashboard</NavLink>}
+          {!isClient && !isProfessional && has('clientes.ver') && <NavLink className="nav-link" to={organizationPath('clientes')}>Clientes</NavLink>}
+          {isAdmin && has('empleados.ver') && <NavLink className="nav-link" to={organizationPath('empleados')}>Empleados y profesionales</NavLink>}
+          {(isAdmin || isReception) && has('servicios.ver') && <NavLink className="nav-link" to={organizationPath('servicios')}>Servicios</NavLink>}
+          {isAdmin && has('recursos.ver') && <NavLink className="nav-link" to={orgId ? `/organizaciones/${orgId}/sedes` : '/organizaciones'}>Recursos</NavLink>}
+          {isAdmin && has('horarios.ver') && <NavLink className="nav-link" to="/horarios">Horarios</NavLink>}
+          {(isAdmin || isReception) && has('reservas.ver') && <NavLink className="nav-link" to="/reservas">Reservas</NavLink>}
+          {isClient && has('reservas.crear') && orgId && <NavLink className="nav-link" to={`/organizaciones/${orgId}/reservas/nueva`}>Nueva reserva</NavLink>}
+          {isClient && has('reservas.ver') && <NavLink className="nav-link" to="/reservas">Mis reservas</NavLink>}
+          {isReception && has('reservas.ver') && <NavLink className="nav-link" to="/disponibilidad">Disponibilidad</NavLink>}
+          {isProfessional && has('atenciones.ver') && <NavLink className="nav-link" to="/atenciones/agenda">Mi agenda</NavLink>}
+          {(isAdmin || isReception) && has('atenciones.ver') && <NavLink className="nav-link" to="/atenciones/agenda">Atenciones</NavLink>}
+          {!isProfessional && has('pagos.ver') && <NavLink className="nav-link" to="/pagos">{isClient ? 'Mis pagos' : 'Pagos'}</NavLink>}
+          {isClient && has('calificaciones.crear') && <NavLink className="nav-link" to="/calificaciones">Calificaciones</NavLink>}
+          {isAdmin && has('reportes.ver') && <NavLink className="nav-link" to="/reportes">Reportes</NavLink>}
         </nav>
 
-        {(has('organizaciones.ver') || has('sedes.ver') || has('roles.ver') || has('usuarios.ver')) && <>
+        {isAdmin && (has('organizaciones.ver') || has('sedes.ver') || has('roles.ver') || has('usuarios.ver')) && <>
           <div className="small fw-bold text-secondary text-uppercase px-3 mt-4 mb-2">Configuración</div>
           <nav className="nav flex-column gap-1">
             {has('organizaciones.ver') && <NavLink className="nav-link" to="/organizaciones">Organización</NavLink>}
@@ -48,7 +53,7 @@ export function AppLayout() {
           </nav>
         </>}
 
-        {!orgId && !isClient && <p className="small text-secondary mt-4 px-3">Selecciona una organización para administrar sus clientes, sedes, servicios y personal.</p>}
+        {!orgId && isAdmin && <p className="small text-secondary mt-4 px-3">Selecciona una organización para administrar sus clientes, sedes, servicios y personal.</p>}
       </aside>
       <main className="app-content"><Outlet /></main>
     </div>
