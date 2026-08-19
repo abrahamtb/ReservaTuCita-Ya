@@ -63,4 +63,12 @@ jobs:
         run: dotnet test ReservaTuCitaYa.UnitTests/ReservaTuCitaYa.UnitTests.csproj --configuration Release --no-build --verbosity normal --logger "console;verbosity=detailed"
 
       - name: Integration tests
-        run: dotnet test ReservaTuCitaYa.IntegrationTests/ReservaTuCitaYa.IntegrationTests.csproj --configuration Release --no-build --verbosity normal --logger "console;verbosity=detailed" -m:1
+        run: dotnet test ReservaTuCitaYa.IntegrationTests/ReservaTuCitaYa.IntegrationTests.csproj --configuration Release --no-build --verbosity normal --logger "trx;LogFileName=integration.trx" -m:1
+
+      - name: Upload integration test results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: integration-test-results
+          path: backend/ReservaTuCitaYa/ReservaTuCitaYa.IntegrationTests/TestResults/integration.trx
+          if-no-files-found: error
