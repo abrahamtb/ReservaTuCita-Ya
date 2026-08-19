@@ -28,6 +28,7 @@ namespace ReservaTuCitaYa.Infrastructure.Data.Seed
             },
             [RoleNames.Profesional] = new[]
             {
+                Permissions.Empleados.Ver,
                 Permissions.Reservas.Ver,
                 Permissions.Atenciones.Ver, Permissions.Atenciones.MarcarPresente,
                 Permissions.Atenciones.Iniciar, Permissions.Atenciones.Finalizar,
