@@ -6,7 +6,9 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using ReservaTuCitaYa.Application.Abstractions;
 using ReservaTuCitaYa.Application.Abstractions.Persistence;
+using ReservaTuCitaYa.Application.Common.Disponibilidad;
 using ReservaTuCitaYa.Application.Interfaces;
+using ReservaTuCitaYa.Application.Interfaces.Repository;
 using ReservaTuCitaYa.Application.Services;
 using ReservaTuCitaYa.Infrastructure.Data;
 using ReservaTuCitaYa.Infrastructure.Data.Seed;
@@ -26,6 +28,16 @@ public static class DependencyInjection
         services.AddScoped<IServicioService, ServicioService>();
         services.AddScoped<IClienteService, ClienteService>();
         services.AddScoped<IEmpleadoService, EmpleadoService>();
+        services.AddScoped<IRecursoService, RecursoService>();
+        services.AddScoped<IBloqueoRecursoService, BloqueoRecursoService>();
+        services.AddScoped<IHorarioSedeService, HorarioSedeService>();
+        services.AddScoped<IHorarioProfesionalService, HorarioProfesionalService>();
+        services.AddScoped<IHorarioRecursoService, HorarioRecursoService>();
+        services.AddScoped<IDisponibilidadService, DisponibilidadService>();
+        services.AddScoped<IReservaService, ReservaService>();
+        services.AddScoped<IAtencionService, AtencionService>();
+        services.AddScoped<IDashboardService, DashboardService>();
+        services.AddScoped<IReporteService, ReporteService>();
 
         return services;
     }
@@ -41,18 +53,39 @@ public static class DependencyInjection
         services.AddDbContext<ApplicationDbContext>(options =>
             options.UseSqlServer(connectionString));
 
+        services.Configure<DisponibilidadOptions>(configuration.GetSection(DisponibilidadOptions.Seccion));
+
         services.AddScoped<IOrganizacionRepository, OrganizacionRepository>();
         services.AddScoped<ISedeRepository, SedeRepository>();
         services.AddScoped<ICategoriaServicioRepository, CategoriaServicioRepository>();
         services.AddScoped<IServicioRepository, ServicioRepository>();
         services.AddScoped<IClienteRepository, ClienteRepository>();
         services.AddScoped<IEmpleadoRepository, EmpleadoRepository>();
+        services.AddScoped<IRecursoRepository, RecursoRepository>();
+        services.AddScoped<IBloqueoRecursoRepository, BloqueoRecursoRepository>();
+        services.AddScoped<IHorarioSedeRepository, HorarioSedeRepository>();
+        services.AddScoped<IExcepcionHorarioSedeRepository, ExcepcionHorarioSedeRepository>();
+        services.AddScoped<IHorarioProfesionalRepository, HorarioProfesionalRepository>();
+        services.AddScoped<IExcepcionHorarioProfesionalRepository, ExcepcionHorarioProfesionalRepository>();
+        services.AddScoped<IHorarioRecursoRepository, HorarioRecursoRepository>();
+        services.AddScoped<IExcepcionHorarioRecursoRepository, ExcepcionHorarioRecursoRepository>();
+        services.AddScoped<IDisponibilidadRepository, DisponibilidadRepository>();
+        services.AddScoped<IReservaRepository, ReservaRepository>();
+        services.AddScoped<IAtencionRepository, AtencionRepository>();
+        services.AddScoped<IDashboardRepository, DashboardRepository>();
+        services.AddScoped<IReporteRepository, ReporteRepository>();
 
         services.AddHttpContextAccessor();
         services.AddScoped<ICurrentUser, CurrentUser>();
 
         services.AddSingleton<IAuthorizationPolicyProvider, PermissionPolicyProvider>();
         services.AddScoped<IAuthorizationHandler, PermissionAuthorizationHandler>();
+        services.AddScoped<IPagoRepository, PagoRepository>();
+        services.AddScoped<IReembolsoRepository, ReembolsoRepository>();
+        services.AddScoped<IPagoService, PagoService>();
+        services.AddScoped<ICalificacionService, CalificacionService>();
+        services.AddScoped<ICalificacionRepository, CalificacionRepository>();
+
         return services;
     }
 
@@ -96,5 +129,7 @@ public static class DependencyInjection
             roleManager,
             configuration,
             logger);
+        await MetodoPagoSeeder.SeedAsync(dbContext);
+        await DemoDataSeeder.SeedAsync(dbContext, configuration, logger, cancellationToken);
     }
 }

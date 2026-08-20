@@ -5,16 +5,18 @@ using ReservaTuCitaYa.Application.Common;
 using ReservaTuCitaYa.Application.DTOs.Clientes;
 using ReservaTuCitaYa.Application.DTOs.Common;
 using ReservaTuCitaYa.Application.Interfaces;
+using ReservaTuCitaYa.Domain.Common;
 using ReservaTuCitaYa.Domain.Enums;
 using ReservaTuCitaYa.Infrastructure.Identity;
 
 namespace ReservaTuCitaYa.Api.Controllers;
 
 [ApiController]
-[Authorize(Roles = RoleNames.Administracion)]
+[Authorize]
 public sealed class ClientesController(IClienteService service) : ApiControllerBase
 {
     [HttpGet("api/organizaciones/{organizacionId:guid}/clientes")]
+    [Authorize(Policy = Permissions.Clientes.Ver)]
     public async Task<ActionResult<PaginaResultado<ClienteListaDto>>> Listar(
         Guid organizacionId,
         [FromQuery] string? busqueda,
@@ -33,6 +35,7 @@ public sealed class ClientesController(IClienteService service) : ApiControllerB
     }
 
     [HttpGet("api/clientes/{id:guid}")]
+    [Authorize(Policy = Permissions.Clientes.Ver)]
     public async Task<ActionResult<ClienteDetalleDto>> Obtener(
         Guid id,
         CancellationToken cancellationToken)
@@ -44,6 +47,7 @@ public sealed class ClientesController(IClienteService service) : ApiControllerB
     }
 
     [HttpPost("api/organizaciones/{organizacionId:guid}/clientes")]
+    [Authorize(Policy = Permissions.Clientes.Crear)]
     public async Task<ActionResult<ClienteDetalleDto>> Crear(
         Guid organizacionId,
         CrearClienteRequest request,
@@ -70,6 +74,7 @@ public sealed class ClientesController(IClienteService service) : ApiControllerB
     }
 
     [HttpPut("api/clientes/{id:guid}")]
+    [Authorize(Policy = Permissions.Clientes.Editar)]
     public async Task<IActionResult> Actualizar(
         Guid id,
         ActualizarClienteRequest request,
@@ -94,6 +99,7 @@ public sealed class ClientesController(IClienteService service) : ApiControllerB
     }
 
     [HttpPatch("api/clientes/{id:guid}/estado")]
+    [Authorize(Policy = Permissions.Clientes.Editar)]
     public async Task<IActionResult> CambiarEstado(
         Guid id,
         CambiarEstadoClienteRequest request,
@@ -106,6 +112,7 @@ public sealed class ClientesController(IClienteService service) : ApiControllerB
     }
 
     [HttpDelete("api/clientes/{id:guid}")]
+    [Authorize(Policy = Permissions.Clientes.Eliminar)]
     public async Task<IActionResult> Eliminar(Guid id, CancellationToken cancellationToken)
     {
         var result = await service.EliminarAsync(id, cancellationToken);

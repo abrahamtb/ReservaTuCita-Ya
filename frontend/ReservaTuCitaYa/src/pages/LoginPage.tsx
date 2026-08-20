@@ -14,12 +14,13 @@ export function LoginPage() {
     try { await login(email, password, remember); navigate((location.state as { from?: string } | null)?.from ?? '/', { replace: true }) }
     catch (caught) { setError(caught) } finally { setBusy(false) }
   }
-  return <main className="login-page"><form className="card shadow-sm login-card" onSubmit={submit}>
-    <div className="card-body p-4"><h1 className="h3 mb-1">Reserva tu Cita Ya</h1><p className="text-secondary mb-4">Acceso administrativo</p>
-      {error ? <ErrorAlert error={error} /> : null}
-      <label className="form-label">Correo</label><input className="form-control mb-3" type="email" required value={email} onChange={e => setEmail(e.target.value)} autoComplete="username" />
-      <label className="form-label">Contraseña</label><input className="form-control mb-3" type="password" required value={password} onChange={e => setPassword(e.target.value)} autoComplete="current-password" />
-      <div className="form-check mb-3"><input className="form-check-input" id="remember" type="checkbox" checked={remember} onChange={e => setRemember(e.target.checked)} /><label className="form-check-label" htmlFor="remember">Recordarme</label></div>
+  return <main className="login-hifi">
+    <section className="login-showcase" aria-hidden="true"><div className="brand-mark"><span>R</span><strong>Reserva tu<br />Cita Ya</strong></div><div className="login-message"><p className="eyebrow">RESERVA TU CITA YA</p><h1>Tu agenda organizada.<br />Tus clientes más cerca.</h1><article className="next-appointment"><small>PRÓXIMA CITA</small><strong>María González</strong><span>Hoy · 10:30 · Tratamiento facial</span></article></div></section>
+    <section className="login-form-wrap"><form className="login-card" onSubmit={submit}><div className="brand-mobile"><span>R</span> Reserva tu Cita Ya</div><h1>Bienvenido</h1><p>Ingresa a tu cuenta para continuar</p>{error ? <ErrorAlert error={error} /> : null}
+      <label htmlFor="login-email" className="form-label">Correo</label><input id="login-email" className="form-control mb-3" type="email" required value={email} onChange={e => setEmail(e.target.value)} autoComplete="username" />
+      <label htmlFor="login-password" className="form-label">Contraseña</label><input id="login-password" className="form-control mb-3" type="password" required value={password} onChange={e => setPassword(e.target.value)} autoComplete="current-password" />
+      <div className="d-flex justify-content-between align-items-center mb-4"><div className="form-check"><input className="form-check-input" id="remember" type="checkbox" checked={remember} onChange={e => setRemember(e.target.checked)} /><label className="form-check-label" htmlFor="remember">Recordarme</label></div><span className="text-secondary small">Recuperar contraseña</span></div>
       <button className="btn btn-primary w-100" disabled={busy}>{busy ? 'Ingresando…' : 'Ingresar'}</button>
-    </div></form></main>
+    </form></section>
+  </main>
 }

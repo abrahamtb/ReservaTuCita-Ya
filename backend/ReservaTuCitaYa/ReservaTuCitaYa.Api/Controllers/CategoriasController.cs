@@ -11,7 +11,7 @@ using ReservaTuCitaYa.Infrastructure.Identity;
 namespace ReservaTuCitaYa.Api.Controllers;
 
 [ApiController]
-[Authorize(Roles = RoleNames.Administracion)]
+[Authorize]
 public sealed class CategoriasController(ICategoriaServicioService service, ICurrentUser currentUser) : ApiControllerBase
 {
     [HttpGet("api/organizaciones/{organizacionId:guid}/categorias")]

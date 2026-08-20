@@ -6,16 +6,18 @@ using ReservaTuCitaYa.Application.DTOs.Common;
 using ReservaTuCitaYa.Application.DTOs.Empleados;
 using ReservaTuCitaYa.Application.Interfaces;
 using ReservaTuCitaYa.Application.Services;
+using ReservaTuCitaYa.Domain.Common;
 using ReservaTuCitaYa.Domain.Enums;
 using ReservaTuCitaYa.Infrastructure.Identity;
 
 namespace ReservaTuCitaYa.Api.Controllers;
 
 [ApiController]
-[Authorize(Roles = RoleNames.Administracion)]
+[Authorize]
 public sealed class EmpleadosController(IEmpleadoService service) : ApiControllerBase
 {
     [HttpGet("api/organizaciones/{organizacionId:guid}/empleados")]
+    [Authorize(Policy = Permissions.Empleados.Ver)]
     public async Task<ActionResult<PaginaResultado<EmpleadoListaDto>>> Listar(
         Guid organizacionId,
         [FromQuery] string? busqueda,
@@ -36,6 +38,7 @@ public sealed class EmpleadosController(IEmpleadoService service) : ApiControlle
     }
 
     [HttpGet("api/empleados/{id:guid}")]
+    [Authorize(Policy = Permissions.Empleados.Ver)]
     public async Task<ActionResult<EmpleadoDetalleDto>> Obtener(
         Guid id, CancellationToken cancellationToken)
     {
@@ -45,6 +48,7 @@ public sealed class EmpleadosController(IEmpleadoService service) : ApiControlle
     }
 
     [HttpPost("api/organizaciones/{organizacionId:guid}/empleados")]
+    [Authorize(Policy = Permissions.Empleados.Gestionar)]
     public async Task<ActionResult<EmpleadoDetalleDto>> Crear(
         Guid organizacionId, CrearEmpleadoRequest request, CancellationToken cancellationToken)
     {
@@ -73,6 +77,7 @@ public sealed class EmpleadosController(IEmpleadoService service) : ApiControlle
     }
 
     [HttpPut("api/empleados/{id:guid}")]
+    [Authorize(Policy = Permissions.Empleados.Gestionar)]
     public async Task<IActionResult> Actualizar(
         Guid id, ActualizarEmpleadoRequest request, CancellationToken cancellationToken)
     {
@@ -97,6 +102,7 @@ public sealed class EmpleadosController(IEmpleadoService service) : ApiControlle
     }
 
     [HttpPatch("api/empleados/{id:guid}/estado")]
+    [Authorize(Policy = Permissions.Empleados.Gestionar)]
     public async Task<IActionResult> CambiarEstado(
         Guid id, CambiarEstadoEmpleadoRequest request, CancellationToken cancellationToken)
     {
@@ -105,6 +111,7 @@ public sealed class EmpleadosController(IEmpleadoService service) : ApiControlle
     }
 
     [HttpDelete("api/empleados/{id:guid}")]
+    [Authorize(Policy = Permissions.Empleados.Gestionar)]
     public async Task<IActionResult> Eliminar(Guid id, CancellationToken cancellationToken)
     {
         var result = await service.EliminarAsync(id, cancellationToken);
@@ -112,6 +119,7 @@ public sealed class EmpleadosController(IEmpleadoService service) : ApiControlle
     }
 
     [HttpGet("api/empleados/{id:guid}/sedes")]
+    [Authorize(Policy = Permissions.Empleados.Ver)]
     public async Task<ActionResult<IReadOnlyList<EmpleadoSedeDto>>> ListarSedes(
         Guid id, CancellationToken cancellationToken)
     {
@@ -121,6 +129,7 @@ public sealed class EmpleadosController(IEmpleadoService service) : ApiControlle
     }
 
     [HttpPut("api/empleados/{id:guid}/sedes")]
+    [Authorize(Policy = Permissions.Empleados.Gestionar)]
     public async Task<IActionResult> ReemplazarSedes(
         Guid id, ReemplazarSedesEmpleadoRequest request, CancellationToken cancellationToken)
     {
@@ -129,6 +138,7 @@ public sealed class EmpleadosController(IEmpleadoService service) : ApiControlle
     }
 
     [HttpGet("api/empleados/{id:guid}/servicios")]
+    [Authorize(Policy = Permissions.Empleados.Ver)]
     public async Task<ActionResult<IReadOnlyList<ProfesionalServicioDto>>> ListarServicios(
         Guid id, CancellationToken cancellationToken)
     {
@@ -138,6 +148,7 @@ public sealed class EmpleadosController(IEmpleadoService service) : ApiControlle
     }
 
     [HttpPut("api/empleados/{id:guid}/servicios")]
+    [Authorize(Policy = Permissions.Empleados.Gestionar)]
     public async Task<IActionResult> ReemplazarServicios(
         Guid id, ReemplazarServiciosProfesionalRequest request,
         CancellationToken cancellationToken)

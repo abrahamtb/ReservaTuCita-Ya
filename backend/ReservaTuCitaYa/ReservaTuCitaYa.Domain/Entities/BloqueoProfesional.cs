@@ -20,5 +20,5 @@ public class BloqueoProfesional : BaseEntity
 
     public TipoBloqueo TipoBloqueo { get; set; }
 
-   // public Profesional Profesional { get; set; } = null!;
+    // public Profesional Profesional { get; set; } = null!;
 }

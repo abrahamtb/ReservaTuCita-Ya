@@ -1,5 +1,7 @@
 ﻿using Microsoft.AspNetCore.Http;
 using ReservaTuCitaYa.Application.Abstractions;
+using ReservaTuCitaYa.Domain.Common;
+using ReservaTuCitaYa.Infrastructure.Identity;
 using ReservaTuCitaYa.Infrastructure.Data;
 using System;
 using System.Collections.Generic;
@@ -132,6 +134,47 @@ namespace ReservaTuCitaYa.Infrastructure.Security
                 .Where(uc => uc.UsuarioId == idClaim && uc.EstaActivo && !uc.EstaEliminado)
                 .FirstOrDefault();
             _clienteId = usuarioCliente?.ClienteId;
+
+            // Compatibilidad con cuentas creadas antes de que la pantalla de usuarios
+            // exigiera una vinculación explícita. Se reconoce el perfil por documento
+            // únicamente dentro de la organización del usuario y sin modificar datos.
+            var numeroDocumento = _db.Users
+                .Where(usuario => usuario.Id == idClaim)
+                .Select(usuario => usuario.NumeroDocumento)
+                .FirstOrDefault();
+
+            if (!string.IsNullOrWhiteSpace(numeroDocumento) &&
+                _roles.Contains(RoleNames.Profesional) && !_empleadoId.HasValue)
+            {
+                _empleadoId = _db.Empleados
+                    .Where(empleado => empleado.NumeroDocumento == numeroDocumento &&
+                                       empleado.EstaActivo && !empleado.EstaEliminado &&
+                                       (!_organizacionId.HasValue || empleado.OrganizacionId == _organizacionId.Value))
+                    .Select(empleado => (Guid?)empleado.Id)
+                    .FirstOrDefault();
+            }
+
+            if (!string.IsNullOrWhiteSpace(numeroDocumento) &&
+                _roles.Contains(RoleNames.Cliente) && !_clienteId.HasValue)
+            {
+                _clienteId = _db.Clientes
+                    .Where(cliente => cliente.NumeroDocumento == numeroDocumento &&
+                                      cliente.EstaActivo && !cliente.EstaEliminado &&
+                                      (!_organizacionId.HasValue || cliente.OrganizacionId == _organizacionId.Value))
+                    .Select(cliente => (Guid?)cliente.Id)
+                    .FirstOrDefault();
+            }
+
+            // Los clientes no necesariamente tienen una vinculación administrativa
+            // con UsuarioOrganizacion. Su contexto debe provenir del cliente activo.
+            if (!_organizacionId.HasValue && _clienteId.HasValue)
+            {
+                _organizacionId = _db.Clientes
+                    .Where(cliente => cliente.Id == _clienteId.Value &&
+                                      !cliente.EstaEliminado)
+                    .Select(cliente => (Guid?)cliente.OrganizacionId)
+                    .FirstOrDefault();
+            }
         }
     }
 }

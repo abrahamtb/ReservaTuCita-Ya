@@ -15,6 +15,7 @@ namespace ReservaTuCitaYa.Infrastructure.Data.Seed
             [RoleNames.Administrador] = Permissions.Todos.ToArray(), // todos los permisos de su organización
             [RoleNames.Recepcionista] = new[]
             {
+                Permissions.Sedes.Ver,
                 Permissions.Clientes.Ver, Permissions.Clientes.Crear, Permissions.Clientes.Editar,
                 Permissions.Servicios.Ver,
                 Permissions.Empleados.Ver,
@@ -22,21 +23,24 @@ namespace ReservaTuCitaYa.Infrastructure.Data.Seed
                 Permissions.Horarios.Ver,
                 Permissions.Reservas.Ver, Permissions.Reservas.Crear,
                 Permissions.Reservas.Reprogramar, Permissions.Reservas.Cancelar,
-                Permissions.Atenciones.Ver,
+                Permissions.Atenciones.Ver, Permissions.Atenciones.MarcarPresente,
                 Permissions.Pagos.Ver, Permissions.Pagos.Registrar,
             },
             [RoleNames.Profesional] = new[]
             {
+                Permissions.Empleados.Ver,
+                Permissions.Servicios.Ver,
                 Permissions.Reservas.Ver,
                 Permissions.Atenciones.Ver, Permissions.Atenciones.MarcarPresente,
                 Permissions.Atenciones.Iniciar, Permissions.Atenciones.Finalizar,
             },
             [RoleNames.Cliente] = new[]
             {
+                Permissions.Sedes.Ver, Permissions.Servicios.Ver,
                 Permissions.Reservas.Ver, Permissions.Reservas.Crear,
                 Permissions.Reservas.Reprogramar, Permissions.Reservas.Cancelar,
                 Permissions.Pagos.Ver,
-                Permissions.Calificaciones.Crear,
+                Permissions.Calificaciones.Ver, Permissions.Calificaciones.Crear,
             },
         };
 

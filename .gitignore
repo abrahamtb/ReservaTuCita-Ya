@@ -316,6 +316,7 @@ FakesAssemblies/
 node_modules/
 frontend/**/dist/
 frontend/**/.env
+frontend/**/.certs/
 
 # Visual Studio 6 build log
 *.plg

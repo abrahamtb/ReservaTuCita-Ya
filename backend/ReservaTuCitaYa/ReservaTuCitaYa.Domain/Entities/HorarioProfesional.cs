@@ -8,24 +8,14 @@ using ReservaTuCitaYa.Domain.Enums;
 
 namespace ReservaTuCitaYa.Domain.Entities
 {
-    public class HorarioProfesional : BaseEntity
+    public sealed class HorarioProfesional : BaseEntity
     {
-        public Guid ProfesionalId { get; set; }
-
+        public Guid EmpleadoId { get; set; }
         public Guid SedeId { get; set; }
-
         public DiaSemana DiaSemana { get; set; }
-
         public TimeOnly HoraInicio { get; set; }
-
         public TimeOnly HoraFin { get; set; }
-
-        public DateOnly FechaInicioVigencia { get; set; }
-
-        public DateOnly? FechaFinVigencia { get; set; }
-
-        //public Profesional Profesional { get; set; } = null!;
-
+        public Empleado Empleado { get; set; } = null!;
         public Sede Sede { get; set; } = null!;
     }
 }

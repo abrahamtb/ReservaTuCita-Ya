@@ -88,7 +88,7 @@ npm install
 npm run dev
 ```
 
-El frontend abre en `http://localhost:5173` y obtiene la API mediante:
+El frontend abre en `https://localhost:5173` y obtiene la API mediante:
 
 ```text
 VITE_API_URL=https://localhost:7264

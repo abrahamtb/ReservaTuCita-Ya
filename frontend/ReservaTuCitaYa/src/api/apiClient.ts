@@ -29,6 +29,25 @@ async function toApiError(response: Response) {
   return new ApiError(response.status, problem)
 }
 
+export interface ApiDownload {
+  blob: Blob
+  filename?: string
+}
+
+export async function apiDownload(path: string, signal?: AbortSignal): Promise<ApiDownload> {
+  const response = await fetch(`${apiUrl}${path}`, { credentials: 'include', signal })
+  if (response.status === 401) window.dispatchEvent(new Event('auth:unauthorized'))
+  if (!response.ok) throw await toApiError(response)
+
+  const disposition = response.headers.get('Content-Disposition')
+  const encoded = disposition?.match(/filename\*=UTF-8''([^;]+)/i)?.[1]
+  const plain = disposition?.match(/filename="?([^";]+)"?/i)?.[1]
+  return {
+    blob: await response.blob(),
+    filename: encoded ? decodeURIComponent(encoded) : plain,
+  }
+}
+
 export async function apiRequest<T>(
   path: string,
   init: RequestInit = {},
