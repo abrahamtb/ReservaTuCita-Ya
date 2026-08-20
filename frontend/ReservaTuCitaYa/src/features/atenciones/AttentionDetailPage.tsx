@@ -4,6 +4,7 @@ import * as attentionApi from '../../api/atencionesApi'
 import { ApiError } from '../../api/apiClient'
 import { obtenerReserva } from '../../api/reservasApi'
 import { listServices } from '../../api/serviciosApi'
+import { useAuth } from '../../auth/useAuth'
 import { ErrorAlert, Loading, SuccessAlert } from '../../components/common/Feedback'
 import type {
   AtencionDetalle,
@@ -38,6 +39,9 @@ const historyLabels: Record<string, string> = {
 
 export function AttentionDetailPage() {
   const { organizationId = '', reservationId = '' } = useParams()
+  const { user } = useAuth()
+  const permissions = new Set(user?.permisos ?? [])
+  const canFinish = permissions.has('atenciones.finalizar')
   const [reservation, setReservation] = useState<ReservaDetalle>()
   const [attention, setAttention] = useState<AtencionDetalle>()
   const [services, setServices] = useState<Servicio[]>([])
@@ -81,17 +85,17 @@ export function AttentionDetailPage() {
   useEffect(() => { void load() }, [load])
 
   useEffect(() => {
-    if (reservation?.estado !== 'EnAtencion') return
+    if (reservation?.estado !== 'EnAtencion' || !canFinish) return
     const controller = new AbortController()
     listServices(
       organizationId,
       { estado: 'Activos', pagina: 1, tamanoPagina: 100 },
       controller.signal,
     ).then(response => setServices(response.elementos)).catch(caught => {
-      if ((caught as Error).name !== 'AbortError') setError(caught)
+      if (!controller.signal.aborted && (caught as Error).name !== 'AbortError') setError(caught)
     })
     return () => controller.abort()
-  }, [organizationId, reservation?.estado])
+  }, [canFinish, organizationId, reservation?.estado])
 
   useEffect(() => {
     if (!attention || attention.estadoReserva !== 'Atendida') return
@@ -222,16 +226,16 @@ export function AttentionDetailPage() {
 
             <div className="d-flex flex-wrap gap-2 mt-4">
               {['Confirmada', 'Reprogramada'].includes(reservation.estado) ? <>
-                <button className="btn btn-primary" onClick={() => setSelectedAction('present')}>Marcar presente</button>
-                <button className="btn btn-outline-danger" onClick={() => setSelectedAction('no-show')}>Marcar no asistencia</button>
+                {permissions.has('atenciones.marcarPresente') && <button className="btn btn-primary" onClick={() => setSelectedAction('present')}>Marcar presente</button>}
+                {canFinish && <button className="btn btn-outline-danger" onClick={() => setSelectedAction('no-show')}>Marcar no asistencia</button>}
               </> : null}
-              {reservation.estado === 'Presente' ? <button className="btn btn-primary" onClick={() => setSelectedAction('start')}>Iniciar atención</button> : null}
+              {reservation.estado === 'Presente' && permissions.has('atenciones.iniciar') ? <button className="btn btn-primary" onClick={() => setSelectedAction('start')}>Iniciar atención</button> : null}
             </div>
           </div>
         </article>
       </div>
 
-      {reservation.estado === 'EnAtencion' ? <div className="col-xl-7">
+      {reservation.estado === 'EnAtencion' && canFinish ? <div className="col-xl-7">
         <FinishForm
           result={result}
           observations={observations}
@@ -248,7 +252,7 @@ export function AttentionDetailPage() {
           onNextDate={setNextDate}
           onSubmit={finish}
         />
-      </div> : null}
+      </div> : reservation.estado === 'EnAtencion' ? <div className="col-xl-7"><article className="card border-0 shadow-sm h-100"><div className="card-body p-4"><h2 className="h4">Atención en curso</h2><p className="text-secondary mb-0">Esta atención está siendo realizada por el profesional asignado.</p></div></article></div> : null}
     </div>
 
     {reservation.estado === 'Atendida' && attention ? <CompletedAttention attention={attention} /> : null}

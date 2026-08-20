@@ -19,6 +19,8 @@ export interface CrearUsuarioRequest {
   telefono: string
   rol: string
   organizacionId?: string | null
+  clienteId?: string | null
+  empleadoId?: string | null
 }
 
 export const listarUsuarios = (signal?: AbortSignal) =>

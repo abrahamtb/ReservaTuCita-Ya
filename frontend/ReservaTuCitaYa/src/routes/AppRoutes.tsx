@@ -1,5 +1,6 @@
 import { Route, Routes } from 'react-router-dom'
 import { ProtectedRoute } from '../auth/ProtectedRoute'
+import { PermissionGuard } from '../auth/AccessGuards'
 import { AppLayout } from '../components/layout/AppLayout'
 import { AttentionDetailPage } from '../features/atenciones/AttentionDetailPage'
 import { ProfessionalAgendaPage } from '../features/atenciones/ProfessionalAgendaPage'
@@ -35,18 +36,21 @@ export function AppRoutes() {
       <Route index element={<HomePage />} />
       <Route path="reservas" element={<ReservasPage />} />
       <Route path="reservas/:id" element={<ReservaDetailPage />} />
+      <Route path="organizaciones/:organizationId/reservas/:id" element={<ReservaDetailPage />} />
       <Route path="organizaciones/:organizationId/reservas/nueva" element={<ReservaFormPage />} />
       <Route path="pagos" element={<PagosIndexPage />} />
       <Route path="pagos/:reservaId" element={<PagosReservaPage />} />
       <Route path="disponibilidad" element={<DisponibilidadPage />} />
       <Route path="horarios" element={<HorariosPage />} />
       <Route path="calificaciones" element={<CalificacionesPage />} />
-      <Route path="reportes" element={<ReportsPage />} />
-      <Route path="usuarios-roles" element={<UsuariosRolesPage />} />
-      <Route path="organizaciones" element={<OrganizationsPage />} />
-      <Route path="organizaciones/nueva" element={<OrganizationFormPage />} />
-      <Route path="organizaciones/:id" element={<OrganizationDetailPage />} />
-      <Route path="organizaciones/:id/editar" element={<OrganizationFormPage />} />
+      <Route element={<PermissionGuard anyOf={['reportes.ver']} />}><Route path="reportes" element={<ReportsPage />} /></Route>
+      <Route element={<PermissionGuard anyOf={['usuarios.ver', 'roles.ver']} />}><Route path="usuarios-roles" element={<UsuariosRolesPage />} /></Route>
+      <Route element={<PermissionGuard anyOf={['organizaciones.ver']} />}>
+        <Route path="organizaciones" element={<OrganizationsPage />} />
+        <Route path="organizaciones/nueva" element={<OrganizationFormPage />} />
+        <Route path="organizaciones/:id" element={<OrganizationDetailPage />} />
+        <Route path="organizaciones/:id/editar" element={<OrganizationFormPage />} />
+      </Route>
       <Route path="organizaciones/:organizationId/sedes" element={<SedesPage />} />
       <Route path="organizaciones/:organizationId/sedes/nueva" element={<SedeFormPage />} />
       <Route path="sedes/:id" element={<SedeDetailPage />} />

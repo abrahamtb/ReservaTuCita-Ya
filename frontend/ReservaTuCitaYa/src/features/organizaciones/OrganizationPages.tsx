@@ -10,7 +10,7 @@ const emptyForm: OrganizationRequest = { tipoOrganizacionId: '', nombreComercial
 export function OrganizationsPage() {
   const [data, setData] = useState<PageResult<Organization>>(); const [error, setError] = useState<unknown>()
   const [search, setSearch] = useState(''); const [state, setState] = useState<EstadoFiltro>('Todos'); const [page, setPage] = useState(1)
-  useEffect(() => { const controller = new AbortController(); api.listOrganizations({ busqueda: search, estado: state, pagina: page }, controller.signal).then(setData).catch(e => { if (e.name !== 'AbortError') setError(e) }); return () => controller.abort() }, [search, state, page])
+  useEffect(() => { const controller = new AbortController(); api.listOrganizations({ busqueda: search, estado: state, pagina: page }, controller.signal).then(setData).catch(e => { if (!controller.signal.aborted && e.name !== 'AbortError') setError(e) }); return () => controller.abort() }, [search, state, page])
   return <><div className="d-flex justify-content-between align-items-center mb-3"><div><h1>Organizaciones</h1><p className="text-secondary mb-0">Administración de organizaciones registradas.</p></div><Link className="btn btn-primary" to="nueva">Nueva organización</Link></div><div className="card card-body mb-3"><div className="row g-2"><div className="col-md-8"><input className="form-control" placeholder="Buscar por nombre, razón social o documento" value={search} onChange={e => { setSearch(e.target.value); setPage(1) }} /></div><div className="col-md-4"><select className="form-select" value={state} onChange={e => { setState(e.target.value as EstadoFiltro); setPage(1) }}><option>Todos</option><option>Activos</option><option>Inactivos</option></select></div></div></div>{error ? <ErrorAlert error={error} /> : !data ? <Loading /> : data.elementos.length === 0 ? <Empty /> : <div className="card"><div className="table-responsive"><table className="table table-hover mb-0"><thead><tr><th>Nombre</th><th>Documento</th><th>Tipo</th><th>Estado</th><th /></tr></thead><tbody>{data.elementos.map(item => <tr key={item.id}><td>{item.nombreComercial}</td><td>{item.numeroDocumento}</td><td>{item.tipoOrganizacion}</td><td><StatusBadge active={item.estaActivo} /></td><td className="text-end"><Link className="btn btn-sm btn-outline-primary" to={item.id}>Ver</Link></td></tr>)}</tbody></table></div></div>}{data ? <div className="mt-3"><Pagination page={data.paginaActual} total={data.totalPaginas} onChange={setPage} /></div> : null}</>
 }
 
@@ -25,6 +25,11 @@ export function OrganizationFormPage() {
 export function OrganizationDetailPage() {
   const { id = '' } = useParams(); const navigate = useNavigate(); const [item, setItem] = useState<Organization>(); const [error, setError] = useState<unknown>(); const [message, setMessage] = useState('')
   const load = useCallback(() => api.getOrganization(id).then(setItem).catch(setError), [id]); useEffect(() => { void load() }, [load])
+  useEffect(() => {
+    if (!id) return
+    window.localStorage.setItem('reserva-tu-cita:selected-organization', id)
+    window.dispatchEvent(new Event('reserva-tu-cita:organization-selected'))
+  }, [id])
   async function toggle() { try { await api.toggleOrganization(id); setMessage('Estado actualizado.'); await load() } catch (caught) { setError(caught) } }
   async function remove() { if (!confirm('¿Eliminar lógicamente esta organización?')) return; try { await api.deleteOrganization(id); navigate('/organizaciones') } catch (caught) { setError(caught) } }
   if (error) return <ErrorAlert error={error} />; if (!item) return <Loading />

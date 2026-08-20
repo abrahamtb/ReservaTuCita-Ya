@@ -3,12 +3,15 @@ import { listOrganizations } from '../../api/organizacionesApi'
 import { guardarPermisosRol, listarPermisos, listarRoles, obtenerPermisosRol, type PermisoDto } from '../../api/rolesApi'
 import { asignarRolUsuario, cambiarEstadoUsuario, crearUsuario, listarUsuarios, type CrearUsuarioRequest, type UsuarioDto } from '../../api/usuariosApi'
 import { useAuth } from '../../auth/useAuth'
+import { listarClientesOrganizacion, type ClienteOpcion } from '../../api/clientesSeleccionApi'
+import { listarProfesionales } from '../../api/empleadosApi'
+import type { EmpleadoLista } from '../../types'
 import type { Organization } from '../../types'
 
 type Tab = 'usuarios' | 'roles'
 
 const emptyUser: CrearUsuarioRequest = {
-  email: '', password: '', nombres: '', apellidos: '', numeroDocumento: '', telefono: '', rol: 'Recepcionista', organizacionId: null,
+  email: '', password: '', nombres: '', apellidos: '', numeroDocumento: '', telefono: '', rol: 'Recepcionista', organizacionId: null, clienteId: null, empleadoId: null,
 }
 
 const moduloLabel: Record<string, string> = {
@@ -27,6 +30,8 @@ export function UsuariosRolesPage() {
   const [roles, setRoles] = useState<string[]>([])
   const [permisos, setPermisos] = useState<PermisoDto[]>([])
   const [organizaciones, setOrganizaciones] = useState<Organization[]>([])
+  const [clientes, setClientes] = useState<ClienteOpcion[]>([])
+  const [profesionales, setProfesionales] = useState<EmpleadoLista[]>([])
   const [rolSeleccionado, setRolSeleccionado] = useState('Administrador')
   const [permisosRol, setPermisosRol] = useState<string[]>([])
   const [busqueda, setBusqueda] = useState('')
@@ -63,6 +68,24 @@ export function UsuariosRolesPage() {
   }, [superAdmin, user?.organizacion])
 
   useEffect(() => {
+    if (nuevo.rol !== 'Cliente' || !nuevo.organizacionId) { setClientes([]); return }
+    const controller = new AbortController()
+    listarClientesOrganizacion(nuevo.organizacionId, '', controller.signal)
+      .then(result => setClientes(result.elementos))
+      .catch(() => { if (!controller.signal.aborted) setClientes([]) })
+    return () => controller.abort()
+  }, [nuevo.organizacionId, nuevo.rol])
+
+  useEffect(() => {
+    if (nuevo.rol !== 'Profesional' || !nuevo.organizacionId) { setProfesionales([]); return }
+    const controller = new AbortController()
+    listarProfesionales(nuevo.organizacionId, controller.signal)
+      .then(result => setProfesionales(result.elementos))
+      .catch(() => { if (!controller.signal.aborted) setProfesionales([]) })
+    return () => controller.abort()
+  }, [nuevo.organizacionId, nuevo.rol])
+
+  useEffect(() => {
     if (!rolSeleccionado) { setPermisosRol([]); return }
     const controller = new AbortController()
     obtenerPermisosRol(rolSeleccionado, controller.signal).then(setPermisosRol).catch(caught => {
@@ -91,9 +114,9 @@ export function UsuariosRolesPage() {
   async function submitNew(event: FormEvent) {
     event.preventDefault(); setSaving(true); setError(''); setSuccess('')
     try {
-      await crearUsuario({ ...nuevo, organizacionId: nuevo.rol === 'Superadministrador' ? null : nuevo.organizacionId })
+      await crearUsuario({ ...nuevo, organizacionId: nuevo.rol === 'Superadministrador' ? null : nuevo.organizacionId, clienteId: nuevo.rol === 'Cliente' ? nuevo.clienteId : null, empleadoId: nuevo.rol === 'Profesional' ? nuevo.empleadoId : null })
       await reloadUsers(); setShowNew(false); setNuevo({ ...emptyUser, rol: roles.includes('Recepcionista') ? 'Recepcionista' : roles[0] ?? '', organizacionId: user?.organizacion?.id ?? organizaciones[0]?.id ?? null })
-      setSuccess('Usuario creado correctamente.')
+      setSuccess(nuevo.rol === 'Cliente' ? 'Cuenta de cliente creada y vinculada correctamente.' : nuevo.rol === 'Profesional' ? 'Cuenta profesional creada y vinculada correctamente.' : 'Usuario creado correctamente.')
     } catch (caught) { setError(caught instanceof Error ? caught.message : 'No se pudo crear el usuario.') }
     finally { setSaving(false) }
   }
@@ -147,8 +170,10 @@ export function UsuariosRolesPage() {
         <div className="col-md-6"><label className="form-label">Contraseña *</label><input required minLength={8} type="password" className="form-control" value={nuevo.password} onChange={e => setNuevo({ ...nuevo, password: e.target.value })} /></div>
         <div className="col-md-4"><label className="form-label">Documento *</label><input required className="form-control" value={nuevo.numeroDocumento} onChange={e => setNuevo({ ...nuevo, numeroDocumento: e.target.value })} /></div>
         <div className="col-md-4"><label className="form-label">Teléfono *</label><input required className="form-control" value={nuevo.telefono} onChange={e => setNuevo({ ...nuevo, telefono: e.target.value })} /></div>
-        <div className="col-md-4"><label className="form-label">Rol *</label><select required className="form-select" value={nuevo.rol} onChange={e => setNuevo({ ...nuevo, rol: e.target.value })}>{roles.filter(role => superAdmin || role !== 'Superadministrador').map(role => <option key={role}>{role}</option>)}</select></div>
+        <div className="col-md-4"><label className="form-label">Rol *</label><select required className="form-select" value={nuevo.rol} onChange={e => setNuevo({ ...nuevo, rol: e.target.value, clienteId: null, empleadoId: null })}>{roles.filter(role => superAdmin || role !== 'Superadministrador').map(role => <option key={role}>{role}</option>)}</select></div>
         {nuevo.rol !== 'Superadministrador' && <div className="col-md-6"><label className="form-label">Organización *</label><select required className="form-select" value={nuevo.organizacionId ?? ''} disabled={!superAdmin} onChange={e => setNuevo({ ...nuevo, organizacionId: e.target.value })}>{organizaciones.map(org => <option key={org.id} value={org.id}>{org.nombreComercial}</option>)}</select></div>}
+        {nuevo.rol === 'Cliente' && <div className="col-md-6"><label className="form-label">Cliente vinculado *</label><select required className="form-select" value={nuevo.clienteId ?? ''} onChange={e => setNuevo({ ...nuevo, clienteId: e.target.value || null })}><option value="">Selecciona un cliente</option>{clientes.map(cliente => <option key={cliente.id} value={cliente.id}>{cliente.nombreCompleto} · {cliente.numeroDocumento}</option>)}</select><small className="text-secondary">Esta cuenta solo podrá ver y administrar sus propias reservas.</small></div>}
+        {nuevo.rol === 'Profesional' && <div className="col-md-6"><label className="form-label">Profesional vinculado *</label><select required className="form-select" value={nuevo.empleadoId ?? ''} onChange={e => setNuevo({ ...nuevo, empleadoId: e.target.value || null })}><option value="">Selecciona un profesional</option>{profesionales.map(profesional => <option key={profesional.id} value={profesional.id}>{profesional.nombreCompleto} · {profesional.especialidad || profesional.cargo}</option>)}</select><small className="text-secondary">Esta cuenta solo podrá consultar y atender su propia agenda.</small></div>}
       </div><div className="mt-3 d-flex gap-2"><button className="btn btn-primary" disabled={saving}>{saving ? 'Guardando…' : 'Guardar usuario'}</button><button type="button" className="btn btn-outline-secondary" onClick={() => setShowNew(false)}>Cancelar</button></div></form>}
 
       <div className="card table-responsive"><table className="table table-hover align-middle mb-0"><thead><tr><th>Nombre</th><th>Correo</th><th>Rol</th><th>Organización</th><th>Estado</th><th>Acciones</th></tr></thead><tbody>{usuariosFiltrados.map(item => <tr key={item.id}>

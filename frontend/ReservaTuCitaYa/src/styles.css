@@ -1,12 +1,65 @@
 :root { color: #172033; background: #f5f7fb; font-family: Inter, system-ui, sans-serif; }
+* { box-sizing: border-box; }
 body { margin: 0; min-width: 320px; min-height: 100vh; background: #f5f7fb; }
 .app-shell { min-height: 100vh; }
-.app-body { display: grid; grid-template-columns: 240px minmax(0, 1fr); min-height: calc(100vh - 56px); }
-.app-sidebar { background: white; border-right: 1px solid #dee2e6; padding: 1.5rem 1rem; }
-.app-sidebar .nav-link.active { color: white; background: #0d6efd; border-radius: .5rem; }
+.app-body { display: grid; grid-template-columns: 232px minmax(0, 1fr); min-height: calc(100vh - 56px); }
+.app-sidebar { background: #102f54; border-right: 0; padding: 1.5rem 1rem; color: #e8eef8; }
+.app-sidebar .nav-link { color: #cbd8ea; padding: .6rem .75rem; font-weight: 500; }
+.app-sidebar .nav-link:hover { color: #fff; background: #1b426e; border-radius: .6rem; }
+.app-sidebar .nav-link.active { color: white; background: #2970ff; border-radius: .6rem; box-shadow: 0 3px 10px rgb(0 0 0 / 12%); }
+.app-sidebar .text-secondary { color: #9fb3cf !important; letter-spacing: .05em; }
+.navbar { background: #fff !important; color: #172033; min-height: 56px; }
+.navbar .navbar-brand, .navbar .text-white { color: #172033 !important; }
+.navbar .btn-outline-light { color: #102f54; border-color: #cbd5e1; }
+.navbar .btn-outline-light:hover { color: #fff; background: #102f54; }
 .app-content { padding: 2rem; overflow-x: auto; }
+.app-content > section { max-width: 1440px; margin: 0 auto; }
+.app-topbar { position: sticky; top: 0; z-index: 20; min-height: 64px; border-bottom: 1px solid #e7edf5; }
+.brand-lockup { display: inline-flex; align-items: center; gap: .65rem; line-height: 1.05; font-size: .9rem; }
+.brand-lockup__mark { display: grid; place-items: center; width: 2.15rem; height: 2.15rem; border-radius: .65rem; color: #fff; background: #2970ff; font-size: 1.1rem; font-weight: 800; }
+.user-initial { display: grid; place-items: center; width: 2rem; height: 2rem; border-radius: 50%; color: #fff; background: #e9eff8; color: #173b63; font-size: .8rem; font-weight: 800; }
+.app-content h1 { margin: 0; color: #172033; font-size: clamp(1.45rem, 2vw, 1.85rem); font-weight: 750; letter-spacing: -.025em; }
+.app-content h1 + .text-secondary, .app-content h1 + p { margin-top: .35rem; }
+.card { border: 1px solid #e7edf5; border-radius: .9rem; box-shadow: 0 4px 18px rgb(26 50 78 / 5%); background: #fff; }
+.card-header { padding: 1rem 1.25rem; background: #fff; border-bottom-color: #edf1f6; font-weight: 700; }
+.card-body, .card.card-body { padding: 1.25rem; }
+.form-label { margin-bottom: .42rem; color: #344054; font-size: .82rem; font-weight: 650; }
+.form-control, .form-select { min-height: 2.7rem; border-color: #d8e0ec; border-radius: .6rem; box-shadow: none !important; font-size: .92rem; }
+.form-control:focus, .form-select:focus { border-color: #2970ff; box-shadow: 0 0 0 .2rem rgb(41 112 255 / 12%) !important; }
+textarea.form-control { min-height: 7rem; }
+.btn { border-radius: .6rem; padding: .55rem .9rem; font-weight: 650; font-size: .88rem; }
+.btn-primary { border-color: #2970ff; background: #2970ff; box-shadow: 0 3px 7px rgb(41 112 255 / 18%); }
+.btn-primary:hover, .btn-primary:focus { border-color: #1e5fdd; background: #1e5fdd; }
+.btn-outline-primary { border-color: #b5cdfb; color: #1e5fdd; }
+.btn-outline-secondary { border-color: #d3dce8; color: #475467; }
+.table { --bs-table-bg: transparent; --bs-table-hover-bg: #f7faff; margin-bottom: 0; }
+.table > :not(caption) > * > * { padding: .85rem 1rem; border-bottom-color: #edf1f6; vertical-align: middle; }
+.table thead th { color: #667085; background: #fafbfc; font-size: .72rem; letter-spacing: .045em; text-transform: uppercase; white-space: nowrap; }
+.badge { border-radius: 999px; padding: .42em .7em; font-weight: 650; }
+.alert { border: 0; border-radius: .75rem; }
+.pagination .page-link { border: 0; border-radius: .45rem; color: #344054; margin: 0 .12rem; }
+.pagination .active .page-link { background: #2970ff; }
+.booking-flow { max-width: 1160px !important; }
+.booking-steps { display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); gap: .5rem; margin: 1.5rem 0; padding: .75rem; border: 1px solid #e7edf5; border-radius: .85rem; background: #fff; }
+.booking-step { display: flex; align-items: center; gap: .45rem; min-width: 0; color: #98a2b3; font-size: .75rem; }
+.booking-step span { display: grid; flex: 0 0 auto; place-items: center; width: 1.55rem; height: 1.55rem; border-radius: 50%; background: #eef2f7; font-size: .75rem; font-weight: 800; }
+.booking-step strong { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-weight: 650; }
+.booking-step.is-current { color: #1e5fdd; }.booking-step.is-current span { color: #fff; background: #2970ff; box-shadow: 0 0 0 4px rgb(41 112 255 / 12%); }
+.booking-step.is-complete { color: #198754; }.booking-step.is-complete span { color: #fff; background: #198754; }
 .login-page, .app-loading { min-height: 100vh; display: grid; place-items: center; padding: 1rem; }
+.login-hifi { min-height: 100vh; display: grid; grid-template-columns: minmax(320px, 1fr) minmax(380px, 1fr); background: #fff; }
+.login-showcase { display: grid; grid-template-rows: auto 1fr; padding: 2.5rem; color: #fff; background: linear-gradient(145deg, #0b294a, #123e6c); }
+.brand-mark, .brand-mobile { display: flex; align-items: center; gap: .75rem; font-size: 1.05rem; line-height: 1.05; }.brand-mark span, .brand-mobile span { display:grid; place-items:center; width:2.35rem; height:2.35rem; background:#2970ff; border-radius:.7rem; font-weight:800; font-size:1.25rem; }
+.login-message { align-self: center; max-width: 32rem; margin: auto; }.eyebrow { font-size:.75rem; letter-spacing:.12em; color:#a8c7ed; }.login-message h1 { font-size: clamp(2rem, 4vw, 3.25rem); line-height:1.1; margin-bottom:2.5rem; }
+.next-appointment { display:grid; gap:.4rem; max-width:24rem; padding:1.25rem; border:1px solid rgb(255 255 255 / 22%); border-radius:.85rem; background:rgb(255 255 255 / 10%); backdrop-filter: blur(4px); }.next-appointment small { color:#bcd6f4; letter-spacing:.1em; }.next-appointment span { color:#d3e2f3; font-size:.9rem; }
+.login-form-wrap { display:grid; place-items:center; padding:2rem; }.login-card { width:min(100%, 420px); }.login-card h1 { font-size:2rem; margin:1rem 0 .25rem; }.login-card > p { color:#667085; margin-bottom:2rem; }.brand-mobile { color:#102f54; font-weight:700; }.brand-mobile span { color:#fff; }
 .login-card { width: min(100%, 420px); }
 .table-actions { white-space: nowrap; }
 .form-card { max-width: 900px; }
 @media (max-width: 768px) { .app-body { grid-template-columns: 1fr; } .app-sidebar { border-right: 0; border-bottom: 1px solid #dee2e6; } .app-content { padding: 1rem; } }
+ .mobile-bottom-nav { display: none; }
+@media (max-width: 768px) { .app-sidebar { display:none; } .app-content { padding:1.25rem 1rem 5.75rem; } .app-topbar { min-height:56px; padding-inline:1rem !important; } .app-topbar .btn { padding:.38rem .6rem; font-size:.75rem; } .brand-lockup { font-size:.78rem; }.brand-lockup__mark { width:1.9rem; height:1.9rem; }.mobile-bottom-nav { position:fixed; z-index:10; bottom:0; left:0; right:0; display:flex; justify-content:space-around; gap:.25rem; padding:.65rem; background:#fff; border-top:1px solid #e4e7ec; box-shadow:0 -4px 16px rgb(16 47 84 / 8%); }.mobile-bottom-nav a { color:#667085; text-decoration:none; font-size:.78rem; font-weight:700; padding:.45rem .6rem; border-radius:.55rem; }.mobile-bottom-nav a.active { color:#fff; background:#2970ff; } .booking-steps { grid-template-columns:repeat(3, minmax(0, 1fr)); } .booking-step { font-size:.69rem; } .booking-step strong { white-space:normal; line-height:1.1; } .card-body, .card.card-body { padding:1rem; } }
+@media (max-width: 768px) { .login-hifi { display:block; }.login-showcase { display:none; }.login-form-wrap { min-height:100vh; padding:1.5rem; } }
+.security-state { min-height: 100vh; display: grid; align-content: center; justify-items: center; text-align: center; padding: 1.5rem; background: #f5f7fb; }
+.security-state h1 { margin-bottom: .5rem; }.security-state p { color: #667085; }.security-code { color: #2970ff !important; font-size: 4rem; font-weight: 800; line-height: 1; margin: 0; }
+.role-context-state { min-height: 55vh; display: grid; place-content: center; justify-items: center; max-width: 38rem; margin: auto; text-align: center; }.role-context-state p:not(.security-code) { color: #667085; }

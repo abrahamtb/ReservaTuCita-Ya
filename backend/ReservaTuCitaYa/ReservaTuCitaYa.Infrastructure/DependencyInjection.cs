@@ -130,5 +130,6 @@ public static class DependencyInjection
             configuration,
             logger);
         await MetodoPagoSeeder.SeedAsync(dbContext);
+        await DemoDataSeeder.SeedAsync(dbContext, configuration, logger, cancellationToken);
     }
 }

@@ -28,6 +28,7 @@ export function ReservaFormPage() {
   const [loadingSlots, setLoadingSlots] = useState(false)
   const [error, setError] = useState<unknown>()
   const [busy, setBusy] = useState(false)
+  const [acompanantes, setAcompanantes] = useState<string[]>([])
   const [form, setForm] = useState<CrearReservaRequest>({
     clienteId: user?.clienteId ?? '',
     servicioId: query.get('servicioId') ?? '',
@@ -65,7 +66,7 @@ export function ReservaFormPage() {
         servicioId: current.servicioId || servicePage.elementos[0]?.id || '',
         clienteId: current.clienteId || user?.clienteId || clientPage.elementos[0]?.id || '',
       }))
-    }).catch(setError).finally(() => setLoadingOptions(false))
+    }).catch(caught => { if (!controller.signal.aborted && (caught as Error).name !== 'AbortError') setError(caught) }).finally(() => { if (!controller.signal.aborted) setLoadingOptions(false) })
     return () => controller.abort()
   }, [organizationId, user?.clienteId])
 
@@ -102,7 +103,7 @@ export function ReservaFormPage() {
       setProfesionales(professionalItems)
       setRecursos(resourceItems)
       setSlots(availability.dias[0]?.horarios ?? [])
-    }).catch(setError).finally(() => { if (!controller.signal.aborted) setLoadingSlots(false) })
+    }).catch(caught => { if (!controller.signal.aborted && (caught as Error).name !== 'AbortError') setError(caught) }).finally(() => { if (!controller.signal.aborted) setLoadingSlots(false) })
     return () => controller.abort()
   }, [form.sedeId, form.servicioId, form.fecha, form.profesionalId, form.recursoId])
 
@@ -121,6 +122,7 @@ export function ReservaFormPage() {
     if (step === 3 && requiereRecurso && recursos.length === 0) return setError(new Error('No hay recursos compatibles disponibles.'))
     if (step === 4 && !form.horaInicio) return setError(new Error('Selecciona un horario disponible.'))
     if (step === 5 && form.cantidadParticipantes < 1) return setError(new Error('La cantidad de participantes debe ser al menos 1.'))
+    if (step === 5 && acompanantes.some(nombre => !nombre.trim())) return setError(new Error('Ingresa el nombre de cada participante adicional.'))
     setStep(current => Math.min(6, current + 1))
   }
 
@@ -129,11 +131,15 @@ export function ReservaFormPage() {
     if (step !== 6) return next()
     setBusy(true); setError(undefined)
     try {
+      const participantes = [
+        { clienteId: form.clienteId, nombreCompleto: cliente?.nombreCompleto ?? '', esTitular: true },
+        ...acompanantes.map(nombreCompleto => ({ nombreCompleto: nombreCompleto.trim(), esTitular: false })),
+      ]
       const created = await crearReserva(organizationId, {
         ...form,
         profesionalId: form.profesionalId || null,
         recursoId: form.recursoId || null,
-        participantes: [],
+        participantes,
       })
       navigate(`/reservas/${created.id}`)
     } catch (caught) { setError(caught) }
@@ -142,9 +148,9 @@ export function ReservaFormPage() {
 
   if (loadingOptions) return <div className="py-5 text-center">Cargando opciones de reserva…</div>
 
-  return <section>
+  return <section className="booking-flow">
     <div className="d-flex justify-content-between align-items-start mb-3"><div><h1>Nueva reserva</h1><p className="text-secondary">Completa los pasos para confirmar una cita disponible.</p></div><Link className="btn btn-outline-secondary" to="/reservas">Cancelar</Link></div>
-    <div className="d-flex flex-wrap gap-2 mb-4">{steps.map((label, index) => { const number = index + 1; return <div key={label} className={`d-flex align-items-center gap-2 px-3 py-2 rounded border ${number === step ? 'border-primary bg-primary-subtle' : number < step ? 'border-success bg-success-subtle' : 'bg-white'}`}><span className={`badge rounded-pill ${number <= step ? 'text-bg-primary' : 'text-bg-secondary'}`}>{number}</span><span className="small fw-semibold">{label}</span></div> })}</div>
+    <div className="booking-steps">{steps.map((label, index) => { const number = index + 1; return <div key={label} className={`booking-step ${number === step ? 'is-current' : number < step ? 'is-complete' : ''}`}><span>{number}</span><strong>{label}</strong></div> })}</div>
     {error ? <ErrorAlert error={error} /> : null}
 
     <form className="card card-body" onSubmit={submit}>
@@ -163,7 +169,7 @@ export function ReservaFormPage() {
 
       {step === 4 && <div><h2 className="h5">4. Fecha y hora</h2><p className="text-secondary">Solo se muestran horarios calculados como disponibles.</p><div className="row g-3"><div className="col-md-4"><label className="form-label">Fecha *</label><input required min={today} type="date" className="form-control" value={form.fecha} onChange={e => setForm({ ...form, fecha: e.target.value, horaInicio: '' })} /></div><div className="col-md-8"><label className="form-label d-block">Horarios disponibles *</label>{loadingSlots ? <span className="text-secondary">Consultando disponibilidad…</span> : <div className="d-flex flex-wrap gap-2">{slots.map((slot, index) => <button type="button" key={`${slot.horaInicio}-${index}`} className={`btn ${form.horaInicio === slot.horaInicio ? 'btn-primary' : 'btn-outline-primary'}`} onClick={() => setForm({ ...form, horaInicio: slot.horaInicio, profesionalId: slot.profesionalId ?? form.profesionalId, recursoId: slot.recursoId ?? form.recursoId })}>{slot.horaInicio.slice(0, 5)}–{slot.horaFinServicio.slice(0, 5)}</button>)}</div>}{!loadingSlots && slots.length === 0 && <small className="text-secondary d-block mt-2">No hay horarios disponibles para la selección actual.</small>}</div></div></div>}
 
-      {step === 5 && <div><h2 className="h5">5. Información</h2><p className="text-secondary">Agrega datos adicionales para la atención.</p><div className="row g-3"><div className="col-md-4"><label className="form-label">Participantes *</label><input required min="1" max={servicio?.capacidadMaxima || undefined} type="number" className="form-control" value={form.cantidadParticipantes} onChange={e => setForm({ ...form, cantidadParticipantes: Number(e.target.value) })} /><small className="text-secondary">Capacidad máxima: {servicio?.capacidadMaxima ?? '—'}</small></div><div className="col-md-8"><label className="form-label">Observaciones</label><textarea rows={4} className="form-control" value={form.observaciones ?? ''} onChange={e => setForm({ ...form, observaciones: e.target.value })} placeholder="Indicaciones o comentarios para la atención" /></div></div></div>}
+      {step === 5 && <div><h2 className="h5">5. Información</h2><p className="text-secondary">Agrega datos adicionales para la atención.</p><div className="row g-3"><div className="col-md-4"><label className="form-label">Participantes *</label><input required min="1" max={servicio?.capacidadMaxima || undefined} type="number" className="form-control" value={form.cantidadParticipantes} onChange={e => { const cantidad = Math.max(1, Number(e.target.value)); setForm({ ...form, cantidadParticipantes: cantidad }); setAcompanantes(actual => Array.from({ length: cantidad - 1 }, (_, index) => actual[index] ?? '')) }} /><small className="text-secondary">Capacidad máxima: {servicio?.capacidadMaxima ?? '—'}</small></div><div className="col-md-8"><label className="form-label">Observaciones</label><textarea rows={4} className="form-control" value={form.observaciones ?? ''} onChange={e => setForm({ ...form, observaciones: e.target.value })} placeholder="Indicaciones o comentarios para la atención" /></div>{acompanantes.map((nombre, index) => <div className="col-md-6" key={index}><label className="form-label">Participante adicional {index + 1}<input required className="form-control" value={nombre} onChange={e => setAcompanantes(actual => actual.map((item, position) => position === index ? e.target.value : item))} /></label></div>)}</div></div>}
 
       {step === 6 && <div><h2 className="h5">6. Confirmar</h2><p className="text-secondary">Revisa la información antes de crear la reserva.</p><div className="row g-3"><div className="col-lg-8"><dl className="row border rounded p-3 mb-0"><dt className="col-sm-4">Cliente</dt><dd className="col-sm-8">{user?.clienteId ? 'Cliente vinculado a tu cuenta' : cliente?.nombreCompleto ?? '—'}</dd><dt className="col-sm-4">Servicio</dt><dd className="col-sm-8">{servicio?.nombre ?? '—'} · {servicio?.duracionMinutos ?? 0} min</dd><dt className="col-sm-4">Sede</dt><dd className="col-sm-8">{sede?.nombre ?? '—'}</dd><dt className="col-sm-4">Profesional</dt><dd className="col-sm-8">{profesional?.nombreCompleto ?? (requiereProfesional ? 'Cualquiera disponible' : 'No requerido')}</dd><dt className="col-sm-4">Recurso</dt><dd className="col-sm-8">{recurso?.nombre ?? (requiereRecurso ? 'Cualquiera disponible' : 'No requerido')}</dd><dt className="col-sm-4">Fecha y hora</dt><dd className="col-sm-8">{form.fecha} · {form.horaInicio.slice(0, 5)}</dd><dt className="col-sm-4">Participantes</dt><dd className="col-sm-8">{form.cantidadParticipantes}</dd><dt className="col-sm-4">Observaciones</dt><dd className="col-sm-8">{form.observaciones || '—'}</dd></dl></div><div className="col-lg-4"><div className="card card-body bg-light"><span className="text-secondary">Precio estimado</span><strong className="fs-3">S/ {servicio?.precio.toFixed(2) ?? '0.00'}</strong>{(servicio?.montoAdelanto ?? 0) > 0 && <small>Adelanto requerido: S/ {servicio?.montoAdelanto.toFixed(2)}</small>}</div></div></div></div>}
 

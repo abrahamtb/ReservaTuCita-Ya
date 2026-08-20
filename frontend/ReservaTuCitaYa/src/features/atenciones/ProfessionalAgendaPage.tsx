@@ -25,6 +25,7 @@ function todayInput() {
 
 export function ProfessionalAgendaPage() {
   const { user } = useAuth()
+  const permissions = new Set(user?.permisos ?? [])
   const [organizations, setOrganizations] = useState<Organization[]>([])
   const [organizationId, setOrganizationId] = useState(user?.organizacion?.id ?? '')
   const [professionals, setProfessionals] = useState<EmpleadoLista[]>([])
@@ -246,7 +247,7 @@ export function ProfessionalAgendaPage() {
         ? <Loading />
         : reservations.length === 0
           ? <Empty message="No hay reservas programadas para esta fecha." />
-          : <AgendaList organizationId={organizationId} reservations={reservations} onAction={(item, action) => setSelected({ item, action })} />}
+          : <AgendaList organizationId={organizationId} reservations={reservations} permissions={permissions} onAction={(item, action) => setSelected({ item, action })} />}
 
     {selected ? <ConfirmationModal
       action={selected.action}
@@ -264,10 +265,12 @@ export function ProfessionalAgendaPage() {
 function AgendaList({
   organizationId,
   reservations,
+  permissions,
   onAction,
 }: {
   organizationId: string
   reservations: AgendaReserva[]
+  permissions: Set<string>
   onAction: (item: AgendaReserva, action: AttentionAction) => void
 }) {
   return <div className="card border-0 shadow-sm overflow-hidden">
@@ -279,7 +282,7 @@ function AgendaList({
           <td><strong>{item.clienteNombre}</strong><small className="d-block text-secondary">{item.servicioNombre} · {item.codigoReserva}</small></td>
           <td>{item.sedeNombre}</td>
           <td><ReservationStatus status={item.estado} /></td>
-          <td className="text-end"><AgendaActions organizationId={organizationId} item={item} onAction={onAction} /></td>
+          <td className="text-end"><AgendaActions organizationId={organizationId} item={item} permissions={permissions} onAction={onAction} /></td>
         </tr>)}</tbody>
       </table>
     </div>
@@ -289,7 +292,7 @@ function AgendaList({
         <h2 className="h5 mt-3 mb-1">{item.clienteNombre}</h2>
         <p className="mb-1">{item.servicioNombre}</p>
         <p className="small text-secondary">{item.sedeNombre} · {item.codigoReserva}</p>
-        <AgendaActions organizationId={organizationId} item={item} onAction={onAction} />
+        <AgendaActions organizationId={organizationId} item={item} permissions={permissions} onAction={onAction} />
       </article>)}
     </div>
   </div>
@@ -298,18 +301,20 @@ function AgendaList({
 function AgendaActions({
   organizationId,
   item,
+  permissions,
   onAction,
 }: {
   organizationId: string
   item: AgendaReserva
+  permissions: Set<string>
   onAction: (item: AgendaReserva, action: AttentionAction) => void
 }) {
   return <div className="d-inline-flex flex-wrap justify-content-end gap-2">
     {['Confirmada', 'Reprogramada'].includes(item.estado) ? <>
-      <button className="btn btn-sm btn-primary" onClick={() => onAction(item, 'present')}>Marcar presente</button>
-      <button className="btn btn-sm btn-outline-danger" onClick={() => onAction(item, 'no-show')}>No asistió</button>
+      {permissions.has('atenciones.marcarPresente') && <button className="btn btn-sm btn-primary" onClick={() => onAction(item, 'present')}>Marcar presente</button>}
+      {permissions.has('atenciones.finalizar') && <button className="btn btn-sm btn-outline-danger" onClick={() => onAction(item, 'no-show')}>No asistió</button>}
     </> : null}
-    {item.estado === 'Presente' ? <button className="btn btn-sm btn-primary" onClick={() => onAction(item, 'start')}>Iniciar atención</button> : null}
+    {item.estado === 'Presente' && permissions.has('atenciones.iniciar') ? <button className="btn btn-sm btn-primary" onClick={() => onAction(item, 'start')}>Iniciar atención</button> : null}
     <Link className="btn btn-sm btn-outline-secondary" to={`/organizaciones/${organizationId}/reservas/${item.reservaId}/atencion`}>
       {item.estado === 'EnAtencion' ? 'Finalizar atención' : item.estado === 'Atendida' ? 'Ver atención' : 'Ver detalle'}
     </Link>

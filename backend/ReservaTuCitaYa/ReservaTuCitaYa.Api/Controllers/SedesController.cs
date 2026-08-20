@@ -10,7 +10,7 @@ using ReservaTuCitaYa.Infrastructure.Identity;
 namespace ReservaTuCitaYa.Api.Controllers;
 
 [ApiController]
-[Authorize(Roles = RoleNames.Administracion)]
+[Authorize]
 public sealed class SedesController(ISedeService service, ICurrentUser currentUser) : ApiControllerBase
 {
     [HttpGet("api/organizaciones/{organizacionId:guid}/sedes")]

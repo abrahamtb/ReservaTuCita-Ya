@@ -156,6 +156,11 @@ public sealed class AtencionesController(
             return NotFound();
         }
 
+        if (currentUser.IsInRole(RoleNames.Profesional) && currentUser.EmpleadoId != profesionalId)
+        {
+            return NotFound();
+        }
+
         var result = await service.ObtenerAgendaProfesionalAsync(
             organizacionId,
             profesionalId,

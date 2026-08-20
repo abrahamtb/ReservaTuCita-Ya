@@ -8,7 +8,9 @@
         string NumeroDocumento,
         string Telefono,
         string Rol,
-        Guid? OrganizacionId);
+        Guid? OrganizacionId,
+        Guid? ClienteId,
+        Guid? EmpleadoId);
 
     public sealed record UsuarioResponse(
         Guid Id,

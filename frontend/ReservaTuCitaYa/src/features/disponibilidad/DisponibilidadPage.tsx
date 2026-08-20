@@ -32,7 +32,7 @@ export function DisponibilidadPage() {
     const controller = new AbortController()
     listOrganizations({ estado: 'Activos', pagina: 1, tamanoPagina: 100 }, controller.signal)
       .then(result => { setOrganizations(result.elementos); setOrganizationId(current => current || result.elementos[0]?.id || '') })
-      .catch(setError)
+      .catch(caught => { if (!controller.signal.aborted && (caught as Error).name !== 'AbortError') setError(caught) })
     return () => controller.abort()
   }, [user?.organizacion])
 
@@ -46,7 +46,7 @@ export function DisponibilidadPage() {
       setSedes(siteItems); setServicios(servicePage.elementos)
       setSedeId(current => siteItems.some(x => x.id === current) ? current : siteItems[0]?.id || '')
       setServicioId(current => servicePage.elementos.some(x => x.id === current) ? current : servicePage.elementos[0]?.id || '')
-    }).catch(setError)
+    }).catch(caught => { if (!controller.signal.aborted && (caught as Error).name !== 'AbortError') setError(caught) })
     return () => controller.abort()
   }, [organizationId])
 

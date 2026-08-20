@@ -26,7 +26,7 @@ export function ReservasPage() {
     const controller = new AbortController()
     listOrganizations({ estado: 'Activos', pagina: 1, tamanoPagina: 100 }, controller.signal)
       .then(result => { setOrganizations(result.elementos); setOrganizationId(current => current || result.elementos[0]?.id || '') })
-      .catch(setError)
+      .catch(caught => { if (!controller.signal.aborted && (caught as Error).name !== 'AbortError') setError(caught) })
     return () => controller.abort()
   }, [user?.organizacion])
 
@@ -34,7 +34,7 @@ export function ReservasPage() {
     if (!organizationId) { setData(undefined); return }
     const controller = new AbortController()
     listarReservas(organizationId, { estado: state, pagina: page, tamanoPagina: 10 }, controller.signal)
-      .then(setData).catch(caught => { if ((caught as Error).name !== 'AbortError') setError(caught) })
+      .then(setData).catch(caught => { if (!controller.signal.aborted && (caught as Error).name !== 'AbortError') setError(caught) })
     return () => controller.abort()
   }, [organizationId, state, page])
 

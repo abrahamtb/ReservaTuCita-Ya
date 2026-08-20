@@ -92,6 +92,43 @@ public sealed class UsuariosController : ControllerBase
                 detail: $"El rol '{request.Rol}' no existe.");
         }
 
+        var organizacionId = request.OrganizacionId ?? _currentUser.OrganizacionId;
+        Cliente? clienteVinculado = null;
+        Empleado? empleadoVinculado = null;
+        if (request.Rol == RoleNames.Cliente)
+        {
+            if (request.ClienteId is null || organizacionId is null)
+                return Problem(statusCode: StatusCodes.Status400BadRequest, title: "Cliente requerido", detail: "Selecciona el cliente que tendrá acceso a su cuenta.");
+
+            clienteVinculado = await _db.Clientes.FirstOrDefaultAsync(cliente =>
+                cliente.Id == request.ClienteId && cliente.OrganizacionId == organizacionId &&
+                cliente.EstaActivo && !cliente.EstaEliminado, cancellationToken);
+            if (clienteVinculado is null)
+                return Problem(statusCode: StatusCodes.Status400BadRequest, title: "Cliente inválido", detail: "El cliente seleccionado no pertenece a la organización activa.");
+
+            var yaVinculado = await _db.UsuariosClientes.AnyAsync(link =>
+                link.ClienteId == clienteVinculado.Id && link.EstaActivo && !link.EstaEliminado, cancellationToken);
+            if (yaVinculado)
+                return Problem(statusCode: StatusCodes.Status409Conflict, title: "Cliente ya vinculado", detail: "Este cliente ya tiene una cuenta de acceso.");
+        }
+
+        if (request.Rol == RoleNames.Profesional)
+        {
+            if (request.EmpleadoId is null || organizacionId is null)
+                return Problem(statusCode: StatusCodes.Status400BadRequest, title: "Profesional requerido", detail: "Selecciona el profesional que tendrá acceso a su cuenta.");
+
+            empleadoVinculado = await _db.Empleados.FirstOrDefaultAsync(empleado =>
+                empleado.Id == request.EmpleadoId && empleado.OrganizacionId == organizacionId &&
+                empleado.EsProfesional && empleado.EstaActivo && !empleado.EstaEliminado, cancellationToken);
+            if (empleadoVinculado is null)
+                return Problem(statusCode: StatusCodes.Status400BadRequest, title: "Profesional inválido", detail: "El profesional seleccionado no pertenece a la organización activa o no está disponible.");
+
+            var yaVinculado = await _db.UsuariosEmpleados.AnyAsync(link =>
+                link.EmpleadoId == empleadoVinculado.Id && link.EstaActivo && !link.EstaEliminado, cancellationToken);
+            if (yaVinculado)
+                return Problem(statusCode: StatusCodes.Status409Conflict, title: "Profesional ya vinculado", detail: "Este profesional ya tiene una cuenta de acceso.");
+        }
+
         var nuevoUsuario = new ApplicationUser
         {
             UserName = request.Email,
@@ -117,7 +154,6 @@ public sealed class UsuariosController : ControllerBase
         await _userManager.AddToRoleAsync(nuevoUsuario, request.Rol);
 
         // Vincular organización (obligatorio salvo Superadministrador)
-        var organizacionId = request.OrganizacionId ?? _currentUser.OrganizacionId;
         if (organizacionId is Guid orgId)
         {
             _db.UsuariosOrganizaciones.Add(new UsuarioOrganizacion
@@ -126,6 +162,17 @@ public sealed class UsuariosController : ControllerBase
                 OrganizacionId = orgId,
                 EsPrincipal = true
             });
+            await _db.SaveChangesAsync(cancellationToken);
+        }
+
+        if (clienteVinculado is not null)
+        {
+            _db.UsuariosClientes.Add(new UsuarioCliente { UsuarioId = nuevoUsuario.Id, ClienteId = clienteVinculado.Id });
+            await _db.SaveChangesAsync(cancellationToken);
+        }
+        else if (empleadoVinculado is not null)
+        {
+            _db.UsuariosEmpleados.Add(new UsuarioEmpleado { UsuarioId = nuevoUsuario.Id, EmpleadoId = empleadoVinculado.Id });
             await _db.SaveChangesAsync(cancellationToken);
         }
         else if (request.Rol != RoleNames.Superadministrador)

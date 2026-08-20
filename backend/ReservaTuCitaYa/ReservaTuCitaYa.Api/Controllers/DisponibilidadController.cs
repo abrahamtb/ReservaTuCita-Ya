@@ -4,11 +4,12 @@ using ReservaTuCitaYa.Application.Common;
 using ReservaTuCitaYa.Application.DTOs.Disponibilidad;
 using ReservaTuCitaYa.Application.Interfaces;
 using ReservaTuCitaYa.Application.Services;
+using ReservaTuCitaYa.Domain.Common;
 using ReservaTuCitaYa.Infrastructure.Identity;
 namespace ReservaTuCitaYa.Api.Controllers;
 
 [ApiController]
-[Authorize(Roles = RoleNames.Administracion)]
+[Authorize(Policy = Permissions.Reservas.Crear)]
 public sealed class DisponibilidadController(IDisponibilidadService service) : ApiControllerBase
 {
     [HttpGet("api/disponibilidad")]

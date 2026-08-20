@@ -6,20 +6,23 @@ using ReservaTuCitaYa.Application.DTOs.Common;
 using ReservaTuCitaYa.Application.DTOs.Reservas;
 using ReservaTuCitaYa.Application.Interfaces;
 using ReservaTuCitaYa.Application.Services;
+using ReservaTuCitaYa.Domain.Common;
 using ReservaTuCitaYa.Domain.Enums;
 using ReservaTuCitaYa.Infrastructure.Identity;
 using System.Security.Claims;
 namespace ReservaTuCitaYa.Api.Controllers;
 
 [ApiController]
-[Authorize(Roles = RoleNames.Administracion)]
+[Authorize]
 public sealed class ReservasController(IReservaService service, ICurrentUser currentUser) : ApiControllerBase
 {
     [HttpPost("api/organizaciones/{organizacionId:guid}/reservas")]
+    [Authorize(Policy = Permissions.Reservas.Crear)]
     public async Task<ActionResult<ReservaCreadaDto>> Crear(
         Guid organizacionId, CrearReservaSolicitud request, CancellationToken ct)
     {
         if (!EsOrganizacionAutorizada(organizacionId)) return NotFound();
+        if (!EsClientePropio(request.ClienteId)) return Forbid();
         var usuarioId = User.FindFirstValue(ClaimTypes.NameIdentifier);
         var result = await service.CrearAsync(organizacionId, request, usuarioId, ct);
         return result.EsExitoso && result.Valor is not null
@@ -28,26 +31,29 @@ public sealed class ReservasController(IReservaService service, ICurrentUser cur
     }
 
     [HttpGet("api/reservas/{id:guid}")]
+    [Authorize(Policy = Permissions.Reservas.Ver)]
     public async Task<ActionResult<ReservaDetalleDto>> Obtener(Guid id, CancellationToken ct)
     {
         var result = await service.ObtenerPorIdAsync(id, ct);
-        if (result.EsExitoso && result.Valor is not null && !EsOrganizacionAutorizada(result.Valor.OrganizacionId))
+        if (result.EsExitoso && result.Valor is not null && (!EsOrganizacionAutorizada(result.Valor.OrganizacionId) || !EsReservaPropia(result.Valor.Cliente.Id)))
             return NotFound();
         return result.EsExitoso && result.Valor is not null
             ? Ok(result.Valor) : ReservaProblem(result.Error, result.TipoError);
     }
 
     [HttpGet("api/reservas/codigo/{codigo}")]
+    [Authorize(Policy = Permissions.Reservas.Ver)]
     public async Task<ActionResult<ReservaDetalleDto>> ObtenerPorCodigo(string codigo, CancellationToken ct)
     {
         var result = await service.ObtenerPorCodigoAsync(codigo, ct);
-        if (result.EsExitoso && result.Valor is not null && !EsOrganizacionAutorizada(result.Valor.OrganizacionId))
+        if (result.EsExitoso && result.Valor is not null && (!EsOrganizacionAutorizada(result.Valor.OrganizacionId) || !EsReservaPropia(result.Valor.Cliente.Id)))
             return NotFound();
         return result.EsExitoso && result.Valor is not null
             ? Ok(result.Valor) : ReservaProblem(result.Error, result.TipoError);
     }
 
     [HttpGet("api/organizaciones/{organizacionId:guid}/reservas")]
+    [Authorize(Policy = Permissions.Reservas.Ver)]
     public async Task<ActionResult<PaginaResultado<ReservaListaDto>>> Listar(
         Guid organizacionId, [FromQuery] Guid? sedeId, [FromQuery] Guid? clienteId,
         [FromQuery] Guid? profesionalId, [FromQuery] Guid? servicioId,
@@ -55,6 +61,8 @@ public sealed class ReservasController(IReservaService service, ICurrentUser cur
         [FromQuery] int pagina = 1, [FromQuery] int tamanoPagina = 10, CancellationToken ct = default)
     {
         if (!EsOrganizacionAutorizada(organizacionId)) return NotFound();
+        if (EsCliente() && !currentUser.ClienteId.HasValue) return Forbid();
+        if (EsCliente()) clienteId = currentUser.ClienteId;
         var result = await service.ListarAsync(new ReservaFiltroDto(
             organizacionId, sedeId, clienteId, profesionalId, servicioId,
             estado, desde, hasta, pagina, tamanoPagina), ct);
@@ -63,10 +71,13 @@ public sealed class ReservasController(IReservaService service, ICurrentUser cur
     }
 
     [HttpPut("api/organizaciones/{organizacionId:guid}/reservas/{id:guid}/reprogramacion")]
+    [Authorize(Policy = Permissions.Reservas.Reprogramar)]
     public async Task<ActionResult<ReprogramarReservaRespuesta>> Reprogramar(
         Guid organizacionId, Guid id, ReprogramarReservaSolicitud request, CancellationToken ct)
     {
         if (!EsOrganizacionAutorizada(organizacionId)) return NotFound();
+        var reserva = await service.ObtenerPorIdAsync(id, ct);
+        if (!reserva.EsExitoso || reserva.Valor is null || !EsReservaPropia(reserva.Valor.Cliente.Id)) return NotFound();
         var solicitud = new ReprogramarReservaSolicitud
         {
             ReservaId = id,
@@ -84,10 +95,13 @@ public sealed class ReservasController(IReservaService service, ICurrentUser cur
     }
 
     [HttpPost("api/organizaciones/{organizacionId:guid}/reservas/{id:guid}/cancelacion")]
+    [Authorize(Policy = Permissions.Reservas.Cancelar)]
     public async Task<ActionResult<CancelarReservaRespuesta>> Cancelar(
         Guid organizacionId, Guid id, CancelarReservaSolicitud request, CancellationToken ct)
     {
         if (!EsOrganizacionAutorizada(organizacionId)) return NotFound();
+        var reserva = await service.ObtenerPorIdAsync(id, ct);
+        if (!reserva.EsExitoso || reserva.Valor is null || !EsReservaPropia(reserva.Valor.Cliente.Id)) return NotFound();
         var solicitud = new CancelarReservaSolicitud
         {
             ReservaId = id,
@@ -117,4 +131,11 @@ public sealed class ReservasController(IReservaService service, ICurrentUser cur
 
     private bool EsOrganizacionAutorizada(Guid organizacionId) =>
         currentUser.IsInRole(RoleNames.Superadministrador) || currentUser.OrganizacionId == organizacionId;
+
+    private bool EsCliente() => currentUser.IsInRole(RoleNames.Cliente);
+
+    private bool EsClientePropio(Guid clienteId) =>
+        !EsCliente() || (currentUser.ClienteId.HasValue && currentUser.ClienteId.Value == clienteId);
+
+    private bool EsReservaPropia(Guid clienteId) => EsClientePropio(clienteId);
 }
