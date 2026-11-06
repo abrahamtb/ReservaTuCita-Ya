@@ -1,6 +1,31 @@
 # Reserva tu Cita Ya
 
-Plataforma académica de reservas con backend ASP.NET Core 8, frontend React/TypeScript, Entity Framework Core 8, SQL Server Express y ASP.NET Core Identity.
+> **Proyecto académico en desarrollo.** Plataforma de reservas con frontend React + TypeScript, API ASP.NET Core 8 y persistencia en SQL Server. Su documentación describe la implementación actual y el trabajo pendiente; no se presenta como servicio productivo desplegado.
+
+## Vista general para reclutadores
+
+- **Problema abordado:** organizar servicios, sedes y datos de organizaciones en una aplicación web de reservas.
+- **Backend:** ASP.NET Core Web API, arquitectura por capas, Entity Framework Core 8 y ASP.NET Core Identity.
+- **Frontend:** React + TypeScript (Vite), consumo de API mediante HTTPS y manejo de sesiones.
+- **Buenas prácticas documentadas:** autenticación con cookies, protección antiforgery, CORS restringido, DTOs, migraciones de base de datos y proyectos de pruebas unitarias e integración.
+- **Estado:** código y pruebas disponibles en el repositorio; su ejecución exitosa en un entorno nuevo debe validarse con las instrucciones siguientes.
+
+**Enlaces rápidos:** [Backend](backend/ReservaTuCitaYa) · [Frontend](frontend/ReservaTuCitaYa) · [Perfil del autor](https://github.com/abrahamtb) · [LinkedIn](https://www.linkedin.com/in/abrahamtb/)
+
+## Características incluidas en el repositorio
+
+- API para autenticación y gestión de organizaciones, sedes, categorías y servicios.
+- Separación entre dominio, aplicación, infraestructura y capa API.
+- Pruebas unitarias y de integración con proyectos propios en la solución.
+- Configuración local mediante User Secrets y variables de entorno; sin credenciales reales en este README.
+
+## Tecnologías principales
+
+| Backend | Frontend | Datos y pruebas |
+| --- | --- | --- |
+| C# · .NET 8 · ASP.NET Core Identity · EF Core | React · TypeScript · Vite | SQL Server Express · xUnit / pruebas en la solución |
+
+---
 
 ## Estructura del repositorio
 
@@ -188,3 +213,7 @@ Las pruebas API utilizan `WebApplicationFactory` y una base SQL Server Express a
 
 - RG-018 debe comenzar solo después de aprobar esta separación y resolver el riesgo de persistencia de RG-014.
 - RG-030 deberá reemplazar la autorización temporal por políticas, contexto de organización, permisos detallados y menús definitivos.
+
+---
+
+**Autor:** [Abraham Tintaya Barreda](https://github.com/abrahamtb) · [LinkedIn](https://www.linkedin.com/in/abrahamtb/)
